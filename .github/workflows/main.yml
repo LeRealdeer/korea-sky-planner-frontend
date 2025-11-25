@@ -1,4 +1,4 @@
-name: Deploy Next.js Frontend to Oracle Cloud
+name: Deploy Next.js Frontend to Oracle Cloud (Runner Build)
 
 on:
   push:
@@ -13,7 +13,33 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
     
-    - name: Deploy to Oracle Cloud Server
+    # ----------------------------------------------------------------------
+    # 1. GitHub Runner에서 Next.js 환경 설정 및 빌드 (RAM 7GB 사용)
+    # ----------------------------------------------------------------------
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # 🌟 사용하시는 Node.js 버전에 맞게 수정하세요
+
+    - name: Install Dependencies & Build (on Runner)
+      run: |
+        echo "=== Installing Dependencies on Runner ==="
+        npm install
+        
+        echo "=== Building Next.js on Runner ==="
+        npm run build 
+        
+    - name: Create .env.local for Remote Server
+      # 서버에서 필요한 환경 변수 파일 생성
+      run: |
+        cat > .env.local << 'ENVEOF'
+        NEXT_PUBLIC_API_URL=http://${{ secrets.SERVER_IP }}:8000
+        ENVEOF
+
+    # ----------------------------------------------------------------------
+    # 2. 서버 환경 정리 및 파일 전송 (SCP 사용)
+    # ----------------------------------------------------------------------
+    - name: SSH - Clean Up Remote Environment & Stop Server
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -22,45 +48,58 @@ jobs:
         port: 22
         script: |
           set -e
+          DEPLOY_DIR=~/korea-sky-planner-frontend
           
-          echo "=== Starting Frontend Deployment ==="
-          
-          cd ~/korea-sky-planner-frontend
-          git pull origin main
-          
-          # .env.local 파일 생성
-          cat > .env.local << 'ENVEOF'
-          NEXT_PUBLIC_API_URL=http://${{ secrets.SERVER_IP }}:8000
-          ENVEOF
-          
-          # 의존성 설치
-          echo "=== Installing Dependencies ==="
-          npm install
-          
-          # 빌드
-          echo "=== Building Next.js ==="
-          npm run build
-          
-          # 기존 서버 종료
           echo "=== Stopping Existing Next.js Server ==="
           screen -S nextjs -X quit || true
           
-          sleep 3
+          echo "=== Cleaning Old Build Artifacts ==="
+          # 이전 빌드 파일(.next) 및 실행 의존성 폴더 삭제
+          rm -rf $DEPLOY_DIR/.next $DEPLOY_DIR/node_modules
           
-          # 새 서버 시작
+    - name: SCP - Transfer Build Artifacts to Server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        # .next, public, package.json, .env.local 등 실행에 필요한 파일만 전송
+        source: ".next,public,package.json,package-lock.json,.env.local" 
+        target: "~/korea-sky-planner-frontend" # 서버의 프로젝트 경로
+
+    # ----------------------------------------------------------------------
+    # 3. 서버에서 재실행 (Production Install & Start)
+    # ----------------------------------------------------------------------
+    - name: SSH - Start Next.js Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          set -e
+          DEPLOY_DIR=~/korea-sky-planner-frontend
+          
+          cd $DEPLOY_DIR
+          
+          echo "=== Installing Production Dependencies (Small) ==="
+          # 실행에 필요한 의존성만 설치 (--omit=dev). 빌드보다 훨씬 빠름.
+          npm install --omit=dev 
+
           echo "=== Starting Next.js Server ==="
-          screen -dmS nextjs bash -c 'cd ~/korea-sky-planner-frontend && npm start > nextjs.log 2>&1'
+          screen -dmS nextjs bash -c 'cd $DEPLOY_DIR && npm start > nextjs.log 2>&1'
           
           sleep 5
           
-          # 서버 확인
+          # 서버 확인 및 로그 출력
           if screen -list | grep -q "nextjs"; then
             echo "Next.js server is running"
           else
             echo "Failed to start Next.js server"
+            cat nextjs.log
             exit 1
           fi
-          
-          tail -n 20 nextjs.log
           
           echo "=== Frontend Deployment Completed ==="

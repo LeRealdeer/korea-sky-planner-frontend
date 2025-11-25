@@ -20,3 +20,4 @@ import MainPageClient from './MainPageClient';
 export default function Page() {
   return <MainPageClient />;     /* 서버는 그냥 래핑만 */
 }
+//

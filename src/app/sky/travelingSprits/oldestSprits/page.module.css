@@ -1,0 +1,616 @@
+/* src/app/sky/travelingSprits/oldestSprits/page.module.css */
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.navButton,
+.refreshButton,
+.retryButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton {
+  background: #f3f4f6;
+  color: #374151;
+  margin: 0 auto;
+  display: block;
+  max-width: 300px;
+}
+
+.navButton:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.refreshButton {
+  background: #3b82f6;
+  color: white;
+}
+
+.refreshButton:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.retryButton {
+  background: #ef4444;
+  color: white;
+  margin-top: 1rem;
+}
+
+.retryButton:hover {
+  background: #dc2626;
+}
+
+/* 통계 바 */
+.statsBar {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statNumber {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* 영혼 목록 */
+.spiritsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.spiritCard {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.spiritCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #d1d5db;
+}
+
+.rankBadge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: #6366f1;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+/* 순위별 뱃지 색상 */
+.spiritCard:nth-child(1) .rankBadge {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #92400e;
+}
+
+.spiritCard:nth-child(2) .rankBadge {
+  background: linear-gradient(135deg, #c0c0c0, #e5e7eb);
+  color: #374151;
+}
+
+.spiritCard:nth-child(3) .rankBadge {
+  background: linear-gradient(135deg, #cd7f32, #d97706);
+  color: white;
+}
+
+.imageSection {
+  width: 80px;
+  height: 80px;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+}
+
+.spiritImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  border-radius: 8px;
+}
+
+.infoSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.spiritName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.seasonBadge {
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.detailsRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.orderNumber {
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.rerunCount {
+  font-size: 0.9rem;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.dateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.statusSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.statusBadge {
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.statusActive {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  border: none;
+}
+
+.statusRecent {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: white;
+  border: none;
+}
+
+.statusModerate {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: white;
+  border: none;
+}
+
+.statusOld {
+  background: linear-gradient(135deg, #ef4444, #f87171);
+  color: white;
+  border: none;
+}
+
+.statusVeryOld {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  color: white;
+  border: none;
+}
+
+.daysCount {
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  text-shadow: none;
+}
+
+/* 로딩 및 오류 상태 */
+.loading,
+.error {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+}
+
+.loading {
+  color: #6b7280;
+}
+
+.error {
+  color: #dc2626;
+}
+
+/* 로딩 더 보기 */
+.loadingMore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f4f6;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 끝 메시지 */
+.endMessage {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-top: 1rem;
+  border: 1px dashed #d1d5db;
+}
+
+/* 빈 상태 */
+.emptyState {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  color: #6b7280;
+}
+
+/* 반응형 디자인 - 컴팩트한 PC 스타일 */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+  }
+  
+  .statsBar {
+    gap: 0.5rem;
+    padding: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .statItem {
+    flex: 1;
+    min-width: 70px;
+  }
+  
+  .statNumber {
+    font-size: 1.2rem;
+  }
+  
+  .statLabel {
+    font-size: 0.75rem;
+  }
+  
+  /* 매우 컴팩트한 카드 레이아웃 */
+  .spiritCard {
+    padding: 0.75rem !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    text-align: left !important;
+    gap: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .rankBadge {
+    top: 0.4rem;
+    left: 0.4rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.35rem;
+  }
+  
+  /* 이미지 크기 축소 */
+  .imageSection {
+    width: 60px !important;
+    height: 60px !important;
+    margin-right: 0.75rem !important;
+    margin-bottom: 0 !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    border: none !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .spiritImage {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 6px !important;
+    background: #f9fafb !important;
+  }
+  
+  .noImage {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #f3f4f6 !important;
+    color: #9ca3af !important;
+    font-size: 0.6rem !important;
+    border-radius: 6px !important;
+  }
+  
+  /* 텍스트 크기 대폭 축소 */
+  .infoSection {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.25rem !important;
+    text-align: left !important;
+  }
+  
+  .nameRow {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    margin-bottom: 0.15rem !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .spiritName {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    margin: 0 !important;
+  }
+  
+  .seasonBadge {
+    color: white !important;
+    padding: 0.15rem 0.3rem !important;
+    border-radius: 4px !important;
+    font-size: 0.55rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .detailsRow {
+    display: flex !important;
+    gap: 0.6rem !important;
+    margin-bottom: 0.15rem !important;
+    justify-content: flex-start !important;
+  }
+  
+  .orderNumber,
+  .rerunCount {
+    font-size: 0.65rem !important;
+    color: #4b5563 !important;
+    font-weight: 500 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  
+  .rerunCount {
+    color: #dc2626 !important;
+    font-weight: 600 !important;
+  }
+  
+  .dateInfo {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.1rem !important;
+    font-size: 0.6rem !important;
+    color: #6b7280 !important;
+    text-align: left !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* 상태 뱃지 크기 축소 */
+  .statusSection {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 0.25rem !important;
+    margin-left: 0.4rem !important;
+    margin-top: 0 !important;
+  }
+  
+  .statusBadge {
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 20px !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    min-width: 70px !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.2px !important;
+  }
+  
+  .daysCount {
+    font-size: 0.6rem !important;
+    color: #374151 !important;
+    font-weight: 700 !important;
+    margin-top: 0.15rem !important;
+    padding: 0.15rem 0.4rem !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+  }
+  
+  .navigation {
+    margin-bottom: 1rem;
+  }
+  
+  .navButton {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    max-width: none;
+  }
+  
+  /* 리스트 간격 축소 */
+  .spiritsList {
+    gap: 0.5rem !important;
+  }
+  
+  /* 로딩 관련 텍스트 크기 축소 */
+  .loadingMore {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .endMessage {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+  
+  /* 애니메이션 제거 */
+  .statusOld,
+  .statusVeryOld {
+    animation: none !important;
+  }
+  
+  /* 모바일 터치 효과 */
+  .spiritCard:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}

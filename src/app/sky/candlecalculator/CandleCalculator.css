@@ -1,0 +1,132 @@
+/* -------------------------------------------------
+   Consolidated Candle Calculator CSS
+   - Removed duplicate .calc-container blocks
+   - Unified width/overflow rules
+   - Removed .guide-sidebar (season guide)
+------------------------------------------------- */
+
+/* 기본 컨테이너 */
+.calc-container {
+  padding: 13px;
+  font-family: sans-serif;
+  /* 고정 너비 1000px */
+  width: 1000px;
+  max-width: none;
+  margin: 0 auto;
+  text-align: center;
+  overflow-x: hidden; /* 가로 스크롤 제거 */
+}
+
+/* 헤더 */
+.header,
+.header-title-big {
+  text-align: center;
+  margin-bottom: 13px;
+}
+.header-title-big { font-size: 1.5rem; }
+.byline {
+  font-size: 0.8rem;
+  color: #bbb;
+  margin-left: 0.2rem;
+  vertical-align: bottom;
+}
+
+/* 설정 패널 */
+.candle-settings-panel {
+  border: 1px solid #555;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.candle-settings-panel .season-days { width:100%; font-weight:bold; color:#f1f1f1; }
+.candle-settings-panel .setting-group { margin:8px; color:#f1f1f1; }
+.candle-settings-panel .setting-group label { font-weight:bold; margin-bottom:6px; }
+.candle-settings-panel input, .candle-settings-panel select { padding:6px 10px; border:1px solid #777; border-radius:4px; background:#444; color:#f1f1f1; }
+.candle-settings-panel .buy-options { border-top:1px solid #666; padding-top:12px; }
+.candle-settings-panel .calc-btn { padding:10px 18px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+  display: flex;
+  justify-content: center;
+  gap: 53px;
+  margin-bottom: 20px;
+}
+
+/* 노드 영역 */
+.nodes-container {
+  /* min-width 제거: 컨테이너 내에서 유동 조정 */
+  flex: 1;
+}
+.souls-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+.soul-col { display: flex; flex-direction: column; align-items: center; }
+.soul-selector { width:133px; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; background:#f8f8f8; border:1px solid #ddd; border-radius:4px; margin-bottom:5px; overflow:hidden; transition:background 0.2s; }
+/* .soul-selector:hover { background:#a6a6a6; } */
+.soul-selector-img { width:80px; height:80px; object-fit:contain; border-radius:8px; }
+.soul-selector-text { margin-top:5px; font-size:0.75rem; font-weight:bold; color:#333; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+
+/* NodeView styling */
+.node-row { display:flex; align-items:center; justify-content:flex-end; margin-bottom:16px; gap:15px; }
+.node-image-box { position:relative; margin-right:13px; }
+.node-image { width:67px; cursor:pointer; border:1.5px solid transparent; border-radius:4px; }
+.cost-badge { position:absolute; bottom:3px; right:3px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.53rem; padding:1px 3px; border-radius:3px; }
+.season-badge, .season-icon-badge { position:absolute; z-index:10; }
+.season-icon { width:16px; height:16px; z-index:11; }
+.menu-overlay { position:absolute; top:106%; left:0; background:#f3f3f3; border:1px solid #ccc; padding:3px; border-radius:3px; display:flex; gap:3px; z-index:1000; }
+.menu-overlay .menu-btn { padding:3px 6px; border:none; border-radius:3px; font-size:0.5rem; color:#fff; cursor:pointer; }
+.menu-btn-have { background:#5f9fff; }
+.menu-btn-want { background:#fdcb6e; }
+
+/* Candle count & simple calculator */
+.candle-count { margin-top:5px; font-size:1rem; font-weight:bold; display:flex; align-items:center; gap:3px; }
+.candle-icon { width:33px; height:33px; }
+.simple-candle-calculator { display:flex; align-items:center; gap:16px; padding:12px; border:1px solid #ccc; border-radius:8px; background:#f7f7f7; margin-top:20px; width:220px; }
+.calc-buttons button { width:32px; height:32px; border:none; background:#007bff; color:#fff; font-size:1.2rem; cursor:pointer; border-radius:4px; }
+.calc-buttons button:hover { background:#005bb5; }
+
+/* Download button */
+.download-btn-container { text-align:center; margin-top:40px; }
+.download-btn { padding:10px 20px; background:#28a745; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+.download-btn:hover { background:#218838; }
+
+/* Modal */
+.modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10000; }
+.modal-content { background:#fff; padding:20px; border-radius:8px; max-width:80%; max-height:80%; overflow-y:auto; position:relative; }
+.modal-close, .modal-close-bottom { cursor:pointer; }
+.modal-close { position:absolute; top:10px; right:10px; background:#aaa; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:1.5rem; }
+.modal-close-bottom { display:block; margin:20px auto 0; padding:5px 10px; background:#aaa; color:#fff; border:none; border-radius:4px; }
+.modal-title{color: #4c4c4c; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-align: center;}
+
+/* Soul Info Sidebar */
+.soul-info-sidebar { display:flex; flex-direction:column; gap:10px; align-items:center; }
+.soul-info-header { font-size:1.2rem; font-weight:bold; color:#333; }
+.soul-info-img { width:100%; max-width:600px; border:1px solid #ccc; border-radius:4px; }
+
+/* Total info button */
+.total-info-btn { padding:0.75rem 1.5rem; background:#f39c12; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+.total-info-btn:hover { background:#d35400; }
+.total-info-container {
+  margin: 20px 0; /* 위아래 간격 추가 */
+}
+
+/* 추가할 CSS */
+.soul-thumb {
+  width: 90px;            /* 사각형 한 변 */
+  height: 90px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; /* 비율 유지 */
+  border-radius: 6px;
+  /* background-color: #666;   없으면 투명 */
+}

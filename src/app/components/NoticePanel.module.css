@@ -1,0 +1,214 @@
+/* src/app/components/NoticePanel.module.css */
+.noticePanel {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.noticeTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #1e40af;
+}
+
+.noticeDescription {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.4;
+  margin-bottom: 1.2rem;
+}
+
+.noticeExample {
+  font-style: italic;
+  color: #64748b;
+}
+
+.noticeSubDescription {
+  font-size: 0.8rem;
+  color: #334155;
+  margin: 0.8rem 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.seasonChipsContainer {
+  display: grid;
+  grid-template-columns: repeat(10, auto);
+  gap: 0.3rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.seasonChip {
+  background-color: #444;
+  color: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.seasonChip:hover {
+  background-color: #666;
+}
+
+.seasonChip:active {
+  transform: scale(0.95);
+}
+
+.filterChipsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.filterChip {
+  padding: 10px 20px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #64748b;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filterChip:hover {
+  background-color: #475569;
+  transform: translateY(-1px);
+}
+
+.filterChipSoul {
+  padding: 10px 20px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filterChipSoul:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.oldestSpiritsContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.oldestSpiritsButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.oldestSpiritsButton:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.oldestSpiritsIcon {
+  font-size: 0.9rem;
+}
+
+.oldestSpiritsText {
+  font-size: 0.85rem;
+}
+
+.oldestSpiritsArrow {
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.oldestSpiritsButton:hover .oldestSpiritsArrow {
+  transform: translateX(2px);
+}
+
+@media screen and (max-width: 768px) {
+  .noticePanel {
+    padding: 20px 16px;
+    margin: 0.5rem;
+  }
+
+  .noticeTitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .noticeDescription {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .noticeSubDescription {
+    font-size: 0.75rem;
+    margin: 0.6rem 0 0.4rem 0;
+  }
+
+  .seasonChipsContainer {
+    grid-template-columns: repeat(5, auto);
+    gap: 0.25rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .seasonChip {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  .filterChipsContainer {
+    gap: 0.8rem;
+    margin: 0.3rem 0;
+  }
+
+  .filterChip,
+  .filterChipSoul {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+  }
+
+  .oldestSpiritsContainer {
+    margin-top: 0.8rem;
+  }
+
+  .oldestSpiritsButton {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+
+  .oldestSpiritsIcon {
+    font-size: 0.85rem;
+  }
+
+  .oldestSpiritsText {
+    font-size: 0.8rem;
+  }
+
+  .oldestSpiritsArrow {
+    font-size: 0.85rem;
+  }
+}

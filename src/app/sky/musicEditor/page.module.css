@@ -1,0 +1,805 @@
+/* 기본 레이아웃 */
+.main {
+  max-width: 1000px;
+  min-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: sans-serif;
+  color: #2d3748;
+}
+
+/* 헤더 */
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.header p {
+  margin: 0;
+  color: #718096;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.madeByText {
+  font-size: 0.75rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+
+
+/* Sky Studio 앱 링크 버튼 컨테이너 */
+.skyStudioLinks {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Sky Studio 앱 링크 버튼 (크기 수정) */
+.skyStudioButton {
+  padding: 6px 12px;
+  background-color: #e2e8f0;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #4a5568;
+  font-size: 0.6rem;
+  font-weight: bold;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.skyStudioButton:hover {
+  background-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+/* 상단 액션 버튼 섹션 */
+.topActionSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  gap: 15px;
+}
+
+/* 버튼 그룹 컨테이너 */
+.buttonGroupWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 60%;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* 버튼 공통 스타일 */
+.actionButton {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #4a5568;
+  background-color: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.actionButton:hover {
+  background-color: #f0f4f8;
+  border-color: #a0aec0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 다운로드 버튼 (강조) */
+.downloadButton {
+  width: 20%;
+  padding: 14px 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #4299e1;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
+}
+
+.downloadButton:hover {
+  background-color: #3182ce;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(66, 153, 225, 0.5);
+}
+
+/* 악보 연주 버튼 */
+.playerOpenButton {
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(145deg, #4facfe, #00f2fe);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 150, 255, 0.3);
+  width: 100%;
+}
+
+.playerOpenButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 150, 255, 0.4);
+}
+
+/* 뮤직 플레이어 컨트롤러를 감싸는 컨테이너 */
+.musicControlsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.musicControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.playButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: #63b3ed;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.playButton:hover {
+  background-color: #4299e1;
+}
+
+.bpmControl {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bpmControl label {
+  font-weight: 500;
+  width: 80px;
+}
+
+.bpmControl input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px;
+  height: 8px;
+  background: #cbd5e0;
+  border-radius: 5px;
+  outline: none;
+}
+
+.bpmControl input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4299e1;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bpmControl input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #4299e1;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+
+
+.sheetHeader {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #a0aec0;
+  font-weight: 500;
+  margin-bottom: 0rem;
+}
+
+/* page.module.css 파일 수정 */
+/* page.module.css 파일 하단에 추가 */
+
+.captureHeader {
+  /* 보이지는 않지만, 높이 30px의 공간을 차지하는 가짜 헤더 */
+  height: 30px;
+}
+/* 악보 정보 입력 폼 */
+.infoForm {
+  
+  background-color: white;
+  padding: 2rem 3rem 3rem;
+  border-radius: 12px;
+  margin-bottom: 0rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+
+/* 제목 스타일 */
+.titleInput {
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  margin: 1rem 0 1.5rem 0;
+  color: #2d3748;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.titleInput::placeholder {
+  color: #cbd5e0;
+}
+
+/* 색상 범례 */
+.colorLegend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  margin-top: 0rem;
+  margin-bottom: 2rem;
+  border-top: 1px solid #e2e8f0; /* 선 다시 추가 */
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #4a5568;
+}
+
+.legendColorChip {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 메타 정보 입력 */
+.metaInputs {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.metaInputs label {
+  font-size: 0.9rem;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metaInputs input {
+  font-size: 0.9rem;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  outline: none;
+  padding: 0.4rem;
+  background-color: transparent;
+  transition: border-bottom-color 0.2s;
+}
+
+.metaInputs input:focus {
+  border-bottom-color: #4299e1;
+}
+
+/* 악보 스크롤 컨테이너 */
+.sheetContainer {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-bottom: 2rem;
+}
+
+.sheetContainer::-webkit-scrollbar {
+  display: none;
+}
+
+/* SheetMusicEditor 컴포넌트의 스타일 */
+.editorWrapper {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.page {
+  background-color: white;
+  padding: 2.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  margin-bottom: 3rem;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.sheetGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px 16px;
+  min-height: 150px;
+}
+
+.beatWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.beatWrapper.selected .beatColumn {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 2px #4299e1;
+}
+
+/* 재생 중인 시트 강조 */
+.beatWrapper.playing {
+  background-color: #f0f4f8;
+  border-color: #4299e1;
+  transform: scale(1.02);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(66, 153, 225, 0.5);
+}
+
+.beatColumn {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.noteGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  place-items: center;
+}
+
+.beatControls {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background-color: #ffffff;
+  padding: 6px;
+  border-radius: 8px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.beatControls button {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background-color: #f1f5f9;
+  color: #4a5568;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.beatControls button:hover {
+  background-color: #e2e8f0;
+}
+
+.bottomControls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1rem;
+  gap: 12px;
+}
+
+.addButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  background-color: #e2e8f0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #cbd5e0;
+}
+
+.pageFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a0aec0;
+}
+
+.sourceLink {
+  display: none;
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  color: #718096;
+  font-family: 'Times New Roman', serif;
+}
+
+/* Palette Container */
+.paletteContainer {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 50;
+}
+
+/* 다운로드 진행률 컨테이너 */
+.downloadProgressContainer {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.progressMessage {
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+/* 공지 패널 (새로운 디자인) */
+.noticePanel {
+  background-color: #f8f9fa; /* 부드러운 배경색 */
+  border: 1px solid #e9ecef; /* 연한 테두리 */
+  border-radius: 16px; /* 둥근 모서리 */
+  padding: 24px 30px; /* 넉넉한 안쪽 여백 */
+  margin: 0 auto 2rem;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* 은은한 그림자 효과 */
+}
+
+/* 공지 패널 헤더 (아이콘 + 제목) */
+.noticeHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 1rem;
+}
+
+.noticeIcon {
+  font-size: 1.3rem;
+}
+
+/* 공지 패널 목록 */
+.noticeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.noticeList li {
+  display: flex;
+  align-items: flex-start; /* 여러 줄일 경우 아이콘과 줄 시작점 맞춤 */
+  gap: 10px;
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+/* 목록 앞 아이콘(블릿) 스타일 */
+.noticeList li::before {
+  content: '✓'; /* 체크 아이콘 */
+  color: #4C86E7; /* 포인트 색상 */
+  font-weight: bold;
+  padding-top: 2px;
+}
+
+.noticeList li:last-child {
+  margin-bottom: 0;
+}
+
+.captureWrapper {
+  padding-top: -10px; /* 캡처 시 상단에 안전 여백을 강제로 추가 */
+  background-color: #f7fafc; /* body와 동일한 배경색으로 여백 채우기 */
+}
+/* 캡처 모드 전환 버튼 */
+.modeToggleButton {
+  width: 70%;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #4a5568;
+  background-color: #f0f4f8;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-top: 10px;
+}
+
+.modeToggleButton:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.modeToggleButton:disabled {
+  background-color: #e2e8f0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 캡처 모드 컨트롤 전체 컨테이너 */
+.captureControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  margin-top: 0px;
+}
+
+/* 페이지네이션 UI */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+  background-color: #fff;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #f7fafc;
+}
+
+.pagination button:disabled {
+  background-color: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+.pageInput {
+  width: 50px;
+  margin-right: 5px;
+  padding: 8px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  -moz-appearance: textfield;
+}
+
+.pageInput::-webkit-outer-spin-button,
+.pageInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* 다운로드 버튼 (캡처 모드에서 너비 조정) */
+.captureControls .downloadButton {
+  width: 40%;
+}
+
+.modeButtonsContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.selectWrapper {
+  width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e4e6eb;
+  color: #1c1e21;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.selectBox {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #1c1e21;
+  cursor: pointer;
+}
+
+/* page.module.css 파일에서 아래 클래스들을 찾아 수정하거나 교체하세요. */
+
+/* 버튼과 Select 메뉴를 모두 감싸는 부모 컨테이너 */
+.modeButtonsContainer {
+  display: flex;
+  width: 60%; /* 컨테이너 너비를 100%로 설정 */
+  gap: 12px;   /* 아이템 사이의 간격 조정 */
+  align-items: stretch; /* 모든 아이템의 높이를 가장 큰 아이템에 맞춤 */
+}
+
+/* 캡처 모드 전환 버튼 */
+.modeToggleButton {
+  /* width: 70%; <- 이 속성은 반드시 제거해주세요! */
+  margin-top: 0; /* 불필요한 상단 마진 제거 */
+  flex: 2.5; /* 다른 select 메뉴보다 2.5배의 공간을 차지하도록 설정 */
+  padding: 12px 20px;
+  font-size: 0.95rem; /* 폰트 크기 미세 조정 */
+  
+  /* --- 이하 기존 스타일 유지 --- */
+  font-weight: bold;
+  color: #4a5568;
+  background-color: #f0f4f8;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.modeToggleButton:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-1px);
+}
+.modeToggleButton:disabled {
+  background-color: #e2e8f0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* '페이지 당 줄', '줄 당 비트' Select 메뉴를 감싸는 래퍼 */
+.selectWrapper {
+  flex: 1; /* 남은 공간을 1:1 비율로 나누어 가짐 */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 내부 요소들을 중앙 정렬 */
+  padding: 0 12px;
+  white-space: nowrap; /* 내부 글자가 줄바꿈되지 않도록 */
+
+  /* --- 이하 기존 스타일과 동일 --- */
+  gap: 8px;
+  background-color: #e2e8f0;
+  color: #2d3748;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: 1px solid #cbd5e0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.main {
+position: relative;
+max-width: 1000px;
+min-width: 1000px;
+margin: 0 auto;
+padding: 2rem;
+font-family: sans-serif;
+color: #2d3748;
+}
+.languageToggleContainer {
+position: absolute;
+top: 2rem;
+left: 2rem;
+display: flex;
+gap: 10px;
+align-items: center;
+background-color: rgba(249, 250, 251, 0.85);
+padding: 10px 18px;
+border-radius: 12px;
+z-index: 100;
+border: 1px solid #e5e7eb;
+backdrop-filter: blur(5px);
+box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+}
+.languageToggleContainer button {
+background: none;
+border: none;
+cursor: pointer;
+font-weight: 600;
+font-size: 1.05rem;
+color: #6b7280;
+padding: 0;
+transition: color 0.2s;
+}
+.languageToggleContainer button.activeLang {
+color: #1e3a8a;
+}
+.languageToggleContainer span {
+color: #d1d5db;
+font-size: 1.05rem;
+}

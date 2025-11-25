@@ -1,0 +1,141 @@
+/* 전체 컨테이너 */
+.container {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 카드 */
+.card {
+  max-width: 600px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8f4fd;
+}
+
+/* 타이틀 */
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2196f3;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* 이미지 */
+.imageWrapper {
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8f4fd;
+}
+
+/* 버튼 그룹 */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* 기본 버튼 */
+.button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* 주요 버튼 (다운로드) */
+.primaryButton {
+  color: #ffffff;
+  background: #2196f3;
+}
+
+.primaryButton:hover {
+  background: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.primaryButton:active {
+  transform: translateY(0);
+}
+
+/* 보조 버튼들 */
+.secondaryButtons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.secondaryButton {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2196f3;
+  background: #f8fbff;
+  border: 2px solid #e3f2fd;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateY(-1px);
+}
+
+.secondaryButton:active {
+  transform: translateY(0);
+}
+
+/* 복사 성공 메시지 */
+.copyMessage {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .card {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .secondaryButtons {
+    flex-direction: column;
+  }
+
+  .secondaryButton {
+    width: 100%;
+  }
+}

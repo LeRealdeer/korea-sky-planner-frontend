@@ -1,0 +1,232 @@
+/* quiz.module.css (에러 수정 및 중복 정리 완료) */
+
+/* ==============================================
+  SKY QUIZ STYLESHEET
+==============================================
+  1. Layout (레이아웃)
+  2. Typography (타이포그래피)
+  3. Buttons (버튼)
+  4. Components (컴포넌트)
+==============================================
+*/
+
+/* ---------------------------------- */
+/* 1. Layout (레이아웃) */
+/* ---------------------------------- */
+.container {
+  max-width: 960px;
+  min-width: 960px; 
+  margin: 20px auto 50px;
+  padding: 20px 30px;
+  font-family: var(--font-family-main);
+  background-color: var(--bg-color);
+}
+
+/* ---------------------------------- */
+/* 2. Typography (타이포그래피) */
+/* ---------------------------------- */
+.titleContainer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mainTitle {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--text-color-dark);
+  margin-bottom: 10px;
+}
+
+.subTitle {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #888;
+}
+
+/* ---------------------------------- */
+/* 3. Buttons (버튼) */
+/* ---------------------------------- */
+.submitButton {
+  display: block;
+  width: 220px;
+  margin: 30px auto 0;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.submitButton:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.retryButton, .shareButton, .downloadButton {
+  flex: 1; 
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: white;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+}
+
+.retryButton:hover, .shareButton:hover, .downloadButton:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.retryButton { background-color: var(--secondary-color); }
+.shareButton { background-color: var(--share-color); }
+.downloadButton { background-color: var(--download-color); }
+
+
+/* ---------------------------------- */
+/* 4. Components (컴포넌트) */
+/* ---------------------------------- */
+
+/* --- Notice Box (공지사항) --- */
+.noticeBox {
+  background-color: #e9f5ff;
+  border: 1px solid #bce0fd;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 25px 0;
+  font-size: 0.9rem;
+  color: #31708f;
+  line-height: 1.7;
+}
+.noticeBox p { margin: 0 0 8px 0; }
+.noticeSign {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 10px !important;
+}
+
+/* --- Quiz View (시험지) --- */
+.quizContainer {
+  column-count: 2; 
+  column-gap: 30px;
+}
+.questionContainer {
+  background-color: var(--box-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  break-inside: avoid-column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.questionText {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.optionsForm { display: flex; flex-direction: column; }
+.option { margin-bottom: 8px; }
+.option label {
+  margin-left: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* --- Result View (결과창) --- */
+.resultContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 30px;
+}
+.certificateBox {
+  background-color: var(--box-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 30px;
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+}
+.resultProfileImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #eee;
+  margin: 15px auto;
+}
+.resultName { font-size: 1.6rem; margin-bottom: 15px; color: var(--text-color-dark); }
+.status { font-size: 2rem; font-weight: bold; margin-bottom: 12px; color: var(--success-color); }
+.scoreText { font-size: 1.1rem; margin-bottom: 25px; color: var(--text-color-dark); }
+.score { font-size: 1.3rem; font-weight: bold; color: var(--primary-color); }
+.message { font-size: 0.95rem; color: var(--text-color-light); line-height: 1.6; }
+
+/* --- Answer Sheet (정답지) --- */
+.answerSheetContainer {
+  margin-top: 1.5rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 600px;
+}
+.toggleButton {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  background-color: #f7f7f7;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-color-dark);
+}
+.toggleButton:hover { background-color: #efefef; }
+.answerSheetContent { padding: 1.2rem; }
+.answerItem { padding: 0.8rem 0; border-bottom: 1px solid #f0f0f0; }
+.answerItem:last-child { border-bottom: none; padding-bottom: 0; }
+.answerItem:first-child { padding-top: 0; }
+.answerQuestion { font-weight: 600; margin-bottom: 0.5rem; color: var(--text-color-dark); }
+.answerItem p { margin: 0.3rem 0; font-size: 0.95rem; line-height: 1.6; }
+.correctAnswer { color: var(--success-color); font-weight: bold; }
+.incorrectAnswer { color: var(--danger-color); font-weight: bold; }
+
+/* quiz.module.css 파일 맨 아래에 추가 */
+
+/* --- 결과창 하단 여백 조절 --- */
+.container.resultActive {
+  /* 결과창에서는 하단 여백을 60px로 줄입니다. */
+  margin-bottom: 60px;
+}
+
+.mainPageButton {
+  background-color: #ff9800;
+}
+
+.mainPageButton:hover {
+  background-color: #fb8c00;
+  transform: translateY(-2px);
+}

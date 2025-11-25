@@ -1,0 +1,524 @@
+/* src/app/sky/busTable/busTable.module.css */
+
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 2rem 1rem;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%; 
+  min-width: 1200px;
+}
+
+/* 상단 컨트롤 영역 */
+.topControls {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+/* 언어 전환 버튼 */
+.languageToggleContainer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background-color: rgba(249, 250, 251, 0.95);
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+}
+
+.languageToggleContainer button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #6b7280;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.languageToggleContainer button.activeLang {
+  color: #1e3a8a;
+}
+
+.languageToggleContainer span {
+  color: #d1d5db;
+  font-size: 1.15rem;
+}
+
+/* 배경색 선택기 */
+.colorSelector {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: rgba(249, 250, 251, 0.95);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+}
+
+.colorLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-right: 5px;
+}
+
+.colorButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.colorButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.colorButton.activeColor {
+  border-color: #1e3a8a;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.captureArea {
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  border: 3px solid #0ea5e9;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 3px solid #e0f2fe;
+}
+
+.title {
+  color: #1e40af;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.profileSection {
+  display: flex;
+  alignItems: center;
+  gap: 1rem;
+}
+
+.profileImageWrapper {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #3b82f6;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  flex-shrink: 0;
+}
+
+.profileImageWrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profilePlaceholder {
+  color: #94a3b8;
+  font-size: 3rem;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.profileLabel {
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profileInput {
+  padding: 0.5rem 0.2rem;
+  border: none;
+  border-bottom: 2px solid #cbd5e1;
+  border-radius: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e40af;
+  min-width: 160px;
+  background: transparent;
+}
+
+.profileInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.profileIntro {
+  padding: 0.5rem 0.2rem;
+  border: none;
+  border-bottom: 2px solid #cbd5e1;
+  border-radius: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #64748b;
+  min-width: 160px;
+  background: transparent;
+}
+
+.profileIntro:focus {
+  outline: none;
+  border-bottom-color: #3b82f6;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+/* 노선도 */
+.routeSection {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  padding-bottom: 9rem;
+  background: #f0f9ff;
+  border-radius: 16px;
+  border: 3px solid #3b82f6;
+  position: relative;
+}
+
+.routeMap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  position: relative;
+  padding: 1.5rem 0;
+}
+
+.routeMap::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  left: 5%;
+  right: 5%;
+  height: 4px;
+  background: #60a5fa;
+  z-index: 0;
+}
+
+.locationWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.mainLocation {
+  padding: 0.8rem 0.6rem;
+  background: white;
+  border: 3px solid #3b82f6;
+  border-radius: 16px;
+  color: #1e40af;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  min-width: 130px;
+  position: relative;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
+.mainLocation:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.mainLocationSelected {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-3px) scale(1.05);
+}
+
+.checkmark {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+  border: 2px solid white;
+}
+
+.subLocations {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.subLocation {
+  padding: 0.3rem 0.6rem;
+  background: white;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.subLocation:hover {
+  border-color: #3b82f6;
+  color: #1e40af;
+  background: #f0f9ff;
+}
+
+.subLocationSelected {
+  background: #3b82f6;
+  border-color: #2563eb;
+  color: white;
+  font-weight: 700;
+}
+
+.seasonMapSection {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  background: #fef3c7;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 3px solid #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* 에덴을 오른쪽 중간-하단에 배치 */
+.edenSectionEn {
+  display: none;
+}
+
+/* 기존 bottomMapsSection과 edenSection 스타일 제거 */
+
+.seasonMapTitle {
+  color: #92400e;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.seasonMapList {
+  display: flex;
+  flex-direction: row;
+  gap: 0.6rem;
+}
+
+.seasonMapItem {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid #fbbf24;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.seasonMapItem:hover {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+}
+
+.seasonMapItemSelected {
+  background: #f59e0b;
+  border-color: #d97706;
+  color: white;
+}
+
+/* 옵션 영역 */
+.optionsWrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.categorySection {
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  min-height: 500px;
+}
+
+.categoryTitle {
+  color: #1e40af;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 3px solid #e0f2fe;
+}
+
+.optionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.optionGroup {
+  background: white;
+  padding: 1.1rem;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+  color: #1e40af;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.fixedMessage {
+  display: none;
+}
+
+.optionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.optionButton {
+  padding: 0.6rem 1rem;
+  background: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 80px;
+  text-align: center;
+}
+
+.optionButton:hover {
+  background: #e0f2fe;
+  border-color: #60a5fa;
+  color: #1e40af;
+}
+
+.optionButtonSelected {
+  background: #3b82f6;
+  border-color: #1e40af;
+  color: white;
+  font-weight: 700;
+}
+
+.noteArea {
+  width: 100%;
+  min-height: 220px;
+  padding: 0.6rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.noteArea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* 다운로드 */
+.downloadSection {
+  text-align: center;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.downloadBtn {
+  padding: 1.2rem 3rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.downloadBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
+  background: #2563eb;
+}

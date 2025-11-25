@@ -1,0 +1,84 @@
+/* ───────── 0. CSS RESET & 기본 세팅 ───────── */
+html, body {           /* ✓ 여백·패딩 완전 제거 */
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root {
+  /* 색상 변수 */
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --share-color: #7289da;
+  --download-color: #43b581;
+
+  /* 배경 및 텍스트 색상 */
+  --bg-color: #f0f4f8;
+  --box-bg-color: #ffffff;
+  --text-color-dark: #333333;
+  --text-color-light: #555555;
+  --border-color: #dee2e6;
+
+  /* 폰트 */
+  --font-family-main: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+}
+/* ✓ 모든 요소 box-sizing 통일 */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 링크 기본 스타일 */
+a { text-decoration: none; color: inherit; }
+
+/* ───────── 1. 메인(페이지 내용) ───────── */
+main { padding: 20px; }
+
+/* ───────── 2. 로딩 스피너 ───────── */
+.loading-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.6);   /* 살짝 흐림 */
+}
+
+.spinner { display: flex; gap: 10px; }
+
+.spinner div {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #007bff;
+  animation: bounce 1.5s infinite ease-in-out;
+}
+.spinner div:nth-child(1) { animation-delay: 0s; }
+.spinner div:nth-child(2) { animation-delay: .2s; }
+.spinner div:nth-child(3) { animation-delay: .4s; }
+.spinner div:nth-child(4) { animation-delay: .6s; }
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.5); }
+}
+
+/* ───────── 3. 내비게이션(모바일) ───────── */
+@media (max-width: 768px) {
+  .nav-links   { display: none; }   /* PC 전용 메뉴 숨김 */
+  .hamburger   { display: flex; }
+  .mobile-nav  {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mobile-nav .nav-button,
+  .mobile-nav .credit-button {
+    width: 100%;
+    text-align: center;
+    margin: auto;
+  }
+}

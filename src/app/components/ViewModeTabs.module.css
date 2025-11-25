@@ -1,0 +1,71 @@
+/* src/app/components/ViewModeTabs.module.css */
+.headerRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.viewTabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  width: 300px;
+}
+
+.tabButton {
+  flex: 1; /* 균등 분할 */
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  color: #64748b;
+  position: relative;
+  text-align: center;
+}
+
+.tabButton:hover {
+  color: #334155;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.activeTab {
+  background: white !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.activeTab::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 2px;
+}
+
+@media screen and (max-width: 768px) {
+  .headerRow {
+    margin-bottom: 1rem;
+  }
+
+  .viewTabs {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .tabButton {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}

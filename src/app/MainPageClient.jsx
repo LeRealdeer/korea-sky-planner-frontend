@@ -13,7 +13,7 @@ export default function MainPageClient() {
       router.push(path);
     }
   };
-
+//
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
     { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' },

@@ -241,12 +241,12 @@ export default function OldestSpiritsPage() {
           }
 
           return (
-            <Link
-              key={`${item.id}-${index}`}
-              href={`/sky/SeasonDictionary/souls/${item.id}`}
-              className={styles.spiritCard}
-              ref={isLast ? bottomSentinelRef : null}
-            >
+<Link
+  key={`${item.id}-${index}`}
+  href={`/sky/SeasonDictionary/souls/${item.id}`}
+  className={styles.spiritCard}
+  ref={isLast ? lastSpiritElementRef : null} // ✅ 상단에서 정의한 이름을 사용해야 합니다.
+>
               <div className={styles.rankBadge}>#{rank}</div>
 
               <div className={styles.imageSection}>

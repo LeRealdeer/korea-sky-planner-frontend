@@ -20,12 +20,12 @@ function SoulListContent() {
   // ===== 상태 =====
   const [souls, setSouls] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [viewMode, setViewMode] = useState("list"); // 기본값을 리스트로 변경
+  const [viewMode, setViewMode] = useState("list");
   const [loading, setLoading] = useState(true);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
-  const [isFetchingPrev, setIsFetchingPrev] = useState(false);
   const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -36,10 +36,7 @@ function SoulListContent() {
   const didBootstrapRef = useRef(false);
   const minLoadedPageRef = useRef(null);
   const maxLoadedPageRef = useRef(null);
-  const pageSizeRef = useRef(null);
   const targetSoulIdRef = useRef(null);
-  const targetPageRef = useRef(null);
-  const navTypeRef = useRef("navigate");
 
   // ===== 유틸 함수들 =====
   const formatDate = (dateStr) => {
@@ -96,14 +93,6 @@ function SoulListContent() {
     requestAnimationFrame(seek);
   };
 
-  const removeHashSilently = () => {
-    if (typeof window === "undefined") return;
-    const noHashUrl = window.location.pathname + window.location.search;
-    if (window.location.hash) {
-      window.history.replaceState(null, "", noHashUrl);
-    }
-  };
-
   // ===== API 함수들 =====
   const annotate = (arr, pageNumber) =>
     (Array.isArray(arr) ? arr : []).map((it) => ({
@@ -112,33 +101,45 @@ function SoulListContent() {
     }));
 
   const fetchPageContent = async (pageNumber) => {
-    const url = `https://korea-sky-planner.com/api/v1/souls?page=${pageNumber}`;
+    const url = `http://localhost:8080/api/v1/souls?page=${pageNumber}&size=20`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const content = Array.isArray(data.data?.content) ? data.data.content : [];
-    const pages = data.data?.totalPages || 1;
+    const json = await res.json();
+    const pageData = json.data;
+    
+    const content = Array.isArray(pageData.content) ? pageData.content : [];
+    const pages = pageData.totalPages || 1;
+    const total = pageData.totalElements || 0;
 
-    if (pageSizeRef.current == null) {
-      pageSizeRef.current = content.length || null;
-    }
+    return { 
+      content: annotate(content, pageNumber), 
+      pages,
+      total
+    };
+  };
 
-    return { content: annotate(content, pageNumber), pages };
+  // 검색 API (페이징 지원)
+  const fetchSearchResults = async (query, pageNumber = 0) => {
+    const url = `http://korea-sky-planner.com/api/v1/souls/search?query=${encodeURIComponent(query)}&page=${pageNumber}&size=20`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const pageData = json.data;
+    
+    const content = Array.isArray(pageData.content) ? pageData.content : [];
+    const pages = pageData.totalPages || 1;
+    const total = pageData.totalElements || 0;
+
+    return { 
+      content: annotate(content, pageNumber), 
+      pages,
+      total
+    };
   };
 
   // 범용 로더
   const fetchSoulsAny = async (pageNumber, query, { append = false } = {}) => {
-    let url = "";
     const trimmed = (query || "").trim();
-
-    if (trimmed !== "") {
-      url = `https://korea-sky-planner.com/api/v1/souls/search?query=${encodeURIComponent(
-        trimmed
-      )}`;
-    } else {
-      // 카드 뷰와 리스트 뷰 모두 동일한 페이징 API 사용
-      url = `https://korea-sky-planner.com/api/v1/souls?page=${pageNumber}`;
-    }
 
     const isInitialAppend = append && soulsLenRef.current === 0;
     if (append) {
@@ -150,40 +151,39 @@ function SoulListContent() {
     setError(null);
 
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
+      let result;
+      
       if (trimmed !== "") {
-        const results = Array.isArray(data.data) ? data.data : [];
-        setTotalPages(1);
-        setSouls(uniqueById(results));
-        minLoadedPageRef.current = null;
-        maxLoadedPageRef.current = null;
+        // 검색 모드
+        result = await fetchSearchResults(trimmed, pageNumber);
       } else {
-        const raw = Array.isArray(data.data?.content) ? data.data.content : [];
-        const content = annotate(raw, pageNumber);
-        const pages = data.data?.totalPages || 1;
-        setTotalPages(pages);
+        // 전체 목록 모드
+        result = await fetchPageContent(pageNumber);
+      }
 
-        if (append) {
-          setSouls((prev) => mergeUniqueById(prev, content));
-          if (minLoadedPageRef.current == null)
-            minLoadedPageRef.current = pageNumber;
-          if (
-            maxLoadedPageRef.current == null ||
-            pageNumber > maxLoadedPageRef.current
-          ) {
-            maxLoadedPageRef.current = pageNumber;
-          }
-        } else {
-          setSouls(uniqueById(content));
+      const { content, pages, total } = result;
+      
+      setTotalPages(pages);
+      setTotalElements(total);
+
+      if (append) {
+        setSouls((prev) => mergeUniqueById(prev, content));
+        if (minLoadedPageRef.current == null)
           minLoadedPageRef.current = pageNumber;
+        if (
+          maxLoadedPageRef.current == null ||
+          pageNumber > maxLoadedPageRef.current
+        ) {
           maxLoadedPageRef.current = pageNumber;
         }
+      } else {
+        setSouls(uniqueById(content));
+        minLoadedPageRef.current = pageNumber;
+        maxLoadedPageRef.current = pageNumber;
       }
     } catch (err) {
       setError(err.message || "데이터를 불러오는 중 오류가 발생했습니다.");
+      setSouls([]);
     } finally {
       if (append) {
         setIsFetchingNext(false);
@@ -215,7 +215,6 @@ function SoulListContent() {
     minLoadedPageRef.current = null;
     maxLoadedPageRef.current = null;
     targetSoulIdRef.current = null;
-    targetPageRef.current = null;
 
     if (typeof window !== "undefined" && window.location.hash) {
       history.replaceState(
@@ -247,7 +246,6 @@ function SoulListContent() {
     minLoadedPageRef.current = null;
     maxLoadedPageRef.current = null;
     targetSoulIdRef.current = null;
-    targetPageRef.current = null;
 
     if (typeof window !== "undefined" && window.location.hash) {
       history.replaceState(
@@ -274,7 +272,6 @@ function SoulListContent() {
     minLoadedPageRef.current = null;
     maxLoadedPageRef.current = null;
     targetSoulIdRef.current = null;
-    targetPageRef.current = null;
 
     if (typeof window !== "undefined" && window.location.hash) {
       history.replaceState(
@@ -309,7 +306,6 @@ function SoulListContent() {
     minLoadedPageRef.current = null;
     maxLoadedPageRef.current = null;
     targetSoulIdRef.current = null;
-    targetPageRef.current = null;
 
     if (typeof window !== "undefined" && window.location.hash) {
       history.replaceState(
@@ -363,18 +359,14 @@ function SoulListContent() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 클라이언트 플래그 & 네비게이션 타입
+  // 클라이언트 플래그
   useEffect(() => {
     setIsClient(true);
-    try {
-      const nav = window.performance?.getEntriesByType?.("navigation")?.[0];
-      if (nav?.type) navTypeRef.current = nav.type;
-    } catch {}
   }, []);
 
   // URL → state
   useEffect(() => {
-    const initialMode = searchParams.get("mode") || "list"; // 기본값을 list로 변경
+    const initialMode = searchParams.get("mode") || "list";
     const initialQuery = searchParams.get("query") || "";
     setViewMode(initialMode);
     setSearchQuery(initialQuery);
@@ -400,27 +392,13 @@ function SoulListContent() {
     };
   }, []);
 
-  // 초기 로드 (복잡한 로직은 그대로 유지)
+  // 초기 로드
   useEffect(() => {
     if (!isClient) return;
-
-    const needBootstrap =
-      viewMode === "card" &&
-      submittedQuery.trim() === "" &&
-      soulsLenRef.current === 0 &&
-      !didBootstrapRef.current;
-
-    if (!needBootstrap) {
-      // 기본 경로: 모든 뷰 모드에서 0페이지부터 시작
-      setSouls([]);
-      minLoadedPageRef.current = null;
-      maxLoadedPageRef.current = null;
-      fetchSoulsAny(0, submittedQuery, { append: false });
-      return;
-    }
-
-    didBootstrapRef.current = true;
-    // 부트스트랩 로직은 복잡하므로 그대로 유지...
+    
+    setSouls([]);
+    minLoadedPageRef.current = null;
+    maxLoadedPageRef.current = null;
     fetchSoulsAny(0, submittedQuery, { append: false });
   }, [submittedQuery, viewMode, isClient]);
 
@@ -440,53 +418,44 @@ function SoulListContent() {
     return () => window.removeEventListener("hashchange", onHash);
   }, [isClient]);
 
-  // ===== 아래쪽 무한 스크롤(append) - 카드/리스트 뷰 공통 =====
+  // ===== 무한 스크롤 (검색 결과 포함) =====
   useEffect(() => {
     if (!isClient) return;
     if (!bottomSentinelRef.current) return;
 
     const hasMore =
-      submittedQuery.trim() === "" &&
       maxLoadedPageRef.current != null &&
       maxLoadedPageRef.current + 1 < totalPages &&
       !error;
-
-    console.log('무한 스크롤 상태:', {
-      hasMore,
-      maxLoadedPage: maxLoadedPageRef.current,
-      totalPages,
-      submittedQuery: submittedQuery.trim(),
-      error,
-      viewMode
-    });
 
     if (!hasMore) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const first = entries[0];
-        console.log('센티넬 교차:', first.isIntersecting, {
-          loading,
-          isFetchingNext,
-          maxLoadedPage: maxLoadedPageRef.current,
-          totalPages
-        });
         
         if (
           first.isIntersecting &&
           !loading &&
           !isFetchingNext &&
-          submittedQuery.trim() === "" &&
           maxLoadedPageRef.current != null &&
           maxLoadedPageRef.current + 1 < totalPages
         ) {
           const nextPage = maxLoadedPageRef.current + 1;
-          console.log('다음 페이지 로드 시작:', nextPage);
           setIsFetchingNext(true);
+          
           (async () => {
             try {
-              const { content } = await fetchPageContent(nextPage);
+              let result;
+              if (submittedQuery.trim() !== "") {
+                result = await fetchSearchResults(submittedQuery, nextPage);
+              } else {
+                result = await fetchPageContent(nextPage);
+              }
+              
+              const { content } = result;
               setSouls((prev) => mergeUniqueById(prev, content));
+              
               if (
                 maxLoadedPageRef.current == null ||
                 nextPage > maxLoadedPageRef.current
@@ -496,7 +465,6 @@ function SoulListContent() {
               if (minLoadedPageRef.current == null) {
                 minLoadedPageRef.current = nextPage;
               }
-              console.log('페이지 로드 완료:', nextPage, 'maxLoadedPage:', maxLoadedPageRef.current);
             } catch (err) {
               console.error('페이지 로드 실패:', err);
               setError(err.message || "다음 페이지 로드 실패");
@@ -545,7 +513,7 @@ function SoulListContent() {
       ) : error ? (
         <div className={styles.error}>Error: {error}</div>
       ) : souls.length === 0 ? (
-        <p>해당 시즌에는 아직 유랑 영혼이 없습니다.</p>
+        <p>검색 결과가 없습니다.</p>
       ) : viewMode === "card" ? (
         <>
           <SoulCardGrid
@@ -557,14 +525,7 @@ function SoulListContent() {
             onCardClick={saveOnClick}
           />
           
-          {isFetchingPrev && (
-            <div style={{ textAlign: "center", padding: "0.5rem" }}>
-              이전 페이지 불러오는 중…
-            </div>
-          )}
-          
-          {submittedQuery.trim() === "" &&
-            maxLoadedPageRef.current != null &&
+          {maxLoadedPageRef.current != null &&
             maxLoadedPageRef.current + 1 < totalPages && (
               <>
                 {isFetchingNext && <LoadingSpinner />}
@@ -581,10 +542,9 @@ function SoulListContent() {
             onCardClick={saveOnClick}
             lastSoulElementRef={bottomSentinelRef}
             isFetchingNext={isFetchingNext}
-            hasMore={submittedQuery.trim() === "" && maxLoadedPageRef.current != null && maxLoadedPageRef.current + 1 < totalPages && !error}
+            hasMore={maxLoadedPageRef.current != null && maxLoadedPageRef.current + 1 < totalPages && !error}
           />
           
-          {/* 리스트 뷰에서도 무한 스크롤 로더 표시 */}
           {isFetchingNext && (
             <div style={{ textAlign: "center", padding: "1rem" }}>
               <LoadingSpinner message="더 많은 영혼들을 불러오는 중..." />

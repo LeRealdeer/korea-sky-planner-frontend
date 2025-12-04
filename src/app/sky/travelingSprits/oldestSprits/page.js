@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const BASE_URL = "https://korea-sky-planner.com";
+const BASE_URL = "http://localhost:8080";
 
 export default function OldestSpiritsPage() {
   const [spirits, setSpirits] = useState([]);

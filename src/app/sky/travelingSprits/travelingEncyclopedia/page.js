@@ -1,7 +1,13 @@
 // src/app/sky/travelingSprits/travelingEncyclopedia/page.js
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback, Suspense } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  Suspense,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import NoticePanel from "../../../components/NoticePanel";
 import SearchBar from "../../../components/SearchBar";
@@ -10,7 +16,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://140.245.73.191:8080";
 
 function TravelingEncyclopediaContent() {
   const router = useRouter();
@@ -56,7 +62,9 @@ function TravelingEncyclopediaContent() {
     try {
       let url = "";
       if (query.trim() !== "") {
-        url = `${BASE_URL}/api/v1/souls/search?query=${encodeURIComponent(query)}`;
+        url = `${BASE_URL}/api/v1/souls/search?query=${encodeURIComponent(
+          query
+        )}`;
       } else {
         url = `${BASE_URL}/api/v1/souls/traveling-visits?page=${pageNum}&size=20`;
       }
@@ -74,7 +82,7 @@ function TravelingEncyclopediaContent() {
       } else {
         const pageData = data.data;
         if (isAppend) {
-          setVisits(prev => [...prev, ...(pageData.content || [])]);
+          setVisits((prev) => [...prev, ...(pageData.content || [])]);
         } else {
           setVisits(pageData.content || []);
         }
@@ -96,7 +104,8 @@ function TravelingEncyclopediaContent() {
   }, [submittedQuery]);
 
   useEffect(() => {
-    if (!bottomSentinelRef.current || !hasMore || submittedQuery.trim() !== "") return;
+    if (!bottomSentinelRef.current || !hasMore || submittedQuery.trim() !== "")
+      return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -118,21 +127,25 @@ function TravelingEncyclopediaContent() {
     const params = new URLSearchParams();
     params.set("mode", viewMode);
     if (searchQuery) params.set("query", searchQuery);
-    
+
     setSubmittedQuery(searchQuery);
     setPage(0);
-    router.push(`/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`);
+    router.push(
+      `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
+    );
   };
 
   const handleSeasonClick = (seasonName) => {
     const params = new URLSearchParams();
     params.set("mode", viewMode);
     params.set("query", seasonName);
-    
+
     setSearchQuery(seasonName);
     setSubmittedQuery(seasonName);
     setPage(0);
-    router.push(`/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`);
+    router.push(
+      `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
+    );
   };
 
   const handleAllView = () => {
@@ -150,9 +163,11 @@ function TravelingEncyclopediaContent() {
     const params = new URLSearchParams();
     params.set("mode", mode);
     if (submittedQuery) params.set("query", submittedQuery);
-    
+
     setViewMode(mode);
-    router.push(`/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`);
+    router.push(
+      `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
+    );
   };
 
   const formatDate = (dateStr) => {
@@ -163,15 +178,32 @@ function TravelingEncyclopediaContent() {
   };
 
   const seasonColors = {
-    "감사": "#FFD700", "빛추": "#FF6347", "친밀": "#4CAF50",
-    "리듬": "#3F51B5", "마법": "#9C27B0", "낙원": "#FF5722",
-    "예언": "#9E9E9E", "꿈": "#00BCD4", "협력": "#8BC34A",
-    "어린왕자": "#FFC107", "비행": "#03A9F4", "심해": "#2196F3",
-    "공연": "#FF4081", "파편": "#607D8B", "오로라": "#673AB7",
-    "기억": "#009688", "성장": "#8BC34A", "순간": "#FF9800",
-    "재생": "#3F51B5", "사슴": "#A1887F", "보금자리": "#795548",
-    "듀엣": "#FFEB3B", "무민": "#CDDC39", "광채": "#FF1493",
-    "파랑새": "#1E90FF", "불씨": "#FF4500",
+    감사: "#FFD700",
+    빛추: "#FF6347",
+    친밀: "#4CAF50",
+    리듬: "#3F51B5",
+    마법: "#9C27B0",
+    낙원: "#FF5722",
+    예언: "#9E9E9E",
+    꿈: "#00BCD4",
+    협력: "#8BC34A",
+    어린왕자: "#FFC107",
+    비행: "#03A9F4",
+    심해: "#2196F3",
+    공연: "#FF4081",
+    파편: "#607D8B",
+    오로라: "#673AB7",
+    기억: "#009688",
+    성장: "#8BC34A",
+    순간: "#FF9800",
+    재생: "#3F51B5",
+    사슴: "#A1887F",
+    보금자리: "#795548",
+    듀엣: "#FFEB3B",
+    무민: "#CDDC39",
+    광채: "#FF1493",
+    파랑새: "#1E90FF",
+    불씨: "#FF4500",
   };
 
   return (
@@ -203,22 +235,38 @@ function TravelingEncyclopediaContent() {
         <>
           <div className={styles.cardsGrid}>
             {visits.map((item, index) => {
-              const { id, name, seasonName, orderNum, startDate, endDate,
-                      visitNumber, isWarbandVisit, isActive, images } = item;
-              
-              const representativeImage = images?.find(img => img.imageType === "REPRESENTATIVE");
+              const {
+                id,
+                name,
+                seasonName,
+                orderNum,
+                startDate,
+                endDate,
+                visitNumber,
+                isWarbandVisit,
+                isActive,
+                images,
+              } = item;
+
+              const representativeImage = images?.find(
+                (img) => img.imageType === "REPRESENTATIVE"
+              );
               const isLast = index === visits.length - 1;
 
               return (
                 <Link
-                  key={`${id}-${visitNumber}-${index}`}
-                  href={`/sky/travelingSprits/generalVisits/${id}`}
-                  className={styles.soulCard}
+                  key={`${item.id}-${index}`}
+                  href={`/sky/SeasonDictionary/souls/${item.id}`}
+                  className={styles.spiritCard}
                   ref={isLast ? bottomSentinelRef : null}
                 >
                   <div className={styles.imageWrapperSquare}>
                     {representativeImage?.url ? (
-                      <img src={representativeImage.url} alt={name} className={styles.cardImage} />
+                      <img
+                        src={representativeImage.url}
+                        alt={name}
+                        className={styles.cardImage}
+                      />
                     ) : (
                       <div className={styles.noImage}>No Image</div>
                     )}
@@ -231,7 +279,9 @@ function TravelingEncyclopediaContent() {
                     <p className={styles.firstLine}>
                       <span
                         className={styles.seasonName}
-                        style={{ backgroundColor: seasonColors[seasonName] || "#444" }}
+                        style={{
+                          backgroundColor: seasonColors[seasonName] || "#444",
+                        }}
                       >
                         {seasonName}
                       </span>
@@ -240,12 +290,17 @@ function TravelingEncyclopediaContent() {
                     <p className={styles.secondLine}>
                       {orderNum < 0 ? (
                         <strong style={{ color: "#FF8C00" }}>
-                          {isMobile ? `#${Math.abs(orderNum)}` : `${Math.abs(orderNum)}번째 유랑단`}
+                          {isMobile
+                            ? `#${Math.abs(orderNum)}`
+                            : `${Math.abs(orderNum)}번째 유랑단`}
                         </strong>
                       ) : (
                         `${orderNum}번째`
                       )}{" "}
-                      | <strong style={{ color: "#dc2626" }}>{visitNumber}차 복각</strong>
+                      |{" "}
+                      <strong style={{ color: "#dc2626" }}>
+                        {visitNumber}차 복각
+                      </strong>
                     </p>
                     <p className={styles.thirdLine}>
                       {formatDate(startDate)} ~ {formatDate(endDate)}
@@ -255,7 +310,7 @@ function TravelingEncyclopediaContent() {
               );
             })}
           </div>
-          
+
           {submittedQuery.trim() === "" && hasMore && (
             <>
               {loadingMore && <LoadingSpinner />}
@@ -267,26 +322,42 @@ function TravelingEncyclopediaContent() {
         <>
           <div className={styles.spiritsList}>
             {visits.map((item, index) => {
-              const { id, name, seasonName, orderNum, startDate, endDate,
-                      visitNumber, isWarbandVisit, isActive, images } = item;
-              
-              const representativeImage = images?.find(img => img.imageType === "REPRESENTATIVE");
+              const {
+                id,
+                name,
+                seasonName,
+                orderNum,
+                startDate,
+                endDate,
+                visitNumber,
+                isWarbandVisit,
+                isActive,
+                images,
+              } = item;
+
+              const representativeImage = images?.find(
+                (img) => img.imageType === "REPRESENTATIVE"
+              );
               const isLast = index === visits.length - 1;
 
               return (
                 <Link
-                  key={`${id}-${visitNumber}-${index}`}
-                  href={`/sky/travelingSprits/generalVisits/${id}`}
+                  key={`${item.id}-${index}`}
+                  href={`/sky/SeasonDictionary/souls/${item.id}`}
                   className={styles.spiritCard}
                   ref={isLast ? bottomSentinelRef : null}
                 >
                   <div className={styles.rankBadge}>
                     #{orderNum < 0 ? Math.abs(orderNum) : orderNum}
                   </div>
-                  
+
                   <div className={styles.imageSection}>
                     {representativeImage?.url ? (
-                      <img src={representativeImage.url} alt={name} className={styles.spiritImage} />
+                      <img
+                        src={representativeImage.url}
+                        alt={name}
+                        className={styles.spiritImage}
+                      />
                     ) : (
                       <div className={styles.noImage}>이미지 없음</div>
                     )}
@@ -294,9 +365,11 @@ function TravelingEncyclopediaContent() {
 
                   <div className={styles.infoSection}>
                     <div className={styles.nameRow}>
-                      <span 
+                      <span
                         className={styles.seasonBadge}
-                        style={{ backgroundColor: seasonColors[seasonName] || "#888" }}
+                        style={{
+                          backgroundColor: seasonColors[seasonName] || "#888",
+                        }}
                       >
                         {seasonName}
                       </span>
@@ -306,7 +379,9 @@ function TravelingEncyclopediaContent() {
                     <div className={styles.detailsRow}>
                       <span className={styles.orderNumber}>
                         {orderNum < 0 ? (
-                          <span style={{ color: "#FF8C00", fontWeight: "bold" }}>
+                          <span
+                            style={{ color: "#FF8C00", fontWeight: "bold" }}
+                          >
                             {Math.abs(orderNum)}번째 유랑단
                           </span>
                         ) : (
@@ -319,15 +394,19 @@ function TravelingEncyclopediaContent() {
                     </div>
 
                     <div className={styles.dateInfo}>
-                      <span>기간: {formatDate(startDate)} ~ {formatDate(endDate)}</span>
+                      <span>
+                        기간: {formatDate(startDate)} ~ {formatDate(endDate)}
+                      </span>
                     </div>
                   </div>
                 </Link>
               );
             })}
           </div>
-          
-          {loadingMore && <LoadingSpinner message="더 많은 유랑을 불러오는 중..." />}
+
+          {loadingMore && (
+            <LoadingSpinner message="더 많은 유랑을 불러오는 중..." />
+          )}
         </>
       )}
     </div>

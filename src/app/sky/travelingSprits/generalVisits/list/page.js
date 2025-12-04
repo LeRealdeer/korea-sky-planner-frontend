@@ -101,7 +101,7 @@ function SoulListContent() {
     }));
 
   const fetchPageContent = async (pageNumber) => {
-    const url = `http://localhost:8080/api/v1/souls?page=${pageNumber}&size=20`;
+    const url = `http://140.245.73.191:8080/api/v1/souls?page=${pageNumber}&size=20`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();

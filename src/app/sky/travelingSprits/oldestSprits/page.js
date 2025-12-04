@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://140.245.73.191:8080";
 
 export default function OldestSpiritsPage() {
   const [spirits, setSpirits] = useState([]);
@@ -17,32 +17,37 @@ export default function OldestSpiritsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [totalElements, setTotalElements] = useState(0);
   const router = useRouter();
-  
+
   // 무한 스크롤을 위한 ref
   const observer = useRef();
-  const lastSpiritElementRef = useCallback(node => {
-    if (loadingMore) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadMoreSpirits();
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loadingMore, hasMore]);
+  const lastSpiritElementRef = useCallback(
+    (node) => {
+      if (loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMoreSpirits();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loadingMore, hasMore]
+  );
 
   // 초기 데이터 가져오기
   const fetchInitialSpirits = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/souls/oldest-spirits?page=0&size=20`);
+      const response = await fetch(
+        `${BASE_URL}/api/v1/souls/oldest-spirits?page=0&size=20`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       const pageData = data.data;
-      
+
       setSpirits(pageData.content || []);
       setTotalElements(pageData.totalElements || 0);
       setHasMore(!pageData.last);
@@ -58,18 +63,20 @@ export default function OldestSpiritsPage() {
   // 추가 데이터 로드 (무한 스크롤)
   const loadMoreSpirits = async () => {
     if (loadingMore || !hasMore) return;
-    
+
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const response = await fetch(`${BASE_URL}/api/v1/souls/oldest-spirits?page=${nextPage}&size=20`);
+      const response = await fetch(
+        `${BASE_URL}/api/v1/souls/oldest-spirits?page=${nextPage}&size=20`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       const pageData = data.data;
-      
-      setSpirits(prev => [...prev, ...(pageData.content || [])]);
+
+      setSpirits((prev) => [...prev, ...(pageData.content || [])]);
       setHasMore(!pageData.last);
       setPage(nextPage);
     } catch (err) {
@@ -103,9 +110,9 @@ export default function OldestSpiritsPage() {
     if (days < 365) {
       const months = Math.floor(days / 30);
       const remainingDays = days % 30;
-      return remainingDays > 7 ? 
-        `${months}개월 ${Math.floor(remainingDays / 7)}주째` : 
-        `${months}개월째`;
+      return remainingDays > 7
+        ? `${months}개월 ${Math.floor(remainingDays / 7)}주째`
+        : `${months}개월째`;
     } else {
       const years = Math.floor(days / 365);
       const remainingMonths = Math.floor((days % 365) / 30);
@@ -128,32 +135,32 @@ export default function OldestSpiritsPage() {
 
   // 시즌 색상 매핑
   const seasonColors = {
-    "감사": "#FFD700",
-    "빛추": "#FF6347", 
-    "친밀": "#4CAF50",
-    "리듬": "#3F51B5",
-    "마법": "#9C27B0",
-    "낙원": "#FF5722",
-    "예언": "#9E9E9E",
-    "꿈": "#00BCD4",
-    "협력": "#8BC34A",
-    "어린왕자": "#FFC107",
-    "비행": "#03A9F4",
-    "심해": "#2196F3",
-    "공연": "#FF4081",
-    "파편": "#607D8B",
-    "오로라": "#673AB7",
-    "기억": "#009688",
-    "성장": "#8BC34A",
-    "순간": "#FF9800",
-    "재생": "#3F51B5",
-    "사슴": "#A1887F",
-    "보금자리": "#795548",
-    "듀엣": "#FFEB3B",
-    "무민": "#CDDC39",
-    "광채": "#FF1493",
-    "파랑새": "#1E90FF",
-    "불씨": "#FF4500",
+    감사: "#FFD700",
+    빛추: "#FF6347",
+    친밀: "#4CAF50",
+    리듬: "#3F51B5",
+    마법: "#9C27B0",
+    낙원: "#FF5722",
+    예언: "#9E9E9E",
+    꿈: "#00BCD4",
+    협력: "#8BC34A",
+    어린왕자: "#FFC107",
+    비행: "#03A9F4",
+    심해: "#2196F3",
+    공연: "#FF4081",
+    파편: "#607D8B",
+    오로라: "#673AB7",
+    기억: "#009688",
+    성장: "#8BC34A",
+    순간: "#FF9800",
+    재생: "#3F51B5",
+    사슴: "#A1887F",
+    보금자리: "#795548",
+    듀엣: "#FFEB3B",
+    무민: "#CDDC39",
+    광채: "#FF1493",
+    파랑새: "#1E90FF",
+    불씨: "#FF4500",
   };
 
   if (loading) {
@@ -183,8 +190,10 @@ export default function OldestSpiritsPage() {
           가장 오랫동안 만나지 못한 영혼들을 순서대로 정리하였습니다.
         </p>
         <div className={styles.navigation}>
-          <button 
-            onClick={() => router.push("/sky/travelingSprits/generalVisits/list")}
+          <button
+            onClick={() =>
+              router.push("/sky/travelingSprits/generalVisits/list")
+            }
             className={styles.navButton}
           >
             전체 유랑 목록
@@ -199,7 +208,7 @@ export default function OldestSpiritsPage() {
         </div>
         <div className={styles.statItem}>
           <span className={styles.statNumber}>
-            {spirits.filter(s => s.daysSinceLastVisit > 730).length}
+            {spirits.filter((s) => s.daysSinceLastVisit > 730).length}
           </span>
           <span className={styles.statLabel}>2년 이상</span>
         </div>
@@ -209,9 +218,9 @@ export default function OldestSpiritsPage() {
         {spirits.map((item, index) => {
           const { soul, daysSinceLastVisit, lastVisitDate, isActive } = item;
           const representativeImage = soul.images?.find(
-            img => img.imageType === "REPRESENTATIVE"
+            (img) => img.imageType === "REPRESENTATIVE"
           );
-          
+
           const isLast = index === spirits.length - 1;
 
           // 동일한 daysSinceLastVisit 값에 대해 같은 순위 부여
@@ -233,13 +242,13 @@ export default function OldestSpiritsPage() {
 
           return (
             <Link
-              key={`${soul.id}-${soul.name}`}
-              href={`/sky/travelingSprits/generalVisits/${soul.id}`}
+              key={`${item.id}-${index}`}
+              href={`/sky/SeasonDictionary/souls/${item.id}`}
               className={styles.spiritCard}
-              ref={isLast ? lastSpiritElementRef : null}
+              ref={isLast ? bottomSentinelRef : null}
             >
               <div className={styles.rankBadge}>#{rank}</div>
-              
+
               <div className={styles.imageSection}>
                 {representativeImage?.url ? (
                   <img
@@ -254,10 +263,10 @@ export default function OldestSpiritsPage() {
 
               <div className={styles.infoSection}>
                 <div className={styles.nameRow}>
-                  <span 
+                  <span
                     className={styles.seasonBadge}
-                    style={{ 
-                      backgroundColor: seasonColors[soul.seasonName] || "#888" 
+                    style={{
+                      backgroundColor: seasonColors[soul.seasonName] || "#888",
                     }}
                   >
                     {soul.seasonName}
@@ -267,7 +276,9 @@ export default function OldestSpiritsPage() {
 
                 <div className={styles.detailsRow}>
                   <span className={styles.orderNumber}>
-                    {soul.orderNum < 0 ? `#${Math.abs(soul.orderNum)} 유랑단` : `${soul.orderNum}번째`}
+                    {soul.orderNum < 0
+                      ? `#${Math.abs(soul.orderNum)} 유랑단`
+                      : `${soul.orderNum}번째`}
                   </span>
                   <span className={styles.rerunCount}>
                     {soul.rerunCount}차 복각
@@ -276,12 +287,19 @@ export default function OldestSpiritsPage() {
 
                 <div className={styles.dateInfo}>
                   <span>마지막 방문: {formatDate(lastVisitDate)}</span>
-                  <span>({formatDate(soul.startDate)} ~ {formatDate(soul.endDate)})</span>
+                  <span>
+                    ({formatDate(soul.startDate)} ~ {formatDate(soul.endDate)})
+                  </span>
                 </div>
               </div>
 
               <div className={styles.statusSection}>
-                <div className={`${styles.statusBadge} ${getStatusClass(daysSinceLastVisit, isActive)}`}>
+                <div
+                  className={`${styles.statusBadge} ${getStatusClass(
+                    daysSinceLastVisit,
+                    isActive
+                  )}`}
+                >
                   {formatDaysSince(daysSinceLastVisit)}
                 </div>
                 <div className={styles.daysCount}>
@@ -289,8 +307,12 @@ export default function OldestSpiritsPage() {
                     <>
                       <strong>{daysSinceLastVisit.toLocaleString()}</strong>일
                       {daysSinceLastVisit > 1000 && " 💔"}
-                      {daysSinceLastVisit > 500 && daysSinceLastVisit <= 1000 && " 😢"}
-                      {daysSinceLastVisit > 100 && daysSinceLastVisit <= 500 && " 🥺"}
+                      {daysSinceLastVisit > 500 &&
+                        daysSinceLastVisit <= 1000 &&
+                        " 😢"}
+                      {daysSinceLastVisit > 100 &&
+                        daysSinceLastVisit <= 500 &&
+                        " 🥺"}
                     </>
                   )}
                 </div>

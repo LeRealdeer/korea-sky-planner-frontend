@@ -17,6 +17,7 @@ export default function MainPageClient() {
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
     { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' },
+    { title: '시즌대백과', img: '/sky/extra/calculator.png', path: '/sky/SeasonDictionary' },
     { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
     { title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
     { title: '버스 노선표', img: '/sky/extra/busTable.png', path: '/sky/busTable' },

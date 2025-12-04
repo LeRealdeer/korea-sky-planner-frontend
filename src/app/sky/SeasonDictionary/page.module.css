@@ -1,0 +1,488 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0 3rem 0;
+  background: #fafbfc;
+}
+
+/* 헤더 */
+.header {
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.seasonViewButton,
+.createButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  border: 2px solid;
+}
+
+.seasonViewButton {
+  background: white;
+  color: #667eea;
+  border-color: #667eea;
+}
+
+.seasonViewButton:hover {
+  background: #667eea;
+  color: white;
+}
+
+.createButton {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.createButton:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+/* 시즌 칩 */
+.seasonChipsWrapper {
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+}
+
+/* 시즌 칩 */
+.seasonChipsWrapper {
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+}
+
+.seasonChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.seasonChip {
+  padding: 0.65rem 1.25rem;
+  border: 2px solid;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.seasonChip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.1);
+}
+
+.seasonChip.active {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 검색 */
+.searchForm {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 2rem 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.searchButton {
+  padding: 0.875rem 2rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.searchButton:hover {
+  background: #5568d3;
+}
+
+/* 뷰 모드 */
+.viewModeToggle {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 2rem 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.viewButton {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.viewButton.activeView {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+/* 카드 그리드 */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  padding: 0 2rem;
+}
+
+.soulCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background: white;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.soulCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  background: #f9fafb;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+
+.soulCard:hover .cardImage {
+  transform: scale(1.05);
+}
+
+.cardContent {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.seasonBadge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.soulName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.guideBadge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: #fbbf24;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 12px;
+  align-self: flex-start;
+}
+
+/* 리스트 뷰 */
+.spiritsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0 2rem;
+}
+
+.spiritCard {
+  display: flex;
+  align-items: center;
+  padding: 1.75rem;
+  background: white;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.spiritCard:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.imageSection {
+  width: 120px;
+  height: 120px;
+  margin-right: 2rem;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.spiritImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.infoSection {
+  flex: 1;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.spiritName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.keyword {
+  padding: 0.35rem 0.75rem;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.noData {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #9ca3af;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.error {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #ef4444;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* 헤더 */
+.header {
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #667eea;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.seasonViewButton,
+.createButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  border: 2px solid white;
+}
+
+.seasonViewButton {
+  background: white;
+  color: #667eea;
+}
+
+.seasonViewButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.createButton {
+  background: white;
+  color: #10b981;
+}
+
+.createButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* 반응형 */
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 2rem 1rem;
+  }
+  
+  .headerContent {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .headerButtons {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .seasonViewButton,
+  .createButton {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .seasonChipsWrapper,
+  .searchForm,
+  .viewModeToggle,
+  .cardsGrid,
+  .spiritsList {
+    padding: 0 1rem;
+  }
+  
+  .seasonChips {
+    padding: 1rem;
+  }
+  
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  .imageWrapper {
+    height: 150px;
+  }
+  
+  .imageSection {
+    width: 80px;
+    height: 80px;
+    margin-right: 1rem;
+  }
+  
+  .spiritCard {
+    padding: 1.25rem;
+  }
+  
+  .spiritName {
+    font-size: 1.125rem;
+  }
+}

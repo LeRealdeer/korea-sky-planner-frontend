@@ -13,16 +13,15 @@ export default function MainPageClient() {
       router.push(path);
     }
   };
-//
+
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
     { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' },
-    { title: '시즌대백과', img: '/sky/extra/calculator.png', path: '/sky/SeasonDictionary' },
-    { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
+    { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/generalVisits/list' },
     { title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
     { title: '버스 노선표', img: '/sky/extra/busTable.png', path: '/sky/busTable' },
     { title: '악보 만들기', img: '/sky/extra/musicEditor.png', path: '/sky/musicEditor' },
-    { title: '11월 모의고사', img: '/sky/extra/test.png', path: '/sky/test' },
+    { title: '12월 모의고사', img: '/sky/extra/test.png', path: '/sky/test' },
     { title: '성향 테스트', img: '/sky/extra/mbti.png', path: '/sky/mbti' },
     { title: '크레딧', img: '/sky/extra/profile.png', path: '/sky/credit' },
   ];
@@ -30,23 +29,23 @@ export default function MainPageClient() {
   return (
     <>
       {/* 만족도 조사 배너 */}
-      {/* <div className={styles.surveyBanner}>
+      <div className={styles.surveyBanner}>
         <div className={styles.surveyContent}>
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
-            <strong>스카이 플래너 만족도 조사</strong>
-            <span className={styles.surveyDesc}>여러분의 소중한 의견을 들려주세요!</span>
-            <span className={styles.surveyDesc}>11월 23일까지 진행</span>
+            {/* <strong>스카이 플래너 만족도 조사</strong> */}
+            <span className={styles.surveyDesc}>스카이 플래너 12월 모의고사가 출제되었습니다.</span>
+            <span className={styles.surveyDesc}>25년 가장 난이도 있는 스카이 문제들을 만나보세요!</span>
 
           </div>
           <button 
             className={styles.surveyButton}
-            onClick={() => navigateTo('https://docs.google.com/forms/d/e/1FAIpQLSfi2GB5oq9NK1jzLcj8Vx95IBxYbtDpuDQ90z5ZWhyy7vAeYw/viewform?usp=dialog')}
+            onClick={() => navigateTo('/sky/test')}
           >
             참여하기
           </button>
         </div>
-      </div> */}
+      </div>
 
       <main className={styles.container}>
         {/* 메뉴 그리드 */}

@@ -45,15 +45,18 @@ export default function SeasonsListPage() {
 
   return (
     <div className={styles.container}>
-      {/* 헤더 */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>시즌 목록</h1>
-        <div className={styles.headerButtons}>
-          <Link href="/sky/SeasonDictionary" className={styles.backButton}>
-            영혼별로 보기
-          </Link>
-        </div>
-      </div>
+{/* 헤더 */}
+<div className={styles.header}>
+  <h1 className={styles.title}>시즌 목록</h1>
+  <div className={styles.headerButtons}>
+    <Link href="/sky/SeasonDictionary" className={styles.backButton}>
+      영혼별로 보기
+    </Link>
+    <Link href="/sky/SeasonDictionary/seasons/create" className={styles.createButton}>
+      시즌 만들기
+    </Link>
+  </div>
+</div>
 
       {loading ? (
         <LoadingSpinner />

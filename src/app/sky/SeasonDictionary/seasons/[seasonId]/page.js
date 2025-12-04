@@ -86,11 +86,15 @@ const fetchSeasonDetail = async () => {
         className={styles.seasonHeader}
         style={{ backgroundColor: seasonColors[season.name] || "#888" }}
       >
-        <div className={styles.headerTop}>
-          <button onClick={() => router.back()} className={styles.backButton}>
-            ← 뒤로가기
-          </button>
-        </div>
+{/* 헤더에 수정 버튼 추가 */}
+<div className={styles.header}>
+  <button onClick={() => router.back()} className={styles.backButton}>
+    ← 뒤로가기
+  </button>
+  <Link href={`/sky/SeasonDictionary/seasons/${seasonId}/edit`} className={styles.editButton}>
+    수정하기
+  </Link>
+</div>
         
         <div className={styles.headerContent}>
           {season.emblemIcon && (

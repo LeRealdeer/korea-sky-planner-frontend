@@ -17,7 +17,6 @@ export default function SoulDetailPage() {
   const [soul, setSoul] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedImageType, setSelectedImageType] = useState("REPRESENTATIVE");
 
   useEffect(() => {
     if (soulId) {
@@ -46,17 +45,14 @@ export default function SoulDetailPage() {
     return soul?.images?.find(img => img.imageType === type);
   };
 
-  const imageTypes = [
-    { key: "REPRESENTATIVE", label: "대표 사진" },
-    { key: "WEARING", label: "착용샷" },
-    { key: "NODE_CHART", label: "노드표" },
-  ];
-
   if (loading) return <LoadingSpinner />;
   if (error) return <div className={styles.error}>Error: {error}</div>;
   if (!soul) return <div className={styles.noData}>영혼 정보가 없습니다.</div>;
 
-  const currentImage = getImageByType(selectedImageType);
+  const representativeImage = getImageByType("REPRESENTATIVE");
+  const locationImage = getImageByType("LOCATION");
+  const wearingImage = getImageByType("WEARING");
+  const nodeChartImage = getImageByType("NODE_CHART");
 
   return (
     <div className={styles.container}>
@@ -70,109 +66,125 @@ export default function SoulDetailPage() {
         </Link>
       </div>
 
-      {/* 영혼 정보 헤더 */}
-      <div className={styles.soulHeader}>
-        <div className={styles.badgeSection}>
-          <div className={styles.orderBadge}>#{soul.orderNum}</div>
-          <span
-            className={styles.seasonBadge}
-            style={{ backgroundColor: seasonColors[soul.seasonName] || "#888" }}
-          >
-            {soul.seasonName}
-          </span>
-          {soul.isSeasonGuide && (
-            <span className={styles.guideBadge}>시즌 가이드</span>
-          )}
-        </div>
-        
-        <h1 className={styles.soulName}>{soul.name}</h1>
-        
-        {soul.location && (
-          <p className={styles.location}>📍 {soul.location}</p>
-        )}
-      </div>
+      {/* 메인 콘텐츠 */}
+      <div className={styles.mainContent}>
+        {/* 대표 이미지 및 기본 정보 */}
+        <div className={styles.mainSection}>
+          <div className={styles.imageWrapper}>
+            {representativeImage?.url ? (
+              <img 
+                src={representativeImage.url} 
+                alt={soul.name}
+                className={styles.mainImage}
+              />
+            ) : (
+              <div className={styles.noImage}>이미지 없음</div>
+            )}
+          </div>
 
-      {/* 이미지 섹션 */}
-      <div className={styles.imageSection}>
-        <div className={styles.imageTabs}>
-          {imageTypes.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setSelectedImageType(key)}
-              className={`${styles.imageTab} ${selectedImageType === key ? styles.activeImageTab : ""}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.imageDisplay}>
-          {currentImage?.url ? (
-            <img 
-              src={currentImage.url} 
-              alt={`${soul.name} - ${imageTypes.find(t => t.key === selectedImageType)?.label}`}
-              className={styles.soulImage}
-            />
-          ) : (
-            <div className={styles.noImage}>이미지가 없습니다</div>
-          )}
-        </div>
-      </div>
-
-      {/* 키워드 */}
-      {soul.keywords && soul.keywords.length > 0 && (
-        <div className={styles.keywordsSection}>
-          <h3 className={styles.sectionTitle}>키워드</h3>
-          <div className={styles.keywords}>
-            {soul.keywords.map((keyword, index) => (
-              <span key={index} className={styles.keyword}>
-                {keyword}
+          <div className={styles.infoBox}>
+            <div className={styles.badges}>
+              <span
+                className={styles.seasonBadge}
+                style={{ backgroundColor: seasonColors[soul.seasonName] || "#888" }}
+              >
+                {soul.seasonName}
               </span>
-            ))}
-          </div>
-        </div>
-      )}
+              {soul.isSeasonGuide && (
+                <span className={styles.guideBadge}>시즌 가이드</span>
+              )}
+            </div>
 
-      {/* 설명 */}
-      {soul.description && (
-        <div className={styles.descriptionSection}>
-          <h3 className={styles.sectionTitle}>설명</h3>
-          <p className={styles.description}>{soul.description}</p>
-        </div>
-      )}
+            <h1 className={styles.soulName}>{soul.name}</h1>
 
-      {/* 제작자 */}
-      {soul.creator && (
-        <div className={styles.creatorSection}>
-          <h3 className={styles.sectionTitle}>제작자</h3>
-          <p className={styles.creator}>{soul.creator}</p>
-        </div>
-      )}
-
-      {/* 유랑 정보 */}
-      {soul.travelingVisits && soul.travelingVisits.length > 0 && (
-        <div className={styles.visitsSection}>
-          <h3 className={styles.sectionTitle}>유랑 이력</h3>
-          <div className={styles.visitsList}>
-            {soul.travelingVisits.map((visit, index) => (
-              <div key={index} className={styles.visitCard}>
-                <div className={styles.visitHeader}>
-                  <span className={styles.visitNumber}>{visit.visitNumber}차 복각</span>
-                  {visit.isWarbandVisit && (
-                    <span className={styles.warbandBadge}>유랑단</span>
-                  )}
-                  {visit.isActive && (
-                    <span className={styles.activeBadge}>🔥 진행중</span>
-                  )}
-                </div>
-                <p className={styles.visitDate}>
-                  {visit.startDate} ~ {visit.endDate}
-                </p>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>순서</span>
+                <span className={styles.infoValue}>#{soul.orderNum}</span>
               </div>
-            ))}
+              
+              {soul.creator && (
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>제작자</span>
+                  <span className={styles.infoValue}>{soul.creator}</span>
+                </div>
+              )}
+
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>복각 횟수</span>
+                <span className={styles.infoValue}>{soul.totalVisits || 0}회</span>
+              </div>
+            </div>
+
+            {/* 키워드 */}
+            {soul.keywords && soul.keywords.length > 0 && (
+              <div className={styles.keywordsBox}>
+                {soul.keywords.map((keyword, index) => (
+                  <span key={index} className={styles.keyword}>
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* 유랑 이력 */}
+            {soul.travelingVisits && soul.travelingVisits.length > 0 && (
+              <div className={styles.visitsBox}>
+                <h3 className={styles.boxTitle}>유랑 이력</h3>
+                <div className={styles.visitsList}>
+                  {soul.travelingVisits.map((visit, index) => (
+                    <div key={index} className={styles.visitItem}>
+                      <span className={styles.visitNumber}>
+                        {visit.visitNumber}차
+                        {visit.isWarbandVisit && " (유랑단)"}
+                      </span>
+                      <span className={styles.visitDate}>
+                        {visit.startDate} ~ {visit.endDate}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
+
+        {/* 추가 이미지 */}
+        <div className={styles.additionalImages}>
+          {locationImage?.url && (
+            <div className={styles.imageCard}>
+              <h3 className={styles.imageTitle}>위치</h3>
+              <img 
+                src={locationImage.url} 
+                alt="위치"
+                className={styles.additionalImage}
+              />
+            </div>
+          )}
+
+          {wearingImage?.url && (
+            <div className={styles.imageCard}>
+              <h3 className={styles.imageTitle}>착용샷</h3>
+              <img 
+                src={wearingImage.url} 
+                alt="착용샷"
+                className={styles.additionalImage}
+              />
+            </div>
+          )}
+
+          {nodeChartImage?.url && (
+            <div className={styles.imageCard}>
+              <h3 className={styles.imageTitle}>노드표</h3>
+              <img 
+                src={nodeChartImage.url} 
+                alt="노드표"
+                className={styles.additionalImage}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

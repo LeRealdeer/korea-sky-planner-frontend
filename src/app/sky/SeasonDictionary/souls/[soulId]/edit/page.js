@@ -15,11 +15,19 @@ export default function SoulEditPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState({
-    representative: false,
-    wearing: false,
-    nodeChart: false,
-  });
+const [uploading, setUploading] = useState({
+  representative: false,
+  location: false,  // 추가!
+  wearing: false,
+  nodeChart: false,
+});
+
+const [previewImages, setPreviewImages] = useState({
+  representative: null,
+  location: null,  // 추가!
+  wearing: null,
+  nodeChart: null,
+});
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
 
@@ -37,11 +45,6 @@ export default function SoulEditPage() {
     nodeChartImageUrl: "",
   });
 
-  const [previewImages, setPreviewImages] = useState({
-    representative: null,
-    wearing: null,
-    nodeChart: null,
-  });
 
   const [originalImageUrls, setOriginalImageUrls] = useState({
     representative: "",
@@ -445,7 +448,41 @@ export default function SoulEditPage() {
             </div>
             <p className={styles.hint}>아이템을 착용한 모습의 이미지를 업로드하세요.</p>
           </div>
-
+{/* 위치 이미지 */}
+<div className={styles.formGroup}>
+  <label className={styles.label}>위치 이미지</label>
+  <div className={styles.imageUploadContainer}>
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => handleImageUpload(e, "location")}
+      className={styles.fileInput}
+      id="location-upload"
+      disabled={uploading.location}
+    />
+    <label htmlFor="location-upload" className={styles.uploadButton}>
+      {uploading.location ? "업로드 중..." : "이미지 선택"}
+    </label>
+    
+    {previewImages.location && (
+      <div className={styles.imagePreviewContainer}>
+        <img 
+          src={previewImages.location}
+          alt="위치 이미지 미리보기"
+          className={styles.imagePreview}
+        />
+        <button
+          type="button"
+          onClick={() => handleImageDelete("location")}
+          className={styles.deleteImageButton}
+        >
+          삭제
+        </button>
+      </div>
+    )}
+  </div>
+  <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
+</div>
           {/* 노드표 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>노드표</label>

@@ -132,38 +132,36 @@ function SeasonDictionaryContent() {
   return (
     <div className={styles.container}>
 {/* 헤더 */}
-<div 
-  className={styles.header}
-  style={{
-    backgroundColor: selectedSeason 
-      ? seasonColors[selectedSeason] 
-      : "#667eea"
-  }}
->
+<div className={styles.header}>
   <div className={styles.headerContent}>
     <h1 className={styles.title}>
       {selectedSeason ? `${selectedSeason} 시즌` : "시즌 대백과"}
     </h1>
+    <p className={styles.subtitle}>
+      찾고 있는 영혼이 기억나지 않을 때 검색창에 키워드를 입력해 검색해주세요.
+    </p>
     <div className={styles.headerButtons}>
       <Link href="/sky/SeasonDictionary/seasons" className={styles.seasonViewButton}>
-        시즌별로 보기
+        🗂️ 시즌별로 보기
       </Link>
       <Link href="/sky/SeasonDictionary/create" className={styles.createButton}>
-        영혼 만들기
+        ✨ 영혼 만들기
       </Link>
     </div>
   </div>
 </div>
 
-  {/* 시즌 칩 */}
+{/* 시즌 칩 */}
 <div className={styles.seasonChipsWrapper}>
+  <p className={styles.seasonChipsTitle}>
+    아래 시즌 이름을 클릭하면 자동 검색됩니다:
+  </p>
   <div className={styles.seasonChips}>
     <button
       onClick={handleAllView}
       className={`${styles.seasonChip} ${!selectedSeason ? styles.active : ""}`}
       style={{
         backgroundColor: !selectedSeason ? "#667eea" : "#667eea",
-        borderColor: !selectedSeason ? "#5568d3" : "#667eea",
       }}
     >
       전체보기
@@ -175,9 +173,6 @@ function SeasonDictionaryContent() {
         className={`${styles.seasonChip} ${selectedSeason === season ? styles.active : ""}`}
         style={{
           backgroundColor: seasonColors[season] || "#888",
-          borderColor: selectedSeason === season 
-            ? "rgba(0, 0, 0, 0.3)" 
-            : seasonColors[season] || "#888",
         }}
       >
         {season}
@@ -185,34 +180,37 @@ function SeasonDictionaryContent() {
     ))}
   </div>
 </div>
-      {/* 검색창 */}
-      <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="영혼 이름, 키워드 검색..."
-          className={styles.searchInput}
-        />
-        <button type="submit" className={styles.searchButton}>검색</button>
-      </form>
 
-      {/* 뷰 모드 전환 */}
-      <div className={styles.viewModeToggle}>
-        <button
-          onClick={() => setViewMode("card")}
-          className={`${styles.viewButton} ${viewMode === "card" ? styles.activeView : ""}`}
-        >
-          카드 뷰
-        </button>
-        <button
-          onClick={() => setViewMode("list")}
-          className={`${styles.viewButton} ${viewMode === "list" ? styles.activeView : ""}`}
-        >
-          리스트 뷰
-        </button>
-      </div>
+{/* 검색 및 필터 */}
+<div className={styles.searchAndFilter}>
+  <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+    <input
+      type="text"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      placeholder="영혼 이름, 키워드 검색..."
+      className={styles.searchInput}
+    />
+    <button type="submit" className={styles.searchButton}>
+      검색
+    </button>
+  </form>
 
+  <div className={styles.viewModeToggle}>
+    <button
+      onClick={() => setViewMode("card")}
+      className={`${styles.viewButton} ${viewMode === "card" ? styles.activeView : ""}`}
+    >
+      카드 뷰
+    </button>
+    <button
+      onClick={() => setViewMode("list")}
+      className={`${styles.viewButton} ${viewMode === "list" ? styles.activeView : ""}`}
+    >
+      리스트 뷰
+    </button>
+  </div>
+</div>
       {/* 영혼 리스트 */}
       {loading && page === 0 ? (
         <LoadingSpinner />

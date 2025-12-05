@@ -25,42 +25,64 @@ jobs:
           
           echo "=== Starting Frontend Deployment ==="
           
+          # 좀비 프로세스 정리 (메모리 확보)
+          echo "=== Cleaning up zombie processes ==="
+          sudo pkill -9 runnv 2>/dev/null || true
+          sudo rm -rf /tmp/runnv 2>/dev/null || true
+          
+          # PM2 프론트엔드 중지 (메모리 확보)
+          echo "=== Stopping existing server ==="
+          pm2 stop sky-planner-frontend 2>/dev/null || true
+          screen -S nextjs -X quit 2>/dev/null || true
+          
+          # 캐시 메모리 정리
+          echo "=== Clearing cache memory ==="
+          sudo sync
+          sudo sysctl -w vm.drop_caches=3
+          
+          # 메모리 상태 확인
+          echo "=== Memory status ==="
+          free -h
+          
+          # 프로젝트 업데이트
+          echo "=== Pulling latest code ==="
           cd ~/korea-sky-planner-frontend
           git pull origin main
           
           # .env.local 파일 생성
+          echo "=== Creating .env.local ==="
           cat > .env.local << 'ENVEOF'
           NEXT_PUBLIC_API_URL=http://${{ secrets.SERVER_IP }}:8000
           ENVEOF
           
-          # 의존성 설치
+          # 의존성 설치 (메모리 제한)
           echo "=== Installing Dependencies ==="
-          npm install
+          NODE_OPTIONS="--max-old-space-size=512" npm ci --prefer-offline --no-audit --no-fund
           
           # 빌드
           echo "=== Building Next.js ==="
           npm run build
           
-          # 기존 서버 종료
-          echo "=== Stopping Existing Next.js Server ==="
-          screen -S nextjs -X quit || true
-          
-          sleep 3
-          
-          # 새 서버 시작
-          echo "=== Starting Next.js Server ==="
-          screen -dmS nextjs bash -c 'cd ~/korea-sky-planner-frontend && npm start > nextjs.log 2>&1'
-          
-          sleep 5
+          # PM2로 서버 시작 (screen 대신)
+          echo "=== Starting Next.js Server with PM2 ==="
+          pm2 reload sky-planner-frontend --update-env || pm2 start npm --name "sky-planner-frontend" -- start
           
           # 서버 확인
-          if screen -list | grep -q "nextjs"; then
-            echo "Next.js server is running"
-          else
-            echo "Failed to start Next.js server"
-            exit 1
-          fi
-          
-          tail -n 20 nextjs.log
+          echo "=== Server Status ==="
+          pm2 list
+          pm2 logs sky-planner-frontend --lines 20 --nostream
           
           echo "=== Frontend Deployment Completed ==="
+    
+    - name: Cleanup (Always Run)
+      if: always()
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          # 배포 후 정리
+          sudo pkill -9 runnv 2>/dev/null || true
+          sudo rm -rf /tmp/runnv 2>/dev/null || true

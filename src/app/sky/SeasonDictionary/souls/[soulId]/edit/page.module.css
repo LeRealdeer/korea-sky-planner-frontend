@@ -253,7 +253,118 @@
   margin-bottom: 2rem;
   font-weight: 700;
 }
+/* 기존 스타일은 그대로 유지하고, 아래 내용을 추가하세요 */
 
+/* 여러 이미지 컨테이너 */
+.multipleImagesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* 이미지 미리보기 컨테이너 */
+.imagePreviewContainer {
+  position: relative;
+  display: inline-block;
+}
+
+/* 이미지 미리보기 */
+.imagePreview {
+  max-width: 150px;
+  max-height: 150px;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 삭제 버튼 */
+.deleteImageButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.deleteImageButton:hover {
+  background: rgba(185, 28, 28, 1);
+  transform: scale(1.05);
+}
+
+.deleteImageButton:active {
+  transform: scale(0.95);
+}
+
+/* 업로드 버튼 */
+.uploadButton {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.uploadButton:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.uploadButton:active {
+  transform: translateY(0);
+}
+
+/* 파일 인풋 숨기기 */
+.fileInput {
+  display: none;
+}
+
+/* 이미지 업로드 컨테이너 */
+.imageUploadContainer {
+  margin-top: 8px;
+}
+
+/* 힌트 텍스트 */
+.hint {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .multipleImagesContainer {
+    gap: 10px;
+  }
+
+  .imagePreview {
+    max-width: 120px;
+    max-height: 120px;
+    width: 120px;
+    height: 120px;
+  }
+
+  .deleteImageButton {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
 /* 나머지는 create/page.module.css와 동일 */
 /* ... (위에서 제공한 create CSS 복사) ... */
 /* 반응형 */

@@ -1,113 +1,63 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import LoadingSpinner from "../../../../../components/LoadingSpinner";
-import { seasonColors } from "../../../../../constants/seasonColors";
+import { useRouter } from "next/navigation";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { seasonColors } from "../../../constants/seasonColors";
 import styles from "./page.module.css";
 
 const BASE_URL = "";
 
-export default function SoulEditPage() {
-  const params = useParams();
+export default function SoulCreatePage() {
   const router = useRouter();
-  const soulId = params.soulId;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-const [uploading, setUploading] = useState({
-  representative: false,
-  location: false,  // 추가!
-  wearing: false,
-  nodeChart: false,
-});
+  const [uploading, setUploading] = useState({
+    representative: false,
+    location: false,
+    wearing: false,
+    nodeChart: false,
+  });
 
-const [previewImages, setPreviewImages] = useState({
-  representative: null,
-  location: null,  // 추가!
-  wearing: null,
-  nodeChart: null,
-});
+  const [previewImages, setPreviewImages] = useState({
+    representative: null,
+    location: null,
+    wearing: [], // ✅ 배열로 변경
+    nodeChart: null,
+  });
+  
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
     seasonId: "",
-    location: "",
     orderNum: "",
     isSeasonGuide: false,
     keywords: "",
     description: "",
     creator: "",
     representativeImageUrl: "",
-    wearingImageUrl: "",
+    locationImageUrl: "",
+    wearingImageUrls: [], // ✅ 배열로 변경
     nodeChartImageUrl: "",
   });
 
-
-  const [originalImageUrls, setOriginalImageUrls] = useState({
-    representative: "",
-    wearing: "",
-    nodeChart: "",
-  });
-
   useEffect(() => {
-    fetchData();
-  }, [soulId]);
+    fetchSeasons();
+  }, []);
 
-  const fetchData = async () => {
+  const fetchSeasons = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // 시즌 목록 가져오기
-      const seasonsResponse = await fetch(`${BASE_URL}/api/v1/seasons`);
-      if (seasonsResponse.ok) {
-        const seasonsData = await seasonsResponse.json();
-        setSeasons(seasonsData.data || []);
+      const response = await fetch(`${BASE_URL}/api/v1/seasons`);
+      if (response.ok) {
+        const data = await response.json();
+        setSeasons(data.data || []);
       }
-
-      // 영혼 정보 가져오기
-      const soulResponse = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`);
-      if (!soulResponse.ok) throw new Error("영혼 정보를 불러올 수 없습니다.");
-      
-      const soulData = await soulResponse.json();
-      const soul = soulData.data;
-
-      const representativeImage = soul.images?.find(img => img.imageType === "REPRESENTATIVE");
-      const wearingImage = soul.images?.find(img => img.imageType === "WEARING");
-      const nodeChartImage = soul.images?.find(img => img.imageType === "NODE_CHART");
-
-      const repUrl = representativeImage?.url || "";
-      const wearUrl = wearingImage?.url || "";
-      const nodeUrl = nodeChartImage?.url || "";
-
-      setFormData({
-        name: soul.name || "",
-        seasonId: soul.seasonId || "",
-        location: soul.location || "",
-        orderNum: soul.orderNum || "",
-        isSeasonGuide: soul.isSeasonGuide || false,
-        keywords: soul.keywords ? soul.keywords.join(", ") : "",
-        description: soul.description || "",
-        creator: soul.creator || "",
-        representativeImageUrl: repUrl,
-        wearingImageUrl: wearUrl,
-        nodeChartImageUrl: nodeUrl,
-      });
-
-      setOriginalImageUrls({
-        representative: repUrl,
-        wearing: wearUrl,
-        nodeChart: nodeUrl,
-      });
-
-      setPreviewImages({
-        representative: repUrl,
-        wearing: wearUrl,
-        nodeChart: nodeUrl,
-      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -151,40 +101,45 @@ const [previewImages, setPreviewImages] = useState({
         body: formDataUpload,
       });
 
-      if (!response.ok) throw new Error("이미지 업로드에 실패했습니다.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "이미지 업로드에 실패했습니다.");
+      }
 
       const data = await response.json();
       const imageUrl = data.data.url;
 
-      // 기존 이미지가 있고, 원본 이미지와 다르면 삭제
-      const oldUrl = formData[`${imageType}ImageUrl`];
-      if (oldUrl && oldUrl !== originalImageUrls[imageType]) {
-        try {
-          await fetch(`${BASE_URL}/api/v1/images`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url: oldUrl }),
-          });
-        } catch (err) {
-          console.error("기존 이미지 삭제 실패:", err);
-        }
-      }
-
-      // URL 업데이트
-      setFormData(prev => ({
-        ...prev,
-        [`${imageType}ImageUrl`]: imageUrl
-      }));
-
-      // 미리보기 업데이트
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImages(prev => ({
+      // ✅ 착용샷은 배열에 추가
+      if (imageType === "wearing") {
+        setFormData(prev => ({
           ...prev,
-          [imageType]: reader.result
+          wearingImageUrls: [...prev.wearingImageUrls, imageUrl]
         }));
-      };
-      reader.readAsDataURL(file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImages(prev => ({
+            ...prev,
+            wearing: [...prev.wearing, reader.result]
+          }));
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // 다른 이미지는 기존대로
+        setFormData(prev => ({
+          ...prev,
+          [`${imageType}ImageUrl`]: imageUrl
+        }));
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImages(prev => ({
+            ...prev,
+            [imageType]: reader.result
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
 
     } catch (err) {
       alert(`이미지 업로드 실패: ${err.message}`);
@@ -193,15 +148,15 @@ const [previewImages, setPreviewImages] = useState({
     }
   };
 
-  const handleImageDelete = async (imageType) => {
-    const imageUrl = formData[`${imageType}ImageUrl`];
-    if (!imageUrl) return;
+  const handleImageDelete = async (imageType, index = null) => {
+    // ✅ 착용샷은 인덱스로 삭제
+    if (imageType === "wearing" && index !== null) {
+      const imageUrl = formData.wearingImageUrls[index];
+      if (!imageUrl) return;
 
-    if (!confirm("이미지를 삭제하시겠습니까?")) return;
+      if (!confirm("이미지를 삭제하시겠습니까?")) return;
 
-    try {
-      // 원본 이미지가 아닌 경우에만 서버에서 삭제
-      if (imageUrl !== originalImageUrls[imageType]) {
+      try {
         const response = await fetch(`${BASE_URL}/api/v1/images`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -209,7 +164,38 @@ const [previewImages, setPreviewImages] = useState({
         });
 
         if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
+
+        setFormData(prev => ({
+          ...prev,
+          wearingImageUrls: prev.wearingImageUrls.filter((_, i) => i !== index)
+        }));
+
+        setPreviewImages(prev => ({
+          ...prev,
+          wearing: prev.wearing.filter((_, i) => i !== index)
+        }));
+
+        alert("이미지가 삭제되었습니다.");
+      } catch (err) {
+        alert(`이미지 삭제 실패: ${err.message}`);
       }
+      return;
+    }
+
+    // 기존 코드 (단일 이미지)
+    const imageUrl = formData[`${imageType}ImageUrl`];
+    if (!imageUrl) return;
+
+    if (!confirm("이미지를 삭제하시겠습니까?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/images`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: imageUrl }),
+      });
+
+      if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
 
       setFormData(prev => ({
         ...prev,
@@ -233,54 +219,50 @@ const [previewImages, setPreviewImages] = useState({
     setError(null);
 
     try {
+      const selectedSeason = seasons.find(s => s.id === parseInt(formData.seasonId));
+      if (!selectedSeason) {
+        throw new Error("선택한 시즌을 찾을 수 없습니다.");
+      }
+
       const payload = {
         name: formData.name,
         seasonId: parseInt(formData.seasonId),
-        location: formData.location,
+        seasonName: selectedSeason.name,
         orderNum: parseInt(formData.orderNum),
         isSeasonGuide: formData.isSeasonGuide,
         keywords: formData.keywords.split(",").map(k => k.trim()).filter(k => k),
         description: formData.description,
         creator: formData.creator,
+        startDate: selectedSeason.startDate,
+        endDate: selectedSeason.endDate,
+        // ✅ 착용샷 여러 개 포함
         images: [
-          { imageType: "REPRESENTATIVE", url: formData.representativeImageUrl },
-          { imageType: "WEARING", url: formData.wearingImageUrl },
-          { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
-        ].filter(img => img.url),
+          formData.representativeImageUrl && { imageType: "REPRESENTATIVE", url: formData.representativeImageUrl },
+          formData.locationImageUrl && { imageType: "LOCATION", url: formData.locationImageUrl },
+          ...formData.wearingImageUrls.map(url => ({ imageType: "WEARING", url })), // ✅ 배열 펼치기
+          formData.nodeChartImageUrl && { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
+        ].filter(Boolean), // null/undefined 제거
       };
 
-      const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
-        method: "PUT",
+      const response = await fetch(`${BASE_URL}/api/v1/souls`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("영혼 수정에 실패했습니다.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "영혼 생성에 실패했습니다.");
+      }
 
-      alert("영혼이 성공적으로 수정되었습니다!");
-      router.push(`/sky/SeasonDictionary/souls/${soulId}`);
+      const result = await response.json();
+      alert("영혼이 성공적으로 생성되었습니다!");
+      router.push(`/sky/SeasonDictionary/souls/${result.data.id}`);
     } catch (err) {
       setError(err.message);
-      alert(`수정 실패: ${err.message}`);
+      alert(`생성 실패: ${err.message}`);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("정말로 이 영혼을 삭제하시겠습니까?")) return;
-
-    try {
-      const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("영혼 삭제에 실패했습니다.");
-
-      alert("영혼이 삭제되었습니다.");
-      router.push("/sky/SeasonDictionary");
-    } catch (err) {
-      alert(`삭제 실패: ${err.message}`);
     }
   };
 
@@ -289,15 +271,10 @@ const [previewImages, setPreviewImages] = useState({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>영혼 수정하기</h1>
-        <div className={styles.headerButtons}>
-          <button onClick={() => router.back()} className={styles.cancelButton}>
-            취소
-          </button>
-          <button onClick={handleDelete} className={styles.deleteButton}>
-            삭제
-          </button>
-        </div>
+        <h1 className={styles.title}>새 영혼 만들기</h1>
+        <button onClick={() => router.back()} className={styles.cancelButton}>
+          취소
+        </button>
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
@@ -314,6 +291,7 @@ const [previewImages, setPreviewImages] = useState({
               value={formData.name}
               onChange={handleChange}
               className={styles.input}
+              placeholder="예: 화음을 이루는 악단원"
               required
             />
           </div>
@@ -337,18 +315,6 @@ const [previewImages, setPreviewImages] = useState({
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>위치</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="예: 초원 - 나비 평원"
-            />
-          </div>
-
-          <div className={styles.formGroup}>
             <label className={styles.label}>순서 *</label>
             <input
               type="number"
@@ -356,8 +322,10 @@ const [previewImages, setPreviewImages] = useState({
               value={formData.orderNum}
               onChange={handleChange}
               className={styles.input}
+              placeholder="예: 1"
               required
             />
+            <p className={styles.hint}>시즌 내에서 몇 번째 영혼인지 입력하세요.</p>
           </div>
 
           <div className={styles.formGroup}>
@@ -393,10 +361,10 @@ const [previewImages, setPreviewImages] = useState({
                 {uploading.representative ? "업로드 중..." : "이미지 선택"}
               </label>
               
-              {previewImages.representative && (
+              {(previewImages.representative || formData.representativeImageUrl) && (
                 <div className={styles.imagePreviewContainer}>
                   <img 
-                    src={previewImages.representative}
+                    src={previewImages.representative || formData.representativeImageUrl}
                     alt="대표 이미지 미리보기"
                     className={styles.imagePreview}
                   />
@@ -413,9 +381,45 @@ const [previewImages, setPreviewImages] = useState({
             <p className={styles.hint}>영혼의 메인 이미지를 업로드하세요. (최대 10MB)</p>
           </div>
 
-          {/* 착용샷 */}
+          {/* 위치 이미지 */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>착용샷</label>
+            <label className={styles.label}>위치 이미지</label>
+            <div className={styles.imageUploadContainer}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, "location")}
+                className={styles.fileInput}
+                id="location-upload"
+                disabled={uploading.location}
+              />
+              <label htmlFor="location-upload" className={styles.uploadButton}>
+                {uploading.location ? "업로드 중..." : "이미지 선택"}
+              </label>
+              
+              {(previewImages.location || formData.locationImageUrl) && (
+                <div className={styles.imagePreviewContainer}>
+                  <img 
+                    src={previewImages.location || formData.locationImageUrl}
+                    alt="위치 이미지 미리보기"
+                    className={styles.imagePreview}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleImageDelete("location")}
+                    className={styles.deleteImageButton}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+            <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
+          </div>
+
+          {/* 착용샷 - 여러 개 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>착용샷 (여러 개 가능)</label>
             <div className={styles.imageUploadContainer}>
               <input
                 type="file"
@@ -426,63 +430,34 @@ const [previewImages, setPreviewImages] = useState({
                 disabled={uploading.wearing}
               />
               <label htmlFor="wearing-upload" className={styles.uploadButton}>
-                {uploading.wearing ? "업로드 중..." : "이미지 선택"}
+                {uploading.wearing ? "업로드 중..." : "이미지 추가"}
               </label>
               
-              {previewImages.wearing && (
-                <div className={styles.imagePreviewContainer}>
-                  <img 
-                    src={previewImages.wearing}
-                    alt="착용샷 미리보기"
-                    className={styles.imagePreview}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleImageDelete("wearing")}
-                    className={styles.deleteImageButton}
-                  >
-                    삭제
-                  </button>
+              {/* ✅ 여러 이미지 미리보기 */}
+              {previewImages.wearing.length > 0 && (
+                <div className={styles.multipleImagesContainer}>
+                  {previewImages.wearing.map((img, index) => (
+                    <div key={index} className={styles.imagePreviewContainer}>
+                      <img 
+                        src={img}
+                        alt={`착용샷 ${index + 1}`}
+                        className={styles.imagePreview}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleImageDelete("wearing", index)}
+                        className={styles.deleteImageButton}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-            <p className={styles.hint}>아이템을 착용한 모습의 이미지를 업로드하세요.</p>
+            <p className={styles.hint}>아이템을 착용한 모습의 이미지를 여러 장 업로드하세요.</p>
           </div>
-{/* 위치 이미지 */}
-<div className={styles.formGroup}>
-  <label className={styles.label}>위치 이미지</label>
-  <div className={styles.imageUploadContainer}>
-    <input
-      type="file"
-      accept="image/*"
-      onChange={(e) => handleImageUpload(e, "location")}
-      className={styles.fileInput}
-      id="location-upload"
-      disabled={uploading.location}
-    />
-    <label htmlFor="location-upload" className={styles.uploadButton}>
-      {uploading.location ? "업로드 중..." : "이미지 선택"}
-    </label>
-    
-    {previewImages.location && (
-      <div className={styles.imagePreviewContainer}>
-        <img 
-          src={previewImages.location}
-          alt="위치 이미지 미리보기"
-          className={styles.imagePreview}
-        />
-        <button
-          type="button"
-          onClick={() => handleImageDelete("location")}
-          className={styles.deleteImageButton}
-        >
-          삭제
-        </button>
-      </div>
-    )}
-  </div>
-  <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
-</div>
+
           {/* 노드표 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>노드표</label>
@@ -499,10 +474,10 @@ const [previewImages, setPreviewImages] = useState({
                 {uploading.nodeChart ? "업로드 중..." : "이미지 선택"}
               </label>
               
-              {previewImages.nodeChart && (
+              {(previewImages.nodeChart || formData.nodeChartImageUrl) && (
                 <div className={styles.imagePreviewContainer}>
                   <img 
-                    src={previewImages.nodeChart}
+                    src={previewImages.nodeChart || formData.nodeChartImageUrl}
                     alt="노드표 미리보기"
                     className={styles.imagePreview}
                   />
@@ -533,6 +508,7 @@ const [previewImages, setPreviewImages] = useState({
               className={styles.input}
               placeholder="예: 빨간 망토, 케이프, 키가 큼"
             />
+            <p className={styles.hint}>검색에 도움이 되는 키워드를 쉼표로 구분하여 입력하세요.</p>
           </div>
 
           <div className={styles.formGroup}>
@@ -566,7 +542,7 @@ const [previewImages, setPreviewImages] = useState({
             className={styles.submitButton}
             disabled={saving}
           >
-            {saving ? "저장 중..." : "수정 완료"}
+            {saving ? "생성 중..." : "영혼 만들기"}
           </button>
         </div>
       </form>

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const BASE_URL = "http://140.245.73.191:8080";
+const BASE_URL = "http://localhost:8080";
 
 export default function OldestSpiritsPage() {
   const [spirits, setSpirits] = useState([]);
@@ -228,7 +228,6 @@ export default function OldestSpiritsPage() {
           if (index === 0) {
             rank = 1;
           } else {
-            // 이전 항목들을 확인하여 같은 daysSinceLastVisit를 가진 가장 첫 인덱스 찾기
             let sameRankStartIndex = index;
             for (let i = index - 1; i >= 0; i--) {
               if (spirits[i].daysSinceLastVisit === daysSinceLastVisit) {

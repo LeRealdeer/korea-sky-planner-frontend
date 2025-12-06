@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-import { seasonColors } from "../../../constants/seasonColors";
+import { useRouter, useParams } from "next/navigation";
+import LoadingSpinner from "../../../../../components/LoadingSpinner";
 import styles from "./page.module.css";
 
 const BASE_URL = "";
 
-export default function SoulCreatePage() {
+export default function SoulEditPage() {
   const router = useRouter();
+  const params = useParams();
+  const soulId = params.soulId;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,9 +27,18 @@ export default function SoulCreatePage() {
     wearing: [], // ✅ 배열로 변경
     nodeChart: null,
   });
+
+  // ✅ 원본 이미지 URL 추적 (삭제 방지용)
+  const [originalImageUrls, setOriginalImageUrls] = useState({
+    representative: null,
+    location: null,
+    wearing: [], // ✅ 배열로 변경
+    nodeChart: null,
+  });
   
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
+  const [soul, setSoul] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,18 +56,71 @@ export default function SoulCreatePage() {
 
   useEffect(() => {
     fetchSeasons();
-  }, []);
+    fetchSoul();
+  }, [soulId]);
 
   const fetchSeasons = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
       const response = await fetch(`${BASE_URL}/api/v1/seasons`);
       if (response.ok) {
         const data = await response.json();
         setSeasons(data.data || []);
       }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchSoul = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`);
+      if (!response.ok) throw new Error("영혼 정보를 불러올 수 없습니다.");
+
+      const data = await response.json();
+      const soulData = data.data;
+      setSoul(soulData);
+
+      // ✅ 착용샷 여러 개 처리
+      const wearingImages = soulData.images
+        ?.filter(img => img.imageType === "WEARING")
+        .map(img => img.url) || [];
+
+      const representativeImg = soulData.images?.find(img => img.imageType === "REPRESENTATIVE")?.url || "";
+      const locationImg = soulData.images?.find(img => img.imageType === "LOCATION")?.url || "";
+      const nodeChartImg = soulData.images?.find(img => img.imageType === "NODE_CHART")?.url || "";
+
+      setFormData({
+        name: soulData.name || "",
+        seasonId: soulData.seasonId || "",
+        orderNum: soulData.orderNum || "",
+        isSeasonGuide: soulData.isSeasonGuide || false,
+        keywords: soulData.keywords?.join(", ") || "",
+        description: soulData.description || "",
+        creator: soulData.creator || "",
+        representativeImageUrl: representativeImg,
+        locationImageUrl: locationImg,
+        wearingImageUrls: wearingImages, // ✅ 배열
+        nodeChartImageUrl: nodeChartImg,
+      });
+
+      setPreviewImages({
+        representative: representativeImg || null,
+        location: locationImg || null,
+        wearing: wearingImages, // ✅ 배열
+        nodeChart: nodeChartImg || null,
+      });
+
+      // ✅ 원본 이미지 URL 저장
+      setOriginalImageUrls({
+        representative: representativeImg || null,
+        location: locationImg || null,
+        wearing: wearingImages, // ✅ 배열
+        nodeChart: nodeChartImg || null,
+      });
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,13 +140,11 @@ export default function SoulCreatePage() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 파일 크기 체크 (10MB)
     if (file.size > 10 * 1024 * 1024) {
       alert("파일 크기는 10MB를 초과할 수 없습니다.");
       return;
     }
 
-    // 이미지 파일 체크
     if (!file.type.startsWith("image/")) {
       alert("이미지 파일만 업로드 가능합니다.");
       return;
@@ -107,13 +168,13 @@ export default function SoulCreatePage() {
       }
 
       const data = await response.json();
-      const imageUrl = data.data.url;
+      const newImageUrl = data.data.url;
 
       // ✅ 착용샷은 배열에 추가
       if (imageType === "wearing") {
         setFormData(prev => ({
           ...prev,
-          wearingImageUrls: [...prev.wearingImageUrls, imageUrl]
+          wearingImageUrls: [...prev.wearingImageUrls, newImageUrl]
         }));
 
         const reader = new FileReader();
@@ -125,10 +186,26 @@ export default function SoulCreatePage() {
         };
         reader.readAsDataURL(file);
       } else {
-        // 다른 이미지는 기존대로
+        // ✅ 기존 이미지 삭제 (원본이 아닌 경우에만)
+        const oldImageUrl = formData[`${imageType}ImageUrl`];
+        const isOriginal = originalImageUrls[imageType] === oldImageUrl;
+
+        if (oldImageUrl && !isOriginal) {
+          try {
+            await fetch(`${BASE_URL}/api/v1/images`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ url: oldImageUrl }),
+            });
+          } catch (deleteErr) {
+            console.error("기존 이미지 삭제 실패:", deleteErr);
+          }
+        }
+
+        // 새 이미지로 교체
         setFormData(prev => ({
           ...prev,
-          [`${imageType}ImageUrl`]: imageUrl
+          [`${imageType}ImageUrl`]: newImageUrl
         }));
 
         const reader = new FileReader();
@@ -156,6 +233,48 @@ export default function SoulCreatePage() {
 
       if (!confirm("이미지를 삭제하시겠습니까?")) return;
 
+      // ✅ 원본 이미지가 아닌 경우에만 서버에서 삭제
+      const isOriginal = originalImageUrls.wearing.includes(imageUrl);
+      
+      if (!isOriginal) {
+        try {
+          const response = await fetch(`${BASE_URL}/api/v1/images`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: imageUrl }),
+          });
+
+          if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
+        } catch (err) {
+          alert(`이미지 삭제 실패: ${err.message}`);
+          return;
+        }
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        wearingImageUrls: prev.wearingImageUrls.filter((_, i) => i !== index)
+      }));
+
+      setPreviewImages(prev => ({
+        ...prev,
+        wearing: prev.wearing.filter((_, i) => i !== index)
+      }));
+
+      alert("이미지가 삭제되었습니다.");
+      return;
+    }
+
+    // 단일 이미지 삭제
+    const imageUrl = formData[`${imageType}ImageUrl`];
+    if (!imageUrl) return;
+
+    if (!confirm("이미지를 삭제하시겠습니까?")) return;
+
+    // ✅ 원본 이미지가 아닌 경우에만 서버에서 삭제
+    const isOriginal = originalImageUrls[imageType] === imageUrl;
+    
+    if (!isOriginal) {
       try {
         const response = await fetch(`${BASE_URL}/api/v1/images`, {
           method: "DELETE",
@@ -164,53 +283,23 @@ export default function SoulCreatePage() {
         });
 
         if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
-
-        setFormData(prev => ({
-          ...prev,
-          wearingImageUrls: prev.wearingImageUrls.filter((_, i) => i !== index)
-        }));
-
-        setPreviewImages(prev => ({
-          ...prev,
-          wearing: prev.wearing.filter((_, i) => i !== index)
-        }));
-
-        alert("이미지가 삭제되었습니다.");
       } catch (err) {
         alert(`이미지 삭제 실패: ${err.message}`);
+        return;
       }
-      return;
     }
 
-    // 기존 코드 (단일 이미지)
-    const imageUrl = formData[`${imageType}ImageUrl`];
-    if (!imageUrl) return;
+    setFormData(prev => ({
+      ...prev,
+      [`${imageType}ImageUrl`]: ""
+    }));
 
-    if (!confirm("이미지를 삭제하시겠습니까?")) return;
+    setPreviewImages(prev => ({
+      ...prev,
+      [imageType]: null
+    }));
 
-    try {
-      const response = await fetch(`${BASE_URL}/api/v1/images`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: imageUrl }),
-      });
-
-      if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
-
-      setFormData(prev => ({
-        ...prev,
-        [`${imageType}ImageUrl`]: ""
-      }));
-
-      setPreviewImages(prev => ({
-        ...prev,
-        [imageType]: null
-      }));
-
-      alert("이미지가 삭제되었습니다.");
-    } catch (err) {
-      alert(`이미지 삭제 실패: ${err.message}`);
-    }
+    alert("이미지가 삭제되었습니다.");
   };
 
   const handleSubmit = async (e) => {
@@ -241,26 +330,25 @@ export default function SoulCreatePage() {
           formData.locationImageUrl && { imageType: "LOCATION", url: formData.locationImageUrl },
           ...formData.wearingImageUrls.map(url => ({ imageType: "WEARING", url })), // ✅ 배열 펼치기
           formData.nodeChartImageUrl && { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
-        ].filter(Boolean), // null/undefined 제거
+        ].filter(Boolean),
       };
 
-      const response = await fetch(`${BASE_URL}/api/v1/souls`, {
-        method: "POST",
+      const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || "영혼 생성에 실패했습니다.");
+        throw new Error(errorData.error?.message || "영혼 수정에 실패했습니다.");
       }
 
-      const result = await response.json();
-      alert("영혼이 성공적으로 생성되었습니다!");
-      router.push(`/sky/SeasonDictionary/souls/${result.data.id}`);
+      alert("영혼이 성공적으로 수정되었습니다!");
+      router.push(`/sky/SeasonDictionary/souls/${soulId}`);
     } catch (err) {
       setError(err.message);
-      alert(`생성 실패: ${err.message}`);
+      alert(`수정 실패: ${err.message}`);
     } finally {
       setSaving(false);
     }
@@ -271,7 +359,7 @@ export default function SoulCreatePage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>새 영혼 만들기</h1>
+        <h1 className={styles.title}>영혼 수정</h1>
         <button onClick={() => router.back()} className={styles.cancelButton}>
           취소
         </button>
@@ -358,7 +446,7 @@ export default function SoulCreatePage() {
                 disabled={uploading.representative}
               />
               <label htmlFor="representative-upload" className={styles.uploadButton}>
-                {uploading.representative ? "업로드 중..." : "이미지 선택"}
+                {uploading.representative ? "업로드 중..." : formData.representativeImageUrl ? "이미지 변경" : "이미지 선택"}
               </label>
               
               {(previewImages.representative || formData.representativeImageUrl) && (
@@ -394,7 +482,7 @@ export default function SoulCreatePage() {
                 disabled={uploading.location}
               />
               <label htmlFor="location-upload" className={styles.uploadButton}>
-                {uploading.location ? "업로드 중..." : "이미지 선택"}
+                {uploading.location ? "업로드 중..." : formData.locationImageUrl ? "이미지 변경" : "이미지 선택"}
               </label>
               
               {(previewImages.location || formData.locationImageUrl) && (
@@ -471,7 +559,7 @@ export default function SoulCreatePage() {
                 disabled={uploading.nodeChart}
               />
               <label htmlFor="nodeChart-upload" className={styles.uploadButton}>
-                {uploading.nodeChart ? "업로드 중..." : "이미지 선택"}
+                {uploading.nodeChart ? "업로드 중..." : formData.nodeChartImageUrl ? "이미지 변경" : "이미지 선택"}
               </label>
               
               {(previewImages.nodeChart || formData.nodeChartImageUrl) && (
@@ -542,7 +630,7 @@ export default function SoulCreatePage() {
             className={styles.submitButton}
             disabled={saving}
           >
-            {saving ? "생성 중..." : "영혼 만들기"}
+            {saving ? "저장 중..." : "수정 완료"}
           </button>
         </div>
       </form>

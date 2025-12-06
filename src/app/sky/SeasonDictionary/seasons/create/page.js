@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { seasonColors } from "../../../../constants/seasonColors";
 import styles from "./page.module.css";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export default function SeasonCreatePage() {
   const router = useRouter();

@@ -16,7 +16,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "";
 
 function TravelingEncyclopediaContent() {
   const router = useRouter();

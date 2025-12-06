@@ -13,36 +13,36 @@ export default function SoulCreatePage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-const [uploading, setUploading] = useState({
-  representative: false,
-  location: false,  // 추가!
-  wearing: false,
-  nodeChart: false,
-});
+  const [uploading, setUploading] = useState({
+    representative: false,
+    location: false,
+    wearing: false,
+    nodeChart: false,
+  });
 
-const [previewImages, setPreviewImages] = useState({
-  representative: null,
-  location: null,  // 추가!
-  wearing: null,
-  nodeChart: null,
-});
+  const [previewImages, setPreviewImages] = useState({
+    representative: null,
+    location: null,
+    wearing: null,
+    nodeChart: null,
+  });
+  
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
     seasonId: "",
-    location: "",
     orderNum: "",
     isSeasonGuide: false,
     keywords: "",
     description: "",
     creator: "",
     representativeImageUrl: "",
+    locationImageUrl: "",
     wearingImageUrl: "",
     nodeChartImageUrl: "",
   });
-
 
   useEffect(() => {
     fetchSeasons();
@@ -92,16 +92,20 @@ const [previewImages, setPreviewImages] = useState({
     setUploading(prev => ({ ...prev, [imageType]: true }));
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("imageType", imageType.toUpperCase());
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      formDataUpload.append("imageType", imageType.toUpperCase());
 
+      // ✅ 수정된 엔드포인트 (/upload)
       const response = await fetch(`${BASE_URL}/api/v1/images/upload`, {
         method: "POST",
-        body: formData,
+        body: formDataUpload,
       });
 
-      if (!response.ok) throw new Error("이미지 업로드에 실패했습니다.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "이미지 업로드에 실패했습니다.");
+      }
 
       const data = await response.json();
       const imageUrl = data.data.url;
@@ -166,17 +170,27 @@ const [previewImages, setPreviewImages] = useState({
     setError(null);
 
     try {
+      // ✅ 선택한 시즌의 정보 가져오기
+      const selectedSeason = seasons.find(s => s.id === parseInt(formData.seasonId));
+      if (!selectedSeason) {
+        throw new Error("선택한 시즌을 찾을 수 없습니다.");
+      }
+
       const payload = {
         name: formData.name,
         seasonId: parseInt(formData.seasonId),
-        location: formData.location,
+        seasonName: selectedSeason.name, // ✅ 시즌 이름
         orderNum: parseInt(formData.orderNum),
         isSeasonGuide: formData.isSeasonGuide,
         keywords: formData.keywords.split(",").map(k => k.trim()).filter(k => k),
         description: formData.description,
         creator: formData.creator,
+        startDate: selectedSeason.startDate, // ✅ 시즌 시작일
+        endDate: selectedSeason.endDate,     // ✅ 시즌 종료일
+        // ✅ 이미지 배열로 전송
         images: [
           { imageType: "REPRESENTATIVE", url: formData.representativeImageUrl },
+          { imageType: "LOCATION", url: formData.locationImageUrl },
           { imageType: "WEARING", url: formData.wearingImageUrl },
           { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
         ].filter(img => img.url),
@@ -188,7 +202,10 @@ const [previewImages, setPreviewImages] = useState({
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("영혼 생성에 실패했습니다.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "영혼 생성에 실패했습니다.");
+      }
 
       const result = await response.json();
       alert("영혼이 성공적으로 생성되었습니다!");
@@ -247,18 +264,6 @@ const [previewImages, setPreviewImages] = useState({
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>위치</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="예: 초원 - 나비 평원"
-            />
           </div>
 
           <div className={styles.formGroup}>
@@ -327,41 +332,43 @@ const [previewImages, setPreviewImages] = useState({
             </div>
             <p className={styles.hint}>영혼의 메인 이미지를 업로드하세요. (최대 10MB)</p>
           </div>
-{/* 위치 이미지 */}
-<div className={styles.formGroup}>
-  <label className={styles.label}>위치 이미지</label>
-  <div className={styles.imageUploadContainer}>
-    <input
-      type="file"
-      accept="image/*"
-      onChange={(e) => handleImageUpload(e, "location")}
-      className={styles.fileInput}
-      id="location-upload"
-      disabled={uploading.location}
-    />
-    <label htmlFor="location-upload" className={styles.uploadButton}>
-      {uploading.location ? "업로드 중..." : "이미지 선택"}
-    </label>
-    
-    {previewImages.location && (
-      <div className={styles.imagePreviewContainer}>
-        <img 
-          src={previewImages.location}
-          alt="위치 이미지 미리보기"
-          className={styles.imagePreview}
-        />
-        <button
-          type="button"
-          onClick={() => handleImageDelete("location")}
-          className={styles.deleteImageButton}
-        >
-          삭제
-        </button>
-      </div>
-    )}
-  </div>
-  <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
-</div>
+
+          {/* 위치 이미지 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>위치 이미지</label>
+            <div className={styles.imageUploadContainer}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, "location")}
+                className={styles.fileInput}
+                id="location-upload"
+                disabled={uploading.location}
+              />
+              <label htmlFor="location-upload" className={styles.uploadButton}>
+                {uploading.location ? "업로드 중..." : "이미지 선택"}
+              </label>
+              
+              {previewImages.location && (
+                <div className={styles.imagePreviewContainer}>
+                  <img 
+                    src={previewImages.location}
+                    alt="위치 이미지 미리보기"
+                    className={styles.imagePreview}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleImageDelete("location")}
+                    className={styles.deleteImageButton}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+            <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
+          </div>
+
           {/* 착용샷 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>착용샷</label>

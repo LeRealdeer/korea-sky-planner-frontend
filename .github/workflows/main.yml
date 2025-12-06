@@ -47,7 +47,11 @@ jobs:
           # 프로젝트 업데이트
           echo "=== Pulling latest code ==="
           cd ~/korea-sky-planner-frontend
-          git pull origin main
+          
+          # ✅ 로컬 변경사항 강제 초기화 (덮어쓰기)
+          git fetch origin
+          git reset --hard origin/main
+          git clean -fd
           
           # .env.local 파일 생성
           echo "=== Creating .env.local ==="

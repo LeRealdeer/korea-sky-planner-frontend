@@ -59,13 +59,13 @@ jobs:
           NEXT_PUBLIC_API_URL=http://${{ secrets.SERVER_IP }}:8000
           ENVEOF
           
-          # 의존성 설치 (메모리 제한)
+          # 의존성 설치 (메모리 제한 증가: 1.5GB)
           echo "=== Installing Dependencies ==="
-          NODE_OPTIONS="--max-old-space-size=512" npm ci --prefer-offline --no-audit --no-fund
+          NODE_OPTIONS="--max-old-space-size=1536" npm ci --prefer-offline --no-audit --no-fund
           
-          # 빌드
+          # 빌드 (메모리 제한 증가: 1.5GB)
           echo "=== Building Next.js ==="
-          npm run build
+          NODE_OPTIONS="--max-old-space-size=1536" npm run build
           
           # PM2로 서버 시작 (screen 대신)
           echo "=== Starting Next.js Server with PM2 ==="

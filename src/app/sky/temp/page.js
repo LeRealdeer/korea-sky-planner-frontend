@@ -13,7 +13,7 @@ export default function NoticePage() {
 
   return (
     <div className={styles.card}>
-      <h1 className={styles.title}>양초계산기</h1>
+      <h1 className={styles.title}>유랑대백과</h1>
       
       <div className={styles.imageContainer}>
         <Image 
@@ -26,10 +26,10 @@ export default function NoticePage() {
       </div>
       
       <p className={styles.description}>
-        양초 계산기는 비시즌에 쉬어갑니다.
+        유랑대백과와 오래된 유랑은 현재 수정중에 있습니다.
         <br />
         <br />
-        다음 시즌에 다시 만나요! (목요일 오픈 예정!)
+        금방 만나요!
       </p>
       <button className={styles.optionButton} onClick={handleBack}>
         뒤로가기

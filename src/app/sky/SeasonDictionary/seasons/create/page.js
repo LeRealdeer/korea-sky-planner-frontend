@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { seasonColors } from "../../../../constants/seasonColors";
 import styles from "./page.module.css";
 
-const BASE_URL = "korea-sky-planner-backend-production.up.railway.app";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;;
 
 export default function SeasonCreatePage() {
   const router = useRouter();

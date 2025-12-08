@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import LoadingSpinner from "../../../../../components/LoadingSpinner";
 import styles from "./page.module.css";
 
-const BASE_URL = "korea-sky-planner-backend-production.up.railway.app";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;;
 
 export default function SeasonEditPage() {
   const params = useParams();

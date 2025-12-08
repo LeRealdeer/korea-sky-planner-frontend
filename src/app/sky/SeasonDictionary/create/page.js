@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LoadingSpinner from "../../../components/LoadingSpinner";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://korea-sky-planner-backend-production.up.railway.app';

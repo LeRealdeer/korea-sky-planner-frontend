@@ -25,9 +25,14 @@
   margin: 0;
 }
 
-.cancelButton {
+.headerButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cancelButton,
+.deleteButton {
   padding: 0.75rem 1.5rem;
-  background: #6b7280;
   color: white;
   border: none;
   border-radius: 8px;
@@ -36,8 +41,20 @@
   transition: all 0.2s;
 }
 
+.cancelButton {
+  background: #6b7280;
+}
+
 .cancelButton:hover {
   background: #4b5563;
+}
+
+.deleteButton {
+  background: #ef4444;
+}
+
+.deleteButton:hover {
+  background: #dc2626;
 }
 
 .error {
@@ -95,8 +112,7 @@
 }
 
 .input,
-.select,
-.textarea {
+.select {
   width: 100%;
   padding: 1rem 1.25rem;
   border: 2px solid #e5e7eb;
@@ -108,48 +124,11 @@
 }
 
 .input:focus,
-.select:focus,
-.textarea:focus {
+.select:focus {
   outline: none;
   border-color: #667eea;
 }
 
-.textarea {
-  resize: vertical;
-  line-height: 1.6;
-}
-
-.hint {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 700;
-  color: #374151;
-  cursor: pointer;
-  padding: 0.75rem;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.checkboxLabel:hover {
-  background: #f9fafb;
-}
-
-.checkbox {
-  width: 1.5rem;
-  height: 1.5rem;
-  cursor: pointer;
-  accent-color: #667eea;
-}
-
-/* 이미지 업로드 */
 .imageUploadContainer {
   display: flex;
   flex-direction: column;
@@ -212,93 +191,6 @@
   background: #dc2626;
 }
 
-/* 여러 이미지 컨테이너 */
-.multipleImagesContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.multipleImagesContainer .imagePreviewContainer {
-  max-width: 150px;
-}
-
-.multipleImagesContainer .imagePreview {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-}
-
-/* 유랑 기록 섹션 */
-.addVisitButton {
-  padding: 1rem 2rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 1.5rem;
-}
-
-.addVisitButton:hover {
-  background: #5568d3;
-  transform: translateY(-2px);
-}
-
-.visitsList {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.visitItem {
-  padding: 1.5rem;
-  background: #f9fafb;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-}
-
-.visitHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.visitNumber {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #667eea;
-}
-
-.removeVisitButton {
-  padding: 0.5rem 1rem;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.removeVisitButton:hover {
-  background: #dc2626;
-}
-
-.visitGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1rem;
-  align-items: end;
-}
-
-/* 액션 버튼 */
 .formActions {
   background: white;
   padding: 2.5rem;
@@ -331,7 +223,6 @@
   cursor: not-allowed;
 }
 
-/* 반응형 */
 @media screen and (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -349,7 +240,12 @@
     text-align: center;
   }
   
-  .cancelButton {
+  .headerButtons {
+    flex-direction: column;
+  }
+  
+  .cancelButton,
+  .deleteButton {
     width: 100%;
   }
   
@@ -372,9 +268,5 @@
   
   .imagePreviewContainer {
     max-width: 100%;
-  }
-
-  .visitGrid {
-    grid-template-columns: 1fr;
   }
 }

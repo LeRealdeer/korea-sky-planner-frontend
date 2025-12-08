@@ -6,7 +6,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { seasonColors } from "../../../constants/seasonColors";
 import styles from "./page.module.css";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://korea-sky-planner-backend-production.up.railway.app';
 
 export default function SoulCreatePage() {
   const router = useRouter();
@@ -23,12 +23,13 @@ export default function SoulCreatePage() {
   const [previewImages, setPreviewImages] = useState({
     representative: null,
     location: null,
-    wearing: [], // ✅ 배열로 변경
+    wearing: [],
     nodeChart: null,
   });
   
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
+  const [travelingVisits, setTravelingVisits] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -40,7 +41,7 @@ export default function SoulCreatePage() {
     creator: "",
     representativeImageUrl: "",
     locationImageUrl: "",
-    wearingImageUrls: [], // ✅ 배열로 변경
+    wearingImageUrls: [],
     nodeChartImageUrl: "",
   });
 
@@ -51,7 +52,6 @@ export default function SoulCreatePage() {
   const fetchSeasons = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const response = await fetch(`${BASE_URL}/api/v1/seasons`);
       if (response.ok) {
@@ -73,17 +73,39 @@ export default function SoulCreatePage() {
     }));
   };
 
+  const addTravelingVisit = () => {
+    setTravelingVisits([...travelingVisits, {
+      visitNumber: travelingVisits.length + 1,
+      startDate: '',
+      endDate: '',
+      isWarbandVisit: false
+    }]);
+  };
+
+  const removeTravelingVisit = (index) => {
+    const updated = travelingVisits.filter((_, i) => i !== index);
+    const reordered = updated.map((visit, idx) => ({
+      ...visit,
+      visitNumber: idx + 1
+    }));
+    setTravelingVisits(reordered);
+  };
+
+  const handleVisitChange = (index, field, value) => {
+    const updated = [...travelingVisits];
+    updated[index] = { ...updated[index], [field]: value };
+    setTravelingVisits(updated);
+  };
+
   const handleImageUpload = async (e, imageType) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 파일 크기 체크 (10MB)
     if (file.size > 10 * 1024 * 1024) {
       alert("파일 크기는 10MB를 초과할 수 없습니다.");
       return;
     }
 
-    // 이미지 파일 체크
     if (!file.type.startsWith("image/")) {
       alert("이미지 파일만 업로드 가능합니다.");
       return;
@@ -109,37 +131,27 @@ export default function SoulCreatePage() {
       const data = await response.json();
       const imageUrl = data.data.url;
 
-      // ✅ 착용샷은 배열에 추가
       if (imageType === "wearing") {
         setFormData(prev => ({
           ...prev,
           wearingImageUrls: [...prev.wearingImageUrls, imageUrl]
         }));
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImages(prev => ({
-            ...prev,
-            wearing: [...prev.wearing, reader.result]
-          }));
-        };
-        reader.readAsDataURL(file);
+        setPreviewImages(prev => ({
+          ...prev,
+          wearing: [...prev.wearing, imageUrl]
+        }));
       } else {
-        // 다른 이미지는 기존대로
         setFormData(prev => ({
           ...prev,
           [`${imageType}ImageUrl`]: imageUrl
         }));
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImages(prev => ({
-            ...prev,
-            [imageType]: reader.result
-          }));
-        };
-        reader.readAsDataURL(file);
+        setPreviewImages(prev => ({
+          ...prev,
+          [imageType]: imageUrl
+        }));
       }
+
+      alert('이미지가 업로드되었습니다!');
 
     } catch (err) {
       alert(`이미지 업로드 실패: ${err.message}`);
@@ -149,7 +161,6 @@ export default function SoulCreatePage() {
   };
 
   const handleImageDelete = async (imageType, index = null) => {
-    // ✅ 착용샷은 인덱스로 삭제
     if (imageType === "wearing" && index !== null) {
       const imageUrl = formData.wearingImageUrls[index];
       if (!imageUrl) return;
@@ -182,7 +193,6 @@ export default function SoulCreatePage() {
       return;
     }
 
-    // 기존 코드 (단일 이미지)
     const imageUrl = formData[`${imageType}ImageUrl`];
     if (!imageUrl) return;
 
@@ -235,13 +245,12 @@ export default function SoulCreatePage() {
         creator: formData.creator,
         startDate: selectedSeason.startDate,
         endDate: selectedSeason.endDate,
-        // ✅ 착용샷 여러 개 포함
         images: [
           formData.representativeImageUrl && { imageType: "REPRESENTATIVE", url: formData.representativeImageUrl },
           formData.locationImageUrl && { imageType: "LOCATION", url: formData.locationImageUrl },
-          ...formData.wearingImageUrls.map(url => ({ imageType: "WEARING", url })), // ✅ 배열 펼치기
+          ...formData.wearingImageUrls.map(url => ({ imageType: "WEARING", url })),
           formData.nodeChartImageUrl && { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
-        ].filter(Boolean), // null/undefined 제거
+        ].filter(Boolean),
       };
 
       const response = await fetch(`${BASE_URL}/api/v1/souls`, {
@@ -256,8 +265,33 @@ export default function SoulCreatePage() {
       }
 
       const result = await response.json();
+      const createdSoulId = result.data.id;
+
+      // 유랑 기록 저장
+      if (travelingVisits.length > 0) {
+        for (const visit of travelingVisits) {
+          try {
+            const visitPayload = {
+              soulId: createdSoulId,
+              visitNumber: visit.visitNumber,
+              startDate: visit.startDate,
+              endDate: visit.endDate,
+              isWarbandVisit: visit.isWarbandVisit || false
+            };
+
+            await fetch(`${BASE_URL}/api/v1/visits`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(visitPayload),
+            });
+          } catch (visitErr) {
+            console.error('유랑 기록 저장 실패:', visitErr);
+          }
+        }
+      }
+
       alert("영혼이 성공적으로 생성되었습니다!");
-      router.push(`/sky/SeasonDictionary/souls/${result.data.id}`);
+      router.push(`/sky/SeasonDictionary/souls/${createdSoulId}`);
     } catch (err) {
       setError(err.message);
       alert(`생성 실패: ${err.message}`);
@@ -280,6 +314,7 @@ export default function SoulCreatePage() {
       {error && <div className={styles.error}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        {/* 기본 정보 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>기본 정보</h2>
           
@@ -342,6 +377,7 @@ export default function SoulCreatePage() {
           </div>
         </div>
 
+        {/* 이미지 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>이미지</h2>
           
@@ -378,7 +414,6 @@ export default function SoulCreatePage() {
                 </div>
               )}
             </div>
-            <p className={styles.hint}>영혼의 메인 이미지를 업로드하세요. (최대 10MB)</p>
           </div>
 
           {/* 위치 이미지 */}
@@ -414,10 +449,9 @@ export default function SoulCreatePage() {
                 </div>
               )}
             </div>
-            <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
           </div>
 
-          {/* 착용샷 - 여러 개 */}
+          {/* 착용샷 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>착용샷 (여러 개 가능)</label>
             <div className={styles.imageUploadContainer}>
@@ -433,7 +467,6 @@ export default function SoulCreatePage() {
                 {uploading.wearing ? "업로드 중..." : "이미지 추가"}
               </label>
               
-              {/* ✅ 여러 이미지 미리보기 */}
               {previewImages.wearing.length > 0 && (
                 <div className={styles.multipleImagesContainer}>
                   {previewImages.wearing.map((img, index) => (
@@ -455,7 +488,6 @@ export default function SoulCreatePage() {
                 </div>
               )}
             </div>
-            <p className={styles.hint}>아이템을 착용한 모습의 이미지를 여러 장 업로드하세요.</p>
           </div>
 
           {/* 노드표 */}
@@ -491,10 +523,10 @@ export default function SoulCreatePage() {
                 </div>
               )}
             </div>
-            <p className={styles.hint}>영혼의 노드 트리 이미지를 업로드하세요.</p>
           </div>
         </div>
 
+        {/* 추가 정보 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>추가 정보</h2>
           
@@ -508,7 +540,6 @@ export default function SoulCreatePage() {
               className={styles.input}
               placeholder="예: 빨간 망토, 케이프, 키가 큼"
             />
-            <p className={styles.hint}>검색에 도움이 되는 키워드를 쉼표로 구분하여 입력하세요.</p>
           </div>
 
           <div className={styles.formGroup}>
@@ -534,6 +565,74 @@ export default function SoulCreatePage() {
               placeholder="제작자 이름"
             />
           </div>
+        </div>
+
+        {/* 유랑 기록 */}
+        <div className={styles.formSection}>
+          <h2 className={styles.sectionTitle}>유랑 기록</h2>
+          
+          <button
+            type="button"
+            onClick={addTravelingVisit}
+            className={styles.addVisitButton}
+          >
+            + 유랑 기록 추가
+          </button>
+
+          {travelingVisits.length > 0 && (
+            <div className={styles.visitsList}>
+              {travelingVisits.map((visit, index) => (
+                <div key={index} className={styles.visitItem}>
+                  <div className={styles.visitHeader}>
+                    <span className={styles.visitNumber}>{visit.visitNumber}차 유랑</span>
+                    <button
+                      type="button"
+                      onClick={() => removeTravelingVisit(index)}
+                      className={styles.removeVisitButton}
+                    >
+                      삭제
+                    </button>
+                  </div>
+
+                  <div className={styles.visitGrid}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>시작일 *</label>
+                      <input
+                        type="date"
+                        value={visit.startDate}
+                        onChange={(e) => handleVisitChange(index, 'startDate', e.target.value)}
+                        className={styles.input}
+                        required={travelingVisits.length > 0}
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>종료일 *</label>
+                      <input
+                        type="date"
+                        value={visit.endDate}
+                        onChange={(e) => handleVisitChange(index, 'endDate', e.target.value)}
+                        className={styles.input}
+                        required={travelingVisits.length > 0}
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={visit.isWarbandVisit}
+                          onChange={(e) => handleVisitChange(index, 'isWarbandVisit', e.target.checked)}
+                          className={styles.checkbox}
+                        />
+                        유랑단 방문
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className={styles.formActions}>

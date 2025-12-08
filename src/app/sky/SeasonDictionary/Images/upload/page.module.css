@@ -1,0 +1,206 @@
+/* src/app/sky/Images/upload/page.module.css */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  min-height: 100vh;
+  background: #fafbfc;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background: #4b5563;
+}
+
+.error {
+  padding: 1.25rem;
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  border-radius: 12px;
+  color: #dc2626;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formSection {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 2rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #667eea;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  display: block;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.select {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: white;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileLabel {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #667eea;
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fileLabel:hover {
+  background: #5568d3;
+}
+
+.hint {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.previewContainer {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formActions {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.submitButton {
+  padding: 1.25rem 4rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 250px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.submitButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+  
+  .cancelButton {
+    width: 100%;
+  }
+  
+  .submitButton {
+    width: 100%;
+    min-width: auto;
+  }
+}

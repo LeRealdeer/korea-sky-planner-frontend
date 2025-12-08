@@ -1,11 +1,13 @@
+// src/app/sky/SeasonDictionary/souls/[soulId]/edit/page.js
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import LoadingSpinner from "../../../../../components/LoadingSpinner";
 import styles from "./page.module.css";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://korea-sky-planner-backend-production.up.railway.app';
 
 export default function SoulEditPage() {
   const router = useRouter();
@@ -20,25 +22,10 @@ export default function SoulEditPage() {
     wearing: false,
     nodeChart: false,
   });
-
-  const [previewImages, setPreviewImages] = useState({
-    representative: null,
-    location: null,
-    wearing: [], // ✅ 배열로 변경
-    nodeChart: null,
-  });
-
-  // ✅ 원본 이미지 URL 추적 (삭제 방지용)
-  const [originalImageUrls, setOriginalImageUrls] = useState({
-    representative: null,
-    location: null,
-    wearing: [], // ✅ 배열로 변경
-    nodeChart: null,
-  });
-  
   const [error, setError] = useState(null);
   const [seasons, setSeasons] = useState([]);
   const [soul, setSoul] = useState(null);
+  const [existingImages, setExistingImages] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,10 +35,6 @@ export default function SoulEditPage() {
     keywords: "",
     description: "",
     creator: "",
-    representativeImageUrl: "",
-    locationImageUrl: "",
-    wearingImageUrls: [], // ✅ 배열로 변경
-    nodeChartImageUrl: "",
   });
 
   useEffect(() => {
@@ -82,15 +65,7 @@ export default function SoulEditPage() {
       const data = await response.json();
       const soulData = data.data;
       setSoul(soulData);
-
-      // ✅ 착용샷 여러 개 처리
-      const wearingImages = soulData.images
-        ?.filter(img => img.imageType === "WEARING")
-        .map(img => img.url) || [];
-
-      const representativeImg = soulData.images?.find(img => img.imageType === "REPRESENTATIVE")?.url || "";
-      const locationImg = soulData.images?.find(img => img.imageType === "LOCATION")?.url || "";
-      const nodeChartImg = soulData.images?.find(img => img.imageType === "NODE_CHART")?.url || "";
+      setExistingImages(soulData.images || []);
 
       setFormData({
         name: soulData.name || "",
@@ -100,27 +75,7 @@ export default function SoulEditPage() {
         keywords: soulData.keywords?.join(", ") || "",
         description: soulData.description || "",
         creator: soulData.creator || "",
-        representativeImageUrl: representativeImg,
-        locationImageUrl: locationImg,
-        wearingImageUrls: wearingImages, // ✅ 배열
-        nodeChartImageUrl: nodeChartImg,
       });
-
-      setPreviewImages({
-        representative: representativeImg || null,
-        location: locationImg || null,
-        wearing: wearingImages, // ✅ 배열
-        nodeChart: nodeChartImg || null,
-      });
-
-      // ✅ 원본 이미지 URL 저장
-      setOriginalImageUrls({
-        representative: representativeImg || null,
-        location: locationImg || null,
-        wearing: wearingImages, // ✅ 배열
-        nodeChart: nodeChartImg || null,
-      });
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -136,6 +91,7 @@ export default function SoulEditPage() {
     }));
   };
 
+  // ✅ 이미지 업로드 처리
   const handleImageUpload = async (e, imageType) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -156,8 +112,9 @@ export default function SoulEditPage() {
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
       formDataUpload.append("imageType", imageType.toUpperCase());
+      formDataUpload.append("soulId", soulId);
 
-      const response = await fetch(`${BASE_URL}/api/v1/images/upload`, {
+      const response = await fetch(`${BASE_URL}/api/v1/images`, {
         method: "POST",
         body: formDataUpload,
       });
@@ -168,56 +125,12 @@ export default function SoulEditPage() {
       }
 
       const data = await response.json();
-      const newImageUrl = data.data.url;
+      const uploadedImage = data.data;
 
-      // ✅ 착용샷은 배열에 추가
-      if (imageType === "wearing") {
-        setFormData(prev => ({
-          ...prev,
-          wearingImageUrls: [...prev.wearingImageUrls, newImageUrl]
-        }));
+      // 기존 이미지 목록에 추가
+      setExistingImages(prev => [...prev, uploadedImage]);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImages(prev => ({
-            ...prev,
-            wearing: [...prev.wearing, reader.result]
-          }));
-        };
-        reader.readAsDataURL(file);
-      } else {
-        // ✅ 기존 이미지 삭제 (원본이 아닌 경우에만)
-        const oldImageUrl = formData[`${imageType}ImageUrl`];
-        const isOriginal = originalImageUrls[imageType] === oldImageUrl;
-
-        if (oldImageUrl && !isOriginal) {
-          try {
-            await fetch(`${BASE_URL}/api/v1/images`, {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ url: oldImageUrl }),
-            });
-          } catch (deleteErr) {
-            console.error("기존 이미지 삭제 실패:", deleteErr);
-          }
-        }
-
-        // 새 이미지로 교체
-        setFormData(prev => ({
-          ...prev,
-          [`${imageType}ImageUrl`]: newImageUrl
-        }));
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImages(prev => ({
-            ...prev,
-            [imageType]: reader.result
-          }));
-        };
-        reader.readAsDataURL(file);
-      }
-
+      alert(`${getImageTypeLabel(imageType)} 이미지가 업로드되었습니다!`);
     } catch (err) {
       alert(`이미지 업로드 실패: ${err.message}`);
     } finally {
@@ -225,81 +138,22 @@ export default function SoulEditPage() {
     }
   };
 
-  const handleImageDelete = async (imageType, index = null) => {
-    // ✅ 착용샷은 인덱스로 삭제
-    if (imageType === "wearing" && index !== null) {
-      const imageUrl = formData.wearingImageUrls[index];
-      if (!imageUrl) return;
-
-      if (!confirm("이미지를 삭제하시겠습니까?")) return;
-
-      // ✅ 원본 이미지가 아닌 경우에만 서버에서 삭제
-      const isOriginal = originalImageUrls.wearing.includes(imageUrl);
-      
-      if (!isOriginal) {
-        try {
-          const response = await fetch(`${BASE_URL}/api/v1/images`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url: imageUrl }),
-          });
-
-          if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
-        } catch (err) {
-          alert(`이미지 삭제 실패: ${err.message}`);
-          return;
-        }
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        wearingImageUrls: prev.wearingImageUrls.filter((_, i) => i !== index)
-      }));
-
-      setPreviewImages(prev => ({
-        ...prev,
-        wearing: prev.wearing.filter((_, i) => i !== index)
-      }));
-
-      alert("이미지가 삭제되었습니다.");
-      return;
-    }
-
-    // 단일 이미지 삭제
-    const imageUrl = formData[`${imageType}ImageUrl`];
-    if (!imageUrl) return;
-
+  // ✅ 이미지 삭제 처리
+  const handleImageDelete = async (imageId) => {
     if (!confirm("이미지를 삭제하시겠습니까?")) return;
 
-    // ✅ 원본 이미지가 아닌 경우에만 서버에서 삭제
-    const isOriginal = originalImageUrls[imageType] === imageUrl;
-    
-    if (!isOriginal) {
-      try {
-        const response = await fetch(`${BASE_URL}/api/v1/images`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: imageUrl }),
-        });
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/images/${imageId}`, {
+        method: "DELETE",
+      });
 
-        if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
-      } catch (err) {
-        alert(`이미지 삭제 실패: ${err.message}`);
-        return;
-      }
+      if (!response.ok) throw new Error("이미지 삭제에 실패했습니다.");
+
+      setExistingImages(prev => prev.filter(img => img.id !== imageId));
+      alert("이미지가 삭제되었습니다.");
+    } catch (err) {
+      alert(`이미지 삭제 실패: ${err.message}`);
     }
-
-    setFormData(prev => ({
-      ...prev,
-      [`${imageType}ImageUrl`]: ""
-    }));
-
-    setPreviewImages(prev => ({
-      ...prev,
-      [imageType]: null
-    }));
-
-    alert("이미지가 삭제되었습니다.");
   };
 
   const handleSubmit = async (e) => {
@@ -324,13 +178,6 @@ export default function SoulEditPage() {
         creator: formData.creator,
         startDate: selectedSeason.startDate,
         endDate: selectedSeason.endDate,
-        // ✅ 착용샷 여러 개 포함
-        images: [
-          formData.representativeImageUrl && { imageType: "REPRESENTATIVE", url: formData.representativeImageUrl },
-          formData.locationImageUrl && { imageType: "LOCATION", url: formData.locationImageUrl },
-          ...formData.wearingImageUrls.map(url => ({ imageType: "WEARING", url })), // ✅ 배열 펼치기
-          formData.nodeChartImageUrl && { imageType: "NODE_CHART", url: formData.nodeChartImageUrl },
-        ].filter(Boolean),
       };
 
       const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
@@ -354,20 +201,61 @@ export default function SoulEditPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm("정말로 이 영혼을 삭제하시겠습니까?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("영혼 삭제에 실패했습니다.");
+
+      alert("영혼이 삭제되었습니다.");
+      router.push("/sky/SeasonDictionary");
+    } catch (err) {
+      alert(`삭제 실패: ${err.message}`);
+    }
+  };
+
+  const getImageTypeLabel = (type) => {
+    const types = {
+      representative: "대표 이미지",
+      location: "위치 이미지",
+      wearing: "착용샷",
+      nodeChart: "노드표",
+      REPRESENTATIVE: "대표 이미지",
+      LOCATION: "위치 이미지",
+      WEARING: "착용샷",
+      NODE_CHART: "노드표",
+    };
+    return types[type] || type;
+  };
+
+  const getImagesByType = (type) => {
+    return existingImages.filter(img => img.imageType === type.toUpperCase());
+  };
+
   if (loading) return <LoadingSpinner />;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>영혼 수정</h1>
-        <button onClick={() => router.back()} className={styles.cancelButton}>
-          취소
-        </button>
+        <div className={styles.headerButtons}>
+          <button onClick={() => router.back()} className={styles.cancelButton}>
+            취소
+          </button>
+          <button onClick={handleDelete} className={styles.deleteButton}>
+            삭제
+          </button>
+        </div>
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        {/* 기본 정보 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>기본 정보</h2>
           
@@ -430,6 +318,7 @@ export default function SoulEditPage() {
           </div>
         </div>
 
+        {/* 이미지 관리 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>이미지</h2>
           
@@ -437,152 +326,154 @@ export default function SoulEditPage() {
           <div className={styles.formGroup}>
             <label className={styles.label}>대표 이미지</label>
             <div className={styles.imageUploadContainer}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, "representative")}
-                className={styles.fileInput}
-                id="representative-upload"
-                disabled={uploading.representative}
-              />
-              <label htmlFor="representative-upload" className={styles.uploadButton}>
-                {uploading.representative ? "업로드 중..." : formData.representativeImageUrl ? "이미지 변경" : "이미지 선택"}
-              </label>
-              
-              {(previewImages.representative || formData.representativeImageUrl) && (
-                <div className={styles.imagePreviewContainer}>
+              {getImagesByType("REPRESENTATIVE").map(img => (
+                <div key={img.id} className={styles.imagePreviewContainer}>
                   <img 
-                    src={previewImages.representative || formData.representativeImageUrl}
-                    alt="대표 이미지 미리보기"
+                    src={img.url}
+                    alt="대표 이미지"
                     className={styles.imagePreview}
                   />
                   <button
                     type="button"
-                    onClick={() => handleImageDelete("representative")}
+                    onClick={() => handleImageDelete(img.id)}
                     className={styles.deleteImageButton}
                   >
                     삭제
                   </button>
                 </div>
-              )}
+              ))}
+              
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "representative")}
+                  className={styles.fileInput}
+                  id="representative-upload"
+                  disabled={uploading.representative}
+                />
+                <label htmlFor="representative-upload" className={styles.uploadButton}>
+                  {uploading.representative ? "업로드 중..." : "이미지 추가"}
+                </label>
+              </div>
             </div>
-            <p className={styles.hint}>영혼의 메인 이미지를 업로드하세요. (최대 10MB)</p>
           </div>
 
           {/* 위치 이미지 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>위치 이미지</label>
             <div className={styles.imageUploadContainer}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, "location")}
-                className={styles.fileInput}
-                id="location-upload"
-                disabled={uploading.location}
-              />
-              <label htmlFor="location-upload" className={styles.uploadButton}>
-                {uploading.location ? "업로드 중..." : formData.locationImageUrl ? "이미지 변경" : "이미지 선택"}
-              </label>
-              
-              {(previewImages.location || formData.locationImageUrl) && (
-                <div className={styles.imagePreviewContainer}>
+              {getImagesByType("LOCATION").map(img => (
+                <div key={img.id} className={styles.imagePreviewContainer}>
                   <img 
-                    src={previewImages.location || formData.locationImageUrl}
-                    alt="위치 이미지 미리보기"
+                    src={img.url}
+                    alt="위치 이미지"
                     className={styles.imagePreview}
                   />
                   <button
                     type="button"
-                    onClick={() => handleImageDelete("location")}
+                    onClick={() => handleImageDelete(img.id)}
                     className={styles.deleteImageButton}
                   >
                     삭제
                   </button>
                 </div>
-              )}
+              ))}
+              
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "location")}
+                  className={styles.fileInput}
+                  id="location-upload"
+                  disabled={uploading.location}
+                />
+                <label htmlFor="location-upload" className={styles.uploadButton}>
+                  {uploading.location ? "업로드 중..." : "이미지 추가"}
+                </label>
+              </div>
             </div>
-            <p className={styles.hint}>영혼의 위치를 보여주는 이미지를 업로드하세요.</p>
           </div>
 
-          {/* 착용샷 - 여러 개 */}
+          {/* 착용샷 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>착용샷 (여러 개 가능)</label>
             <div className={styles.imageUploadContainer}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, "wearing")}
-                className={styles.fileInput}
-                id="wearing-upload"
-                disabled={uploading.wearing}
-              />
-              <label htmlFor="wearing-upload" className={styles.uploadButton}>
-                {uploading.wearing ? "업로드 중..." : "이미지 추가"}
-              </label>
+              <div className={styles.multipleImagesContainer}>
+                {getImagesByType("WEARING").map(img => (
+                  <div key={img.id} className={styles.imagePreviewContainer}>
+                    <img 
+                      src={img.url}
+                      alt="착용샷"
+                      className={styles.imagePreview}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleImageDelete(img.id)}
+                      className={styles.deleteImageButton}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ))}
+              </div>
               
-              {/* ✅ 여러 이미지 미리보기 */}
-              {previewImages.wearing.length > 0 && (
-                <div className={styles.multipleImagesContainer}>
-                  {previewImages.wearing.map((img, index) => (
-                    <div key={index} className={styles.imagePreviewContainer}>
-                      <img 
-                        src={img}
-                        alt={`착용샷 ${index + 1}`}
-                        className={styles.imagePreview}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleImageDelete("wearing", index)}
-                        className={styles.deleteImageButton}
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "wearing")}
+                  className={styles.fileInput}
+                  id="wearing-upload"
+                  disabled={uploading.wearing}
+                />
+                <label htmlFor="wearing-upload" className={styles.uploadButton}>
+                  {uploading.wearing ? "업로드 중..." : "이미지 추가"}
+                </label>
+              </div>
             </div>
-            <p className={styles.hint}>아이템을 착용한 모습의 이미지를 여러 장 업로드하세요.</p>
           </div>
 
           {/* 노드표 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>노드표</label>
             <div className={styles.imageUploadContainer}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, "nodeChart")}
-                className={styles.fileInput}
-                id="nodeChart-upload"
-                disabled={uploading.nodeChart}
-              />
-              <label htmlFor="nodeChart-upload" className={styles.uploadButton}>
-                {uploading.nodeChart ? "업로드 중..." : formData.nodeChartImageUrl ? "이미지 변경" : "이미지 선택"}
-              </label>
-              
-              {(previewImages.nodeChart || formData.nodeChartImageUrl) && (
-                <div className={styles.imagePreviewContainer}>
+              {getImagesByType("NODE_CHART").map(img => (
+                <div key={img.id} className={styles.imagePreviewContainer}>
                   <img 
-                    src={previewImages.nodeChart || formData.nodeChartImageUrl}
-                    alt="노드표 미리보기"
+                    src={img.url}
+                    alt="노드표"
                     className={styles.imagePreview}
                   />
                   <button
                     type="button"
-                    onClick={() => handleImageDelete("nodeChart")}
+                    onClick={() => handleImageDelete(img.id)}
                     className={styles.deleteImageButton}
                   >
                     삭제
                   </button>
                 </div>
-              )}
+              ))}
+              
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "nodeChart")}
+                  className={styles.fileInput}
+                  id="nodeChart-upload"
+                  disabled={uploading.nodeChart}
+                />
+                <label htmlFor="nodeChart-upload" className={styles.uploadButton}>
+                  {uploading.nodeChart ? "업로드 중..." : "이미지 추가"}
+                </label>
+              </div>
             </div>
-            <p className={styles.hint}>영혼의 노드 트리 이미지를 업로드하세요.</p>
           </div>
         </div>
 
+        {/* 추가 정보 */}
         <div className={styles.formSection}>
           <h2 className={styles.sectionTitle}>추가 정보</h2>
           

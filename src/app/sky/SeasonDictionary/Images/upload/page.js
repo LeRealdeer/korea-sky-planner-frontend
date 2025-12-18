@@ -115,7 +115,7 @@ export default function ImageUploadPage() {
       }
 
       alert("이미지가 성공적으로 업로드되었습니다!");
-      router.push("/sky/Images");
+      router.push("/sky/SeasonDictionary/Images");
     } catch (err) {
       setError(err.message);
       alert(`업로드 실패: ${err.message}`);

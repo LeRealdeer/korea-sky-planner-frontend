@@ -167,18 +167,24 @@ export default function SoulEditPage() {
         throw new Error("선택한 시즌을 찾을 수 없습니다.");
       }
 
-      const payload = {
-        name: formData.name,
-        seasonId: parseInt(formData.seasonId),
-        seasonName: selectedSeason.name,
-        orderNum: parseInt(formData.orderNum),
-        isSeasonGuide: formData.isSeasonGuide,
-        keywords: formData.keywords.split(",").map(k => k.trim()).filter(k => k),
-        description: formData.description,
-        creator: formData.creator,
-        startDate: selectedSeason.startDate,
-        endDate: selectedSeason.endDate,
-      };
+const payload = {
+  name: formData.name,
+  seasonId: parseInt(formData.seasonId),
+  seasonName: selectedSeason.name,
+  orderNum: parseInt(formData.orderNum),
+  isSeasonGuide: formData.isSeasonGuide,
+  
+  // ✅ 키워드 처리 수정
+  keywords: formData.keywords
+    .split(",")
+    .map(k => k.trim())
+    .filter(k => k.length > 0), // 빈 문자열 제거
+  
+  description: formData.description,
+  creator: formData.creator,
+  startDate: selectedSeason.startDate,
+  endDate: selectedSeason.endDate,
+};
 
       const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
         method: "PUT",

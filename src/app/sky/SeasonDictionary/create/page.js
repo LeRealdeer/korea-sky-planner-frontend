@@ -1,4 +1,3 @@
-// src/app/sky/SeasonDictionary/create/page.js
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -329,7 +328,7 @@ export default function SoulCreatePage() {
                       className={styles.imagePreview}
                       onError={(e) => {
                         console.error("❌ 이미지 로드 실패:", img.url);
-                        e.target.src = "/placeholder.png"; // fallback
+                        e.target.src = "/placeholder.png";
                       }}
                     />
                     <p className={styles.imageFileName}>{img.fileName}</p>

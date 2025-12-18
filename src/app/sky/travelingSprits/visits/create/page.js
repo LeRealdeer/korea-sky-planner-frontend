@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://korea-sky-planner-backend-production.up.railway.app';
 
-export default function VisitCreatePage() {
+function VisitCreateForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preSelectedSoulId = searchParams.get("soulId"); // URL에서 영혼 ID 받기
@@ -189,5 +189,13 @@ export default function VisitCreatePage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function VisitCreatePage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <VisitCreateForm />
+    </Suspense>
   );
 }

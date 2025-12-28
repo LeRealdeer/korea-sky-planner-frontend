@@ -79,7 +79,7 @@ export default function TravelingVisitCreatePage() {
       }
 
       alert("유랑 기록이 성공적으로 생성되었습니다!");
-      router.push("/sky/TravelingVisits");
+      router.push(`/sky/SeasonDictionary/souls/${formData.soulId}`);
     } catch (err) {
       setError(err.message);
       alert(`생성 실패: ${err.message}`);

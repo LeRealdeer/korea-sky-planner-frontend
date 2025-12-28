@@ -101,7 +101,7 @@ export default function TravelingVisitEditPage() {
       }
 
       alert("유랑 기록이 성공적으로 수정되었습니다!");
-      router.push("/sky/TravelingVisits");
+      router.push("/sky/TravelingVisits/manage");
     } catch (err) {
       setError(err.message);
       alert(`수정 실패: ${err.message}`);

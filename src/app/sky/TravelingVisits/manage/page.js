@@ -27,7 +27,7 @@ export default function TravelingVisitsManagePage() {
   useEffect(() => {
     if (searchQuery.trim()) {
       const filtered = visits.filter(visit =>
-        visit.soulName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        visit.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         visit.seasonName?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredVisits(filtered);
@@ -152,6 +152,7 @@ export default function TravelingVisitsManagePage() {
         <table className={styles.table}>
           <thead>
             <tr>
+              <th>전체 순서</th>
               <th>시즌</th>
               <th>영혼 이름</th>
               <th>방문 차수</th>
@@ -162,56 +163,30 @@ export default function TravelingVisitsManagePage() {
               <th>관리</th>
             </tr>
           </thead>
-          <tbody>
-            {filteredVisits.length === 0 ? (
-              <tr>
-                <td colSpan="8" className={styles.emptyState}>
-                  유랑 이력이 없습니다.
+          <tbody>{filteredVisits.length === 0 ? (
+            <tr>
+              <td colSpan="9" className={styles.emptyState}>유랑 이력이 없습니다.</td>
+            </tr>
+          ) : (
+            filteredVisits.map((visit) => (
+              <tr key={visit.__travelingVisitId}>
+                <td className={styles.globalOrder}>{visit.globalOrder ? `${visit.globalOrder}번째` : "-"}</td>
+                <td>
+                  <span className={styles.seasonBadge} style={{ backgroundColor: visit.seasonColor || "#999" }}>{visit.seasonName}</span>
+                </td>
+                <td className={styles.soulName}>{visit.name}</td>
+                <td className={styles.visitNumber}>{visit.visitNumber}차</td>
+                <td>{formatDate(visit.startDate)}</td>
+                <td>{formatDate(visit.endDate)}</td>
+                <td className={styles.centered}>{visit.isWarbandVisit ? "✓" : "-"}</td>
+                <td className={styles.centered}>{getStatusBadge(visit.startDate, visit.endDate)}</td>
+                <td className={styles.actions}>
+                  <button onClick={() => handleEdit(visit.__travelingVisitId)} className={styles.editButton} title="수정">✏️ 수정</button>
+                  <button onClick={() => handleDelete(visit.__travelingVisitId)} className={styles.deleteButton} title="삭제">🗑️ 삭제</button>
                 </td>
               </tr>
-            ) : (
-              filteredVisits.map((visit) => (
-                <tr key={visit.__travelingVisitId}>
-                  <td>
-                    <span
-                      className={styles.seasonBadge}
-                      style={{ backgroundColor: visit.seasonColor || "#999" }}
-                    >
-                      {visit.seasonName}
-                    </span>
-                  </td>
-                  <td className={styles.soulName}>{visit.name}</td>
-                  <td className={styles.visitNumber}>
-                    {visit.visitNumber}차
-                  </td>
-                  <td>{formatDate(visit.startDate)}</td>
-                  <td>{formatDate(visit.endDate)}</td>
-                  <td className={styles.centered}>
-                    {visit.isWarbandVisit ? "✓" : "-"}
-                  </td>
-                  <td className={styles.centered}>
-                    {getStatusBadge(visit.startDate, visit.endDate)}
-                  </td>
-                  <td className={styles.actions}>
-                    <button
-                      onClick={() => handleEdit(visit.__travelingVisitId)}
-                      className={styles.editButton}
-                      title="수정"
-                    >
-                      ✏️ 수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(visit.__travelingVisitId)}
-                      className={styles.deleteButton}
-                      title="삭제"
-                    >
-                      🗑️ 삭제
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
+            ))
+          )}</tbody>
         </table>
       </div>
 

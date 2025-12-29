@@ -192,7 +192,7 @@ export default function OldestSpiritsPage() {
         <div className={styles.navigation}>
           <button
             onClick={() =>
-              router.push("/sky/travelingSprits/generalVisits/list")
+              router.push("/sky/travelingSprits/travelingEncyclopedia")
             }
             className={styles.navButton}
           >
@@ -216,7 +216,7 @@ export default function OldestSpiritsPage() {
 
       <div className={styles.spiritsList}>
         {spirits.map((item, index) => {
-          const { soul, daysSinceLastVisit, lastVisitDate, isActive } = item;
+          const { soul, daysSinceLastVisit, lastVisitDate, isActive, visitNumber } = item;
           const representativeImage = soul.images?.find(
             (img) => img.imageType === "REPRESENTATIVE"
           );
@@ -240,12 +240,12 @@ export default function OldestSpiritsPage() {
           }
 
           return (
-<Link
-  key={`${item.id}-${index}`}
-  href={`/sky/SeasonDictionary/souls/${item.id}`}
-  className={styles.spiritCard}
-  ref={isLast ? lastSpiritElementRef : null} // ✅ 상단에서 정의한 이름을 사용해야 합니다.
->
+            <Link
+              key={`${soul.id}-${index}`}
+              href={`/sky/SeasonDictionary/souls/${soul.id}`}
+              className={styles.spiritCard}
+              ref={isLast ? lastSpiritElementRef : null}
+            >
               <div className={styles.rankBadge}>#{rank}</div>
 
               <div className={styles.imageSection}>
@@ -274,21 +274,13 @@ export default function OldestSpiritsPage() {
                 </div>
 
                 <div className={styles.detailsRow}>
-                  <span className={styles.orderNumber}>
-                    {soul.orderNum < 0
-                      ? `#${Math.abs(soul.orderNum)} 유랑단`
-                      : `${soul.orderNum}번째`}
-                  </span>
                   <span className={styles.rerunCount}>
-                    {soul.rerunCount}차 복각
+                    {visitNumber}차 복각
                   </span>
                 </div>
 
                 <div className={styles.dateInfo}>
                   <span>마지막 방문: {formatDate(lastVisitDate)}</span>
-                  <span>
-                    ({formatDate(soul.startDate)} ~ {formatDate(soul.endDate)})
-                  </span>
                 </div>
               </div>
 

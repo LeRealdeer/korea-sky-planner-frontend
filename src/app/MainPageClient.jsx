@@ -35,16 +35,16 @@ export default function MainPageClient() {
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
             {/* <strong>스카이 플래너 만족도 조사</strong> */}
-            <span className={styles.surveyDesc}>스카이 플래너 12월 모의고사가 출제되었습니다.</span>
-            <span className={styles.surveyDesc}>25년 가장 난이도 있는 스카이 문제들을 만나보세요!</span>
+            <span className={styles.surveyDesc}>유랑대백과와 오래된 유랑이 정보제공으로 간단하게 운영됩니다. 추후에 자료 보강이 될 예정입니다.</span>
+            <span className={styles.surveyDesc}>새로운 기능인 시즌 대백과는 베타 버전으로 임시 운영됩니다.</span>
 
           </div>
-          <button 
+          {/* <button 
             className={styles.surveyButton}
             onClick={() => navigateTo('/sky/test')}
           >
             참여하기
-          </button>
+          </button> */}
         </div>
       </div>
 

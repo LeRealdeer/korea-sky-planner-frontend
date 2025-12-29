@@ -21,6 +21,7 @@ export default function TravelingVisitEditPage() {
   const [formData, setFormData] = useState({
     soulId: "",
     visitNumber: 1,
+    globalOrder: "", // ✅ 추가
     startDate: "",
     endDate: "",
     isWarbandVisit: false,
@@ -57,6 +58,7 @@ export default function TravelingVisitEditPage() {
       setFormData({
         soulId: visit.soulId || "",
         visitNumber: visit.visitNumber || 1,
+        globalOrder: visit.globalOrder || "", // ✅ 추가
         startDate: visit.startDate || "",
         endDate: visit.endDate || "",
         isWarbandVisit: visit.isWarbandVisit || false,
@@ -84,6 +86,7 @@ export default function TravelingVisitEditPage() {
     try {
       const payload = {
         visitNumber: parseInt(formData.visitNumber),
+        globalOrder: formData.globalOrder ? parseInt(formData.globalOrder) : null, // ✅ 추가
         startDate: formData.startDate,
         endDate: formData.endDate,
         isWarbandVisit: formData.isWarbandVisit,
@@ -167,7 +170,7 @@ export default function TravelingVisitEditPage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>방문 차수 *</label>
+            <label className={styles.label}>방문 차수 (해당 영혼) *</label>
             <input
               type="number"
               name="visitNumber"
@@ -177,6 +180,22 @@ export default function TravelingVisitEditPage() {
               min="1"
               required
             />
+            <p className={styles.hint}>해당 영혼의 몇 번째 유랑인지 (1차, 2차, 3차...)</p>
+          </div>
+
+          {/* ✅ 전체 유랑 순서 필드 추가 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>전체 유랑 순서</label>
+            <input
+              type="number"
+              name="globalOrder"
+              value={formData.globalOrder}
+              onChange={handleChange}
+              className={styles.input}
+              min="1"
+              placeholder="예: 342 (전체 342번째 유랑)"
+            />
+            <p className={styles.hint}>전체 유랑 중 몇 번째인지 (선택사항, 예: 342번째)</p>
           </div>
 
           <div className={styles.formGroup}>

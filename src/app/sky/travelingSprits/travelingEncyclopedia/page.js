@@ -5,13 +5,11 @@ import React, {
   useEffect,
   useState,
   useRef,
-  useCallback,
   Suspense,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import NoticePanel from "../../../components/NoticePanel";
 import SearchBar from "../../../components/SearchBar";
-import ViewModeTabs from "../../../components/ViewModeTabs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -25,7 +23,6 @@ function TravelingEncyclopediaContent() {
   const [visits, setVisits] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [viewMode, setViewMode] = useState("list");
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
@@ -33,6 +30,7 @@ function TravelingEncyclopediaContent() {
   const [hasMore, setHasMore] = useState(true);
   const [totalElements, setTotalElements] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [showWarbandOnly, setShowWarbandOnly] = useState(false);
 
   const bottomSentinelRef = useRef(null);
 
@@ -44,11 +42,11 @@ function TravelingEncyclopediaContent() {
   }, []);
 
   useEffect(() => {
-    const initialMode = searchParams.get("mode") || "list";
     const initialQuery = searchParams.get("query") || "";
-    setViewMode(initialMode);
+    const warbandFilter = searchParams.get("warband") === "true";
     setSearchQuery(initialQuery);
     setSubmittedQuery(initialQuery);
+    setShowWarbandOnly(warbandFilter);
   }, [searchParams]);
 
   const fetchVisits = async (pageNum = 0, query = "", isAppend = false) => {
@@ -125,8 +123,8 @@ function TravelingEncyclopediaContent() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    params.set("mode", viewMode);
     if (searchQuery) params.set("query", searchQuery);
+    if (showWarbandOnly) params.set("warband", "true");
 
     setSubmittedQuery(searchQuery);
     setPage(0);
@@ -137,8 +135,8 @@ function TravelingEncyclopediaContent() {
 
   const handleSeasonClick = (seasonName) => {
     const params = new URLSearchParams();
-    params.set("mode", viewMode);
     params.set("query", seasonName);
+    if (showWarbandOnly) params.set("warband", "true");
 
     setSearchQuery(seasonName);
     setSubmittedQuery(seasonName);
@@ -151,23 +149,22 @@ function TravelingEncyclopediaContent() {
   const handleAllView = () => {
     setSearchQuery("");
     setSubmittedQuery("");
+    setShowWarbandOnly(false);
     setPage(0);
-    router.push(`/sky/travelingSprits/travelingEncyclopedia?mode=${viewMode}`);
+    router.push(`/sky/travelingSprits/travelingEncyclopedia`);
   };
 
   const handleGoHome = () => {
     router.push("/sky/travelingSprits/oldestSprits");
   };
 
-  const handleViewModeChange = (mode) => {
-    const params = new URLSearchParams();
-    params.set("mode", mode);
-    if (submittedQuery) params.set("query", submittedQuery);
-
-    setViewMode(mode);
-    router.push(
-      `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
-    );
+  // ✅ 유랑단 필터링 핸들러
+  const handleWarbandClick = () => {
+    setShowWarbandOnly(true);
+    setSearchQuery("");
+    setSubmittedQuery("");
+    setPage(0);
+    router.push(`/sky/travelingSprits/travelingEncyclopedia?warband=true`);
   };
 
   const formatDate = (dateStr) => {
@@ -179,7 +176,7 @@ function TravelingEncyclopediaContent() {
 
   const seasonColors = {
     감사: "#FFD700",
-    빛추: "#FF6347",
+    "빛 추적자": "#FF6347",
     친밀: "#4CAF50",
     리듬: "#3F51B5",
     마법: "#9C27B0",
@@ -206,12 +203,17 @@ function TravelingEncyclopediaContent() {
     불씨: "#FF4500",
   };
 
+  const filteredVisits = showWarbandOnly 
+    ? visits.filter(item => item.globalOrder < 0)
+    : visits;
+
   return (
     <div className={styles.container}>
       <NoticePanel
         onSeasonClick={handleSeasonClick}
         onAllView={handleAllView}
         onGoHome={handleGoHome}
+        onWarbandClick={handleWarbandClick} // ✅ 추가
       />
 
       <SearchBar
@@ -220,110 +222,16 @@ function TravelingEncyclopediaContent() {
         onSearchSubmit={handleSearchSubmit}
       />
 
-      <ViewModeTabs
-        viewMode={viewMode}
-        onViewModeChange={handleViewModeChange}
-      />
-
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div className={styles.error}>Error: {error}</div>
-      ) : visits.length === 0 ? (
+      ) : filteredVisits.length === 0 ? (
         <p>해당 조건에 맞는 유랑이 없습니다.</p>
-      ) : viewMode === "card" ? (
-        <>
-          <div className={styles.cardsGrid}>
-            {visits.map((item, index) => {
-              const {
-                id,
-                name,
-                seasonName,
-                orderNum,
-                globalOrder,
-                startDate,
-                endDate,
-                visitNumber,
-                isWarbandVisit,
-                isActive,
-                images,
-              } = item;
-
-              const representativeImage = images?.find(
-                (img) => img.imageType === "REPRESENTATIVE"
-              );
-              const isLast = index === visits.length - 1;
-              const isWarband = orderNum < 0;
-
-              return (
-                <Link
-                  key={`${item.id}-${index}`}
-                  href={`/sky/SeasonDictionary/souls/${item.id}`}
-                  className={styles.spiritCard}
-                  ref={isLast ? bottomSentinelRef : null}
-                >
-                  <div className={styles.imageWrapperSquare}>
-                    {representativeImage?.url ? (
-                      <img
-                        src={representativeImage.url}
-                        alt={name}
-                        className={styles.cardImage}
-                      />
-                    ) : (
-                      <div className={styles.noImage}>No Image</div>
-                    )}
-                    {/* 좌측 상단 순서 배지 */}
-                    <div className={`${styles.orderBadge} ${isWarband ? styles.warbandBadge : ''}`}>
-                      #{globalOrder}
-                    </div>
-                  </div>
-                  <div className={styles.cardContent}>
-                    <p className={styles.firstLine}>
-                      <span
-                        className={styles.seasonName}
-                        style={{
-                          backgroundColor: seasonColors[seasonName] || "#444",
-                        }}
-                      >
-                        {seasonName}
-                      </span>
-                      <span className={styles.soulName}>{name}</span>
-                    </p>
-                    <p className={styles.secondLine}>
-                      {isWarband ? (
-                        <strong style={{ color: "#FF8C00" }}>
-                          #{globalOrder}번째 유랑단
-                        </strong>
-                      ) : (
-                        <strong style={{ color: "#667eea" }}>
-                          #{globalOrder}번째 유랑
-                        </strong>
-                      )}{" "}
-                      |{" "}
-                      <strong style={{ color: "#dc2626" }}>
-                        {visitNumber}차 복각
-                      </strong>
-                    </p>
-                    <p className={styles.thirdLine}>
-                      {formatDate(startDate)} ~ {formatDate(endDate)}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-
-          {submittedQuery.trim() === "" && hasMore && (
-            <>
-              {loadingMore && <LoadingSpinner />}
-              <div ref={bottomSentinelRef} style={{ height: 1 }} />
-            </>
-          )}
-        </>
       ) : (
         <>
           <div className={styles.spiritsList}>
-            {visits.map((item, index) => {
+            {filteredVisits.map((item, index) => {
               const {
                 id,
                 name,
@@ -341,8 +249,8 @@ function TravelingEncyclopediaContent() {
               const representativeImage = images?.find(
                 (img) => img.imageType === "REPRESENTATIVE"
               );
-              const isLast = index === visits.length - 1;
-              const isWarband = orderNum < 0;
+              const isLast = index === filteredVisits.length - 1;
+              const isWarband = globalOrder < 0;
 
               return (
                 <Link
@@ -351,8 +259,9 @@ function TravelingEncyclopediaContent() {
                   className={styles.spiritCard}
                   ref={isLast ? bottomSentinelRef : null}
                 >
+                  {/* ✅ 왼쪽 상단 칩: # 유지, 유랑단은 주황색 */}
                   <div className={`${styles.rankBadge} ${isWarband ? styles.warbandRankBadge : ''}`}>
-                    #{globalOrder}
+                    #{Math.abs(globalOrder)}
                   </div>
 
                   <div className={styles.imageSection}>
@@ -384,11 +293,11 @@ function TravelingEncyclopediaContent() {
                       <span className={styles.orderNumber}>
                         {isWarband ? (
                           <span style={{ color: "#FF8C00", fontWeight: "bold" }}>
-                            {globalOrder}번째 유랑단
+                            {Math.abs(globalOrder)}번째 유랑단 {/* ✅ # 없음 */}
                           </span>
                         ) : (
                           <span style={{ color: "#667eea", fontWeight: "bold" }}>
-                            {globalOrder}번째
+                            {globalOrder}번째 유랑 {/* ✅ # 없음 */}
                           </span>
                         )}
                       </span>

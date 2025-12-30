@@ -5,7 +5,12 @@ import React from "react";
 import styles from "./NoticePanel.module.css";
 import { SEASON_LIST } from "../constants/seasons";
 
-export default function NoticePanel({ onSeasonClick, onAllView, onGoHome }) {
+export default function NoticePanel({ 
+  onSeasonClick, 
+  onAllView, 
+  onGoHome,
+  onWarbandClick // ✅ 추가
+}) {
   return (
     <div className={styles.noticePanel}>
       <h2 className={styles.noticeTitle}>유랑 대백과</h2>
@@ -43,7 +48,7 @@ export default function NoticePanel({ onSeasonClick, onAllView, onGoHome }) {
       <div className={styles.filterChipsContainer}>
         <button
           className={styles.filterChipSoul}
-          onClick={() => onSeasonClick("유랑단")}
+          onClick={onWarbandClick}
         >
           유랑단
         </button>

@@ -25,6 +25,7 @@ function SeasonDictionaryContent() {
   const [isMobile, setIsMobile] = useState(false);
 
   const bottomSentinelRef = useRef(null);
+  const isRestoringScroll = useRef(false);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -33,14 +34,81 @@ function SeasonDictionaryContent() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // ✅ 페이지 떠나기 전 상태 저장
   useEffect(() => {
-    const initialMode = searchParams.get("mode") || "card";
-    const initialQuery = searchParams.get("query") || "";
-    const initialSeason = searchParams.get("season") || "";
-    setViewMode(initialMode);
-    setSearchQuery(initialQuery);
-    setSubmittedQuery(initialQuery);
-    setSelectedSeason(initialSeason);
+    const saveState = () => {
+      sessionStorage.setItem('seasonDict_scrollY', window.scrollY.toString());
+      sessionStorage.setItem('seasonDict_viewMode', viewMode);
+      sessionStorage.setItem('seasonDict_season', selectedSeason);
+      sessionStorage.setItem('seasonDict_query', submittedQuery);
+      sessionStorage.setItem('seasonDict_page', page.toString());
+      sessionStorage.setItem('seasonDict_souls', JSON.stringify(souls));
+    };
+
+    const links = document.querySelectorAll('a[href*="/souls/"]');
+    links.forEach(link => {
+      link.addEventListener('click', saveState);
+    });
+
+    return () => {
+      links.forEach(link => {
+        link.removeEventListener('click', saveState);
+      });
+    };
+  }, [viewMode, selectedSeason, submittedQuery, page, souls]);
+
+  // ✅ URL + sessionStorage 복원
+  useEffect(() => {
+    const urlMode = searchParams.get("mode");
+    const urlSeason = searchParams.get("season");
+    const urlQuery = searchParams.get("query");
+    
+    const savedScrollY = sessionStorage.getItem('seasonDict_scrollY');
+    const savedMode = sessionStorage.getItem('seasonDict_viewMode');
+    const savedSeason = sessionStorage.getItem('seasonDict_season');
+    const savedQuery = sessionStorage.getItem('seasonDict_query');
+    const savedPage = sessionStorage.getItem('seasonDict_page');
+    const savedSouls = sessionStorage.getItem('seasonDict_souls');
+    
+    const isBackNavigation = savedScrollY !== null;
+
+    if (isBackNavigation) {
+      console.log('Restoring season dictionary state');
+      
+      // 상태 복원
+      setViewMode(savedMode || urlMode || "card");
+      setSelectedSeason(savedSeason || urlSeason || "");
+      setSearchQuery(savedQuery || urlQuery || "");
+      setSubmittedQuery(savedQuery || urlQuery || "");
+      setPage(parseInt(savedPage || "0"));
+      
+      // 데이터 복원
+      if (savedSouls) {
+        try {
+          setSouls(JSON.parse(savedSouls));
+          setLoading(false);
+        } catch (e) {
+          console.error('Failed to restore souls:', e);
+        }
+      }
+      
+      // 스크롤 복원
+      isRestoringScroll.current = true;
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollY));
+        isRestoringScroll.current = false;
+        
+        // 복원 후 세션 스토리지 클리어
+        sessionStorage.removeItem('seasonDict_scrollY');
+        sessionStorage.removeItem('seasonDict_souls');
+      }, 100);
+    } else {
+      // 새로 진입
+      setViewMode(urlMode || "card");
+      setSelectedSeason(urlSeason || "");
+      setSearchQuery(urlQuery || "");
+      setSubmittedQuery(urlQuery || "");
+    }
   }, [searchParams]);
 
   const fetchSouls = async (pageNum = 0, query = "", season = "", isAppend = false) => {
@@ -79,6 +147,9 @@ function SeasonDictionaryContent() {
   };
 
   useEffect(() => {
+    // 뒤로가기로 복원된 경우 fetch 생략
+    if (isRestoringScroll.current) return;
+    
     fetchSouls(0, submittedQuery, selectedSeason, false);
   }, [submittedQuery, selectedSeason]);
 
@@ -107,6 +178,11 @@ function SeasonDictionaryContent() {
     
     setSubmittedQuery(searchQuery);
     setPage(0);
+    
+    // 세션 스토리지 클리어 (새 검색)
+    sessionStorage.removeItem('seasonDict_scrollY');
+    sessionStorage.removeItem('seasonDict_souls');
+    
     router.push(`/sky/SeasonDictionary?${params.toString()}`);
   };
 
@@ -118,6 +194,10 @@ function SeasonDictionaryContent() {
     
     setSelectedSeason(seasonName);
     setPage(0);
+    
+    sessionStorage.removeItem('seasonDict_scrollY');
+    sessionStorage.removeItem('seasonDict_souls');
+    
     router.push(`/sky/SeasonDictionary?${params.toString()}`);
   };
 
@@ -126,91 +206,107 @@ function SeasonDictionaryContent() {
     setSearchQuery("");
     setSubmittedQuery("");
     setPage(0);
+    
+    sessionStorage.removeItem('seasonDict_scrollY');
+    sessionStorage.removeItem('seasonDict_souls');
+    
     router.push(`/sky/SeasonDictionary?mode=${viewMode}`);
+  };
+
+  const handleViewModeChange = (mode) => {
+    const params = new URLSearchParams();
+    params.set("mode", mode);
+    if (submittedQuery) params.set("query", submittedQuery);
+    if (selectedSeason) params.set("season", selectedSeason);
+    
+    setViewMode(mode);
+    
+    sessionStorage.removeItem('seasonDict_scrollY');
+    sessionStorage.removeItem('seasonDict_souls');
+    
+    router.push(`/sky/SeasonDictionary?${params.toString()}`);
   };
 
   return (
     <div className={styles.container}>
-{/* 헤더 */}
-<div className={styles.header}>
-  <div className={styles.headerContent}>
-    <h1 className={styles.title}>
-      {selectedSeason ? `${selectedSeason} 시즌` : "시즌 대백과"}
-    </h1>
-    <p className={styles.subtitle}>
-      찾고 있는 영혼이 기억나지 않을 때 검색창에 키워드를 입력해 검색해주세요.
-    </p>
-    <div className={styles.headerButtons}>
-      <Link href="/sky/SeasonDictionary/seasons" className={styles.seasonViewButton}>
-        🗂️ 시즌별로 보기
-      </Link>
-      {/* <Link href="/sky/SeasonDictionary/create" className={styles.createButton}>
-        ✨ 영혼 만들기
-      </Link> */}
-    </div>
-  </div>
-</div>
+      {/* 헤더 */}
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>
+            {selectedSeason ? `${selectedSeason} 시즌` : "시즌 대백과"}
+          </h1>
+          <p className={styles.subtitle}>
+            찾고 있는 영혼이 기억나지 않을 때 검색창에 키워드를 입력해 검색해주세요.
+          </p>
+          <div className={styles.headerButtons}>
+            <Link href="/sky/SeasonDictionary/seasons" className={styles.seasonViewButton}>
+              🗂️ 시즌별로 보기
+            </Link>
+          </div>
+        </div>
+      </div>
 
-{/* 시즌 칩 */}
-<div className={styles.seasonChipsWrapper}>
-  <p className={styles.seasonChipsTitle}>
-    아래 시즌 이름을 클릭하면 자동 검색됩니다:
-  </p>
-  <div className={styles.seasonChips}>
-    <button
-      onClick={handleAllView}
-      className={`${styles.seasonChip} ${!selectedSeason ? styles.active : ""}`}
-      style={{
-        backgroundColor: !selectedSeason ? "#667eea" : "#667eea",
-      }}
-    >
-      전체보기
-    </button>
-    {seasons.map((season) => (
-      <button
-        key={season}
-        onClick={() => handleSeasonClick(season)}
-        className={`${styles.seasonChip} ${selectedSeason === season ? styles.active : ""}`}
-        style={{
-          backgroundColor: seasonColors[season] || "#888",
-        }}
-      >
-        {season}
-      </button>
-    ))}
-  </div>
-</div>
+      {/* 시즌 칩 */}
+      <div className={styles.seasonChipsWrapper}>
+        <p className={styles.seasonChipsTitle}>
+          아래 시즌 이름을 클릭하면 자동 검색됩니다:
+        </p>
+        <div className={styles.seasonChips}>
+          <button
+            onClick={handleAllView}
+            className={`${styles.seasonChip} ${!selectedSeason ? styles.active : ""}`}
+            style={{
+              backgroundColor: !selectedSeason ? "#667eea" : "#667eea",
+            }}
+          >
+            전체보기
+          </button>
+          {seasons.map((season) => (
+            <button
+              key={season}
+              onClick={() => handleSeasonClick(season)}
+              className={`${styles.seasonChip} ${selectedSeason === season ? styles.active : ""}`}
+              style={{
+                backgroundColor: seasonColors[season] || "#888",
+              }}
+            >
+              {season}
+            </button>
+          ))}
+        </div>
+      </div>
 
-{/* 검색 및 필터 */}
-<div className={styles.searchAndFilter}>
-  <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-    <input
-      type="text"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      placeholder="영혼 이름, 키워드 검색..."
-      className={styles.searchInput}
-    />
-    <button type="submit" className={styles.searchButton}>
-      검색
-    </button>
-  </form>
+      {/* 검색 및 필터 */}
+      <div className={styles.searchAndFilter}>
+        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="영혼 이름, 키워드 검색..."
+            className={styles.searchInput}
+          />
+          <button type="submit" className={styles.searchButton}>
+            검색
+          </button>
+        </form>
 
-  <div className={styles.viewModeToggle}>
-    <button
-      onClick={() => setViewMode("card")}
-      className={`${styles.viewButton} ${viewMode === "card" ? styles.activeView : ""}`}
-    >
-      카드 뷰
-    </button>
-    <button
-      onClick={() => setViewMode("list")}
-      className={`${styles.viewButton} ${viewMode === "list" ? styles.activeView : ""}`}
-    >
-      리스트 뷰
-    </button>
-  </div>
-</div>
+        <div className={styles.viewModeToggle}>
+          <button
+            onClick={() => handleViewModeChange("card")}
+            className={`${styles.viewButton} ${viewMode === "card" ? styles.activeView : ""}`}
+          >
+            카드 뷰
+          </button>
+          <button
+            onClick={() => handleViewModeChange("list")}
+            className={`${styles.viewButton} ${viewMode === "list" ? styles.activeView : ""}`}
+          >
+            리스트 뷰
+          </button>
+        </div>
+      </div>
+
       {/* 영혼 리스트 */}
       {loading && page === 0 ? (
         <LoadingSpinner />

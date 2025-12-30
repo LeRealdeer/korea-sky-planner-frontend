@@ -33,6 +33,7 @@ function TravelingEncyclopediaContent() {
   const [showWarbandOnly, setShowWarbandOnly] = useState(false);
 
   const bottomSentinelRef = useRef(null);
+  const isRestoringScroll = useRef(false);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -41,12 +42,79 @@ function TravelingEncyclopediaContent() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // ✅ 페이지 떠나기 전 상태 저장
   useEffect(() => {
-    const initialQuery = searchParams.get("query") || "";
-    const warbandFilter = searchParams.get("warband") === "true";
-    setSearchQuery(initialQuery);
-    setSubmittedQuery(initialQuery);
-    setShowWarbandOnly(warbandFilter);
+    const saveState = () => {
+      sessionStorage.setItem('travelingEncy_scrollY', window.scrollY.toString());
+      sessionStorage.setItem('travelingEncy_query', submittedQuery);
+      sessionStorage.setItem('travelingEncy_warband', showWarbandOnly.toString());
+      sessionStorage.setItem('travelingEncy_page', page.toString());
+      sessionStorage.setItem('travelingEncy_visits', JSON.stringify(visits));
+    };
+
+    const links = document.querySelectorAll('a[href*="/souls/"]');
+    links.forEach(link => {
+      link.addEventListener('click', saveState);
+    });
+
+    return () => {
+      links.forEach(link => {
+        link.removeEventListener('click', saveState);
+      });
+    };
+  }, [submittedQuery, showWarbandOnly, page, visits]);
+
+  // ✅ URL + sessionStorage 복원
+  useEffect(() => {
+    const urlQuery = searchParams.get("query");
+    const urlWarband = searchParams.get("warband");
+    
+    const savedScrollY = sessionStorage.getItem('travelingEncy_scrollY');
+    const savedQuery = sessionStorage.getItem('travelingEncy_query');
+    const savedWarband = sessionStorage.getItem('travelingEncy_warband');
+    const savedPage = sessionStorage.getItem('travelingEncy_page');
+    const savedVisits = sessionStorage.getItem('travelingEncy_visits');
+    
+    const isBackNavigation = savedScrollY !== null;
+
+    if (isBackNavigation) {
+      console.log('Restoring traveling encyclopedia state');
+      
+      // 상태 복원
+      const restoredQuery = savedQuery || urlQuery || "";
+      const restoredWarband = savedWarband === "true" || urlWarband === "true";
+      
+      setSearchQuery(restoredQuery);
+      setSubmittedQuery(restoredQuery);
+      setShowWarbandOnly(restoredWarband);
+      setPage(parseInt(savedPage || "0"));
+      
+      // 데이터 복원
+      if (savedVisits) {
+        try {
+          setVisits(JSON.parse(savedVisits));
+          setLoading(false);
+        } catch (e) {
+          console.error('Failed to restore visits:', e);
+        }
+      }
+      
+      // 스크롤 복원
+      isRestoringScroll.current = true;
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollY));
+        isRestoringScroll.current = false;
+        
+        // 복원 후 세션 스토리지 클리어
+        sessionStorage.removeItem('travelingEncy_scrollY');
+        sessionStorage.removeItem('travelingEncy_visits');
+      }, 100);
+    } else {
+      // 새로 진입
+      setSearchQuery(urlQuery || "");
+      setSubmittedQuery(urlQuery || "");
+      setShowWarbandOnly(urlWarband === "true");
+    }
   }, [searchParams]);
 
   const fetchVisits = async (pageNum = 0, query = "", isAppend = false) => {
@@ -98,6 +166,9 @@ function TravelingEncyclopediaContent() {
   };
 
   useEffect(() => {
+    // 뒤로가기로 복원된 경우 fetch 생략
+    if (isRestoringScroll.current) return;
+    
     fetchVisits(0, submittedQuery, false);
   }, [submittedQuery]);
 
@@ -128,6 +199,11 @@ function TravelingEncyclopediaContent() {
 
     setSubmittedQuery(searchQuery);
     setPage(0);
+    
+    // 세션 스토리지 클리어 (새 검색)
+    sessionStorage.removeItem('travelingEncy_scrollY');
+    sessionStorage.removeItem('travelingEncy_visits');
+    
     router.push(
       `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
     );
@@ -141,6 +217,10 @@ function TravelingEncyclopediaContent() {
     setSearchQuery(seasonName);
     setSubmittedQuery(seasonName);
     setPage(0);
+    
+    sessionStorage.removeItem('travelingEncy_scrollY');
+    sessionStorage.removeItem('travelingEncy_visits');
+    
     router.push(
       `/sky/travelingSprits/travelingEncyclopedia?${params.toString()}`
     );
@@ -151,6 +231,10 @@ function TravelingEncyclopediaContent() {
     setSubmittedQuery("");
     setShowWarbandOnly(false);
     setPage(0);
+    
+    sessionStorage.removeItem('travelingEncy_scrollY');
+    sessionStorage.removeItem('travelingEncy_visits');
+    
     router.push(`/sky/travelingSprits/travelingEncyclopedia`);
   };
 
@@ -158,12 +242,15 @@ function TravelingEncyclopediaContent() {
     router.push("/sky/travelingSprits/oldestSprits");
   };
 
-  // ✅ 유랑단 필터링 핸들러
   const handleWarbandClick = () => {
     setShowWarbandOnly(true);
     setSearchQuery("");
     setSubmittedQuery("");
     setPage(0);
+    
+    sessionStorage.removeItem('travelingEncy_scrollY');
+    sessionStorage.removeItem('travelingEncy_visits');
+    
     router.push(`/sky/travelingSprits/travelingEncyclopedia?warband=true`);
   };
 
@@ -213,7 +300,7 @@ function TravelingEncyclopediaContent() {
         onSeasonClick={handleSeasonClick}
         onAllView={handleAllView}
         onGoHome={handleGoHome}
-        onWarbandClick={handleWarbandClick} // ✅ 추가
+        onWarbandClick={handleWarbandClick}
       />
 
       <SearchBar
@@ -259,7 +346,6 @@ function TravelingEncyclopediaContent() {
                   className={styles.spiritCard}
                   ref={isLast ? bottomSentinelRef : null}
                 >
-                  {/* ✅ 왼쪽 상단 칩: # 유지, 유랑단은 주황색 */}
                   <div className={`${styles.rankBadge} ${isWarband ? styles.warbandRankBadge : ''}`}>
                     #{Math.abs(globalOrder)}
                   </div>
@@ -293,11 +379,11 @@ function TravelingEncyclopediaContent() {
                       <span className={styles.orderNumber}>
                         {isWarband ? (
                           <span style={{ color: "#FF8C00", fontWeight: "bold" }}>
-                            {Math.abs(globalOrder)}번째 유랑단 {/* ✅ # 없음 */}
+                            {Math.abs(globalOrder)}번째 유랑단
                           </span>
                         ) : (
                           <span style={{ color: "#667eea", fontWeight: "bold" }}>
-                            {globalOrder}번째 유랑 {/* ✅ # 없음 */}
+                            {globalOrder}번째 유랑
                           </span>
                         )}
                       </span>

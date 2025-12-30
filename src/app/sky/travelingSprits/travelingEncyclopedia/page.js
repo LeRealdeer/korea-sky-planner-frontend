@@ -240,6 +240,7 @@ function TravelingEncyclopediaContent() {
                 name,
                 seasonName,
                 orderNum,
+                globalOrder,
                 startDate,
                 endDate,
                 visitNumber,
@@ -252,6 +253,7 @@ function TravelingEncyclopediaContent() {
                 (img) => img.imageType === "REPRESENTATIVE"
               );
               const isLast = index === visits.length - 1;
+              const isWarband = orderNum < 0;
 
               return (
                 <Link
@@ -271,8 +273,8 @@ function TravelingEncyclopediaContent() {
                       <div className={styles.noImage}>No Image</div>
                     )}
                     {/* 좌측 상단 순서 배지 */}
-                    <div className={styles.orderBadge}>
-                      #{orderNum < 0 ? Math.abs(orderNum) : orderNum}
+                    <div className={`${styles.orderBadge} ${isWarband ? styles.warbandBadge : ''}`}>
+                      #{globalOrder}
                     </div>
                   </div>
                   <div className={styles.cardContent}>
@@ -288,14 +290,14 @@ function TravelingEncyclopediaContent() {
                       <span className={styles.soulName}>{name}</span>
                     </p>
                     <p className={styles.secondLine}>
-                      {orderNum < 0 ? (
+                      {isWarband ? (
                         <strong style={{ color: "#FF8C00" }}>
-                          {isMobile
-                            ? `#${Math.abs(orderNum)}`
-                            : `${Math.abs(orderNum)}번째 유랑단`}
+                          #{globalOrder}번째 유랑단
                         </strong>
                       ) : (
-                        `${orderNum}번째`
+                        <strong style={{ color: "#667eea" }}>
+                          #{globalOrder}번째 유랑
+                        </strong>
                       )}{" "}
                       |{" "}
                       <strong style={{ color: "#dc2626" }}>
@@ -327,6 +329,7 @@ function TravelingEncyclopediaContent() {
                 name,
                 seasonName,
                 orderNum,
+                globalOrder,
                 startDate,
                 endDate,
                 visitNumber,
@@ -339,6 +342,7 @@ function TravelingEncyclopediaContent() {
                 (img) => img.imageType === "REPRESENTATIVE"
               );
               const isLast = index === visits.length - 1;
+              const isWarband = orderNum < 0;
 
               return (
                 <Link
@@ -347,8 +351,8 @@ function TravelingEncyclopediaContent() {
                   className={styles.spiritCard}
                   ref={isLast ? bottomSentinelRef : null}
                 >
-                  <div className={styles.rankBadge}>
-                    #{orderNum < 0 ? Math.abs(orderNum) : orderNum}
+                  <div className={`${styles.rankBadge} ${isWarband ? styles.warbandRankBadge : ''}`}>
+                    #{globalOrder}
                   </div>
 
                   <div className={styles.imageSection}>
@@ -378,14 +382,14 @@ function TravelingEncyclopediaContent() {
 
                     <div className={styles.detailsRow}>
                       <span className={styles.orderNumber}>
-                        {orderNum < 0 ? (
-                          <span
-                            style={{ color: "#FF8C00", fontWeight: "bold" }}
-                          >
-                            {Math.abs(orderNum)}번째 유랑단
+                        {isWarband ? (
+                          <span style={{ color: "#FF8C00", fontWeight: "bold" }}>
+                            {globalOrder}번째 유랑단
                           </span>
                         ) : (
-                          `${orderNum}번째`
+                          <span style={{ color: "#667eea", fontWeight: "bold" }}>
+                            {globalOrder}번째
+                          </span>
                         )}
                       </span>
                       <span className={styles.rerunCount}>

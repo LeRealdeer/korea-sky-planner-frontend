@@ -17,9 +17,9 @@ export default function MainPageClient() {
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
     { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' },
-    //{ title: '시즌 대백과', img: '/sky/extra/calculator.png', path: '/sky/SeasonDictionary' },
-    //{ title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
-    //{ title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
+    //{ title: '시즌 대백과', img: '/sky/extra/seasonDictionary.png', path: '/sky/SeasonDictionary' },
+    { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
+    { title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
     { title: '버스 노선표', img: '/sky/extra/busTable.png', path: '/sky/busTable' },
     { title: '악보 만들기', img: '/sky/extra/musicEditor.png', path: '/sky/musicEditor' },
     { title: '12월 모의고사', img: '/sky/extra/test.png', path: '/sky/test' },
@@ -35,8 +35,7 @@ export default function MainPageClient() {
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
             {/* <strong>스카이 플래너 만족도 조사</strong> */}
-            <span className={styles.surveyDesc}>유랑대백과와 오래된 유랑이 정보제공으로 간단하게 운영됩니다. 추후에 자료 보강이 될 예정입니다.</span>
-            <span className={styles.surveyDesc}>새로운 기능인 시즌 대백과는 베타 버전으로 임시 운영됩니다.</span>
+            <span className={styles.surveyDesc}>유랑대백과와 오래된 유랑이 베타 버전으로 임시 운영됩니다. 자료 보강 중입니다.</span>
 
           </div>
           {/* <button 

@@ -91,9 +91,9 @@ const fetchSeasonDetail = async () => {
   <button onClick={() => router.back()} className={styles.backButton}>
     ← 뒤로가기
   </button>
-  <Link href={`/sky/SeasonDictionary/seasons/${seasonId}/edit`} className={styles.editButton}>
+  {/* <Link href={`/sky/SeasonDictionary/seasons/${seasonId}/edit`} className={styles.editButton}>
     수정하기
-  </Link>
+  </Link> */}
 </div>
         
         <div className={styles.headerContent}>

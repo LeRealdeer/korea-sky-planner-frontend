@@ -144,9 +144,9 @@ function SeasonDictionaryContent() {
       <Link href="/sky/SeasonDictionary/seasons" className={styles.seasonViewButton}>
         🗂️ 시즌별로 보기
       </Link>
-      <Link href="/sky/SeasonDictionary/create" className={styles.createButton}>
+      {/* <Link href="/sky/SeasonDictionary/create" className={styles.createButton}>
         ✨ 영혼 만들기
-      </Link>
+      </Link> */}
     </div>
   </div>
 </div>

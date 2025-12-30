@@ -52,9 +52,9 @@ export default function SeasonsListPage() {
     <Link href="/sky/SeasonDictionary" className={styles.backButton}>
       영혼별로 보기
     </Link>
-    <Link href="/sky/SeasonDictionary/seasons/create" className={styles.createButton}>
+    {/* <Link href="/sky/SeasonDictionary/seasons/create" className={styles.createButton}>
       시즌 만들기
-    </Link>
+    </Link> */}
   </div>
 </div>
 

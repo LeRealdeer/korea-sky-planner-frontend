@@ -136,7 +136,7 @@ export default function OldestSpiritsPage() {
   // 시즌 색상 매핑
   const seasonColors = {
     감사: "#FFD700",
-    빛추: "#FF6347",
+    "빛 추적자": "#FF6347",
     친밀: "#4CAF50",
     리듬: "#3F51B5",
     마법: "#9C27B0",

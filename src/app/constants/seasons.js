@@ -1,7 +1,7 @@
 // constants/seasons.js
 export const SEASON_LIST = [
   { name: "감사", color: "#FFD700" },
-  { name: "빛추", color: "#FF6347" },
+  { name: "빛 추적자", color: "#FF6347" },
   { name: "친밀", color: "#4CAF50" },
   { name: "리듬", color: "#3F51B5" },
   { name: "마법", color: "#9C27B0" },

@@ -26,10 +26,10 @@ export default function NoticePage() {
       </div>
       
       <p className={styles.description}>
-        유랑대백과와 오래된 유랑은 현재 수정중에 있습니다.
+        시즌양초계산기는 비시즌에는 쉬어갑니다.
         <br />
         <br />
-        금방 만나요!
+        다음 시즌에 만나요!
       </p>
       <button className={styles.optionButton} onClick={handleBack}>
         뒤로가기

@@ -15,12 +15,11 @@ export default function ImageUploadPage() {
   const [uploading, setUploading] = useState(false);
   const [souls, setSouls] = useState([]);
   const [error, setError] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [files, setFiles] = useState([]); // 여러 파일 저장
 
   const [formData, setFormData] = useState({
     soulId: "",
     imageType: "REPRESENTATIVE",
-    file: null,
   });
 
   const imageTypes = [
@@ -58,33 +57,43 @@ export default function ImageUploadPage() {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const selectedFiles = Array.from(e.target.files);
+    
+    // 파일 크기 및 타입 검증
+    const validFiles = selectedFiles.filter(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`${file.name}는 10MB를 초과하여 제외되었습니다.`);
+        return false;
+      }
+      if (!file.type.startsWith("image/")) {
+        alert(`${file.name}는 이미지 파일이 아니어서 제외되었습니다.`);
+        return false;
+      }
+      return true;
+    });
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert("파일 크기는 10MB를 초과할 수 없습니다.");
-      return;
-    }
+    // 미리보기 URL 생성
+    const filesWithPreview = validFiles.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
 
-    if (!file.type.startsWith("image/")) {
-      alert("이미지 파일만 업로드 가능합니다.");
-      return;
-    }
+    setFiles(filesWithPreview);
+  };
 
-    setFormData(prev => ({ ...prev, file }));
-
-    // 미리보기
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const removeFile = (index) => {
+    setFiles(prev => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].preview); // 메모리 해제
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.file) {
+    if (files.length === 0) {
       alert("파일을 선택해주세요.");
       return;
     }
@@ -93,29 +102,48 @@ export default function ImageUploadPage() {
     setError(null);
 
     try {
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", formData.file);
-      uploadFormData.append("imageType", formData.imageType);
+      let successCount = 0;
+      let failCount = 0;
 
-      // ✅ soulId가 있으면 영혼 연결, 없으면 임시 업로드
-      let url = `${BASE_URL}/api/v1/images/upload`;
-      if (formData.soulId) {
-        url = `${BASE_URL}/api/v1/images`;
-        uploadFormData.append("soulId", formData.soulId);
+      // 각 파일을 순차적으로 업로드
+      for (let i = 0; i < files.length; i++) {
+        const { file } = files[i];
+        
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+        uploadFormData.append("imageType", formData.imageType);
+
+        // soulId가 있으면 영혼 연결, 없으면 임시 업로드
+        let url = `${BASE_URL}/api/v1/images/upload`;
+        if (formData.soulId) {
+          url = `${BASE_URL}/api/v1/images`;
+          uploadFormData.append("soulId", formData.soulId);
+        }
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            body: uploadFormData,
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            failCount++;
+            console.error(`${file.name} 업로드 실패`);
+          }
+        } catch (err) {
+          failCount++;
+          console.error(`${file.name} 업로드 오류:`, err);
+        }
       }
 
-      const response = await fetch(url, {
-        method: "POST",
-        body: uploadFormData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "이미지 업로드에 실패했습니다.");
+      if (successCount > 0) {
+        alert(`${successCount}개의 이미지가 성공적으로 업로드되었습니다!${failCount > 0 ? `\n(${failCount}개 실패)` : ''}`);
+        router.push("/sky/SeasonDictionary/Images");
+      } else {
+        throw new Error("모든 이미지 업로드에 실패했습니다.");
       }
-
-      alert("이미지가 성공적으로 업로드되었습니다!");
-      router.push("/sky/SeasonDictionary/Images");
     } catch (err) {
       setError(err.message);
       alert(`업로드 실패: ${err.message}`);
@@ -123,6 +151,13 @@ export default function ImageUploadPage() {
       setUploading(false);
     }
   };
+
+  // 컴포넌트 언마운트 시 메모리 해제
+  useEffect(() => {
+    return () => {
+      files.forEach(({ preview }) => URL.revokeObjectURL(preview));
+    };
+  }, []);
 
   if (loading) return <LoadingSpinner />;
 
@@ -179,23 +214,45 @@ export default function ImageUploadPage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>이미지 파일 *</label>
+            <label className={styles.label}>이미지 파일 * (여러 개 선택 가능)</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
               className={styles.fileInput}
               id="file-upload"
+              multiple // 다중 선택 가능
               required
             />
             <label htmlFor="file-upload" className={styles.fileLabel}>
-              📁 파일 선택
+              📁 파일 선택 (여러 개 가능)
             </label>
-            <p className={styles.hint}>최대 10MB, 이미지 파일만 가능</p>
+            <p className={styles.hint}>최대 10MB, 이미지 파일만 가능 · 여러 개 동시 선택 가능</p>
 
-            {previewUrl && (
-              <div className={styles.previewContainer}>
-                <img src={previewUrl} alt="미리보기" className={styles.preview} />
+            {/* 선택된 파일 미리보기 */}
+            {files.length > 0 && (
+              <div className={styles.previewGrid}>
+                <div className={styles.previewHeader}>
+                  선택된 파일: {files.length}개
+                </div>
+                {files.map(({ file, preview }, index) => (
+                  <div key={index} className={styles.previewItem}>
+                    <img src={preview} alt={`미리보기 ${index + 1}`} className={styles.preview} />
+                    <div className={styles.previewInfo}>
+                      <span className={styles.fileName}>{file.name}</span>
+                      <span className={styles.fileSize}>
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className={styles.removeButton}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -205,9 +262,9 @@ export default function ImageUploadPage() {
           <button 
             type="submit" 
             className={styles.submitButton}
-            disabled={uploading}
+            disabled={uploading || files.length === 0}
           >
-            {uploading ? "업로드 중..." : "이미지 업로드"}
+            {uploading ? `업로드 중... (${files.length}개)` : `${files.length}개 이미지 업로드`}
           </button>
         </div>
       </form>

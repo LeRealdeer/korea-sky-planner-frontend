@@ -277,11 +277,11 @@
 }
 
 .sliderButtonPrev {
-  left: 1rem;
+  left: -70px;
 }
 
 .sliderButtonNext {
-  right: 1rem;
+  right: -70px;
 }
 
 /* 인디케이터 */
@@ -368,11 +368,11 @@
   }
 
   .sliderButtonPrev {
-    left: 0.5rem;
+    left: -20px;
   }
 
   .sliderButtonNext {
-    right: 0.5rem;
+    right: -20px;
   }
 
   .indicators {

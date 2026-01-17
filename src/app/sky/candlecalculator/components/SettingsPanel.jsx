@@ -48,7 +48,7 @@ export function SettingsPanel({
               <div key={index} style={{ marginBottom: index < t.notices.length - 1 ? '4px' : '0' }}>
                 {parts[0]}
                 <a 
-                  href="https://sky-children-of-the-light.fandom.com/wiki/Season_of_Migration"
+                  href="https://sky-children-of-the-light.fandom.com/wiki/Season_of_Lightmending"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

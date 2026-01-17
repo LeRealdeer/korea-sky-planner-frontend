@@ -34,7 +34,7 @@ export default function CandleCalculator() {
   const [calcResult, setCalcResult] = useState("");
 
   const BONUS_CANDLES = 31;
-  const seasonEnd = new Date("2026-01-05T17:00:00+09:00");
+  const seasonEnd = new Date("2026-04-03T17:00:00+09:00");
   
   const t = translations[language];
 
@@ -225,7 +225,7 @@ const handleCalculate = () => {
           justifyContent: 'center',
           flexWrap: 'wrap'
         }}>
-          {spiritsData.slice(0, 3).map(spirit => (
+          {spiritsData.slice(0, 2).map(spirit => (
             <SpiritCard
               key={spirit.id}
               spirit={spirit}
@@ -244,7 +244,7 @@ const handleCalculate = () => {
           justifyContent: 'center',
           flexWrap: 'wrap'
         }}>
-          {spiritsData.slice(3, 5).map(spirit => (
+          {spiritsData.slice(2, 4).map(spirit => (
             <SpiritCard
               key={spirit.id}
               spirit={spirit}

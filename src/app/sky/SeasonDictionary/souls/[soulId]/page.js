@@ -17,6 +17,7 @@ export default function SoulDetailPage() {
   const [soul, setSoul] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentWearingIndex, setCurrentWearingIndex] = useState(0);
 
   useEffect(() => {
     if (soulId) {
@@ -41,6 +42,10 @@ export default function SoulDetailPage() {
     }
   };
 
+  const getImagesByType = (type) => {
+    return soul?.images?.filter(img => img.imageType === type) || [];
+  };
+
   const getImageByType = (type) => {
     return soul?.images?.find(img => img.imageType === type);
   };
@@ -51,8 +56,20 @@ export default function SoulDetailPage() {
 
   const representativeImage = getImageByType("REPRESENTATIVE");
   const locationImage = getImageByType("LOCATION");
-  const wearingImage = getImageByType("WEARING");
+  const wearingImages = getImagesByType("WEARING");
   const nodeChartImage = getImageByType("NODE_CHART");
+
+  const handlePrevWearing = () => {
+    setCurrentWearingIndex(prev => 
+      prev === 0 ? wearingImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextWearing = () => {
+    setCurrentWearingIndex(prev => 
+      prev === wearingImages.length - 1 ? 0 : prev + 1
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -61,9 +78,6 @@ export default function SoulDetailPage() {
         <button onClick={() => router.back()} className={styles.backButton}>
           ← 뒤로가기
         </button>
-        {/* <Link href={`/sky/SeasonDictionary/souls/${soulId}/edit`} className={styles.editButton}>
-          수정하기
-        </Link> */}
       </div>
 
       {/* 메인 콘텐츠 */}
@@ -149,38 +163,87 @@ export default function SoulDetailPage() {
           </div>
         </div>
 
-        {/* 추가 이미지 */}
-        <div className={styles.additionalImages}>
+        {/* 추가 이미지 - 개선된 레이아웃 */}
+        <div className={styles.imagesSection}>
+          {/* 위치 */}
           {locationImage?.url && (
-            <div className={styles.imageCard}>
-              <h3 className={styles.imageTitle}>위치</h3>
-              <img 
-                src={locationImage.url} 
-                alt="위치"
-                className={styles.additionalImage}
-              />
+            <div className={styles.fullWidthImageCard}>
+              <h3 className={styles.sectionTitle}>📍 위치</h3>
+              <div className={styles.fullImageWrapper}>
+                <img 
+                  src={locationImage.url} 
+                  alt="위치"
+                  className={styles.fullImage}
+                />
+              </div>
             </div>
           )}
 
-          {wearingImage?.url && (
-            <div className={styles.imageCard}>
-              <h3 className={styles.imageTitle}>착용샷</h3>
-              <img 
-                src={wearingImage.url} 
-                alt="착용샷"
-                className={styles.additionalImage}
-              />
+          {/* 착용샷 슬라이더 */}
+          {wearingImages.length > 0 && (
+            <div className={styles.fullWidthImageCard}>
+              <h3 className={styles.sectionTitle}>
+                👕 착용샷 {wearingImages.length > 1 && `(${currentWearingIndex + 1}/${wearingImages.length})`}
+              </h3>
+              <div className={styles.sliderWrapper}>
+                {wearingImages.length > 1 && (
+                  <button 
+                    onClick={handlePrevWearing}
+                    className={`${styles.sliderButton} ${styles.sliderButtonPrev}`}
+                    aria-label="이전 이미지"
+                  >
+                    ‹
+                  </button>
+                )}
+                
+                <div className={styles.sliderImageWrapper}>
+                  <img 
+                    src={wearingImages[currentWearingIndex].url} 
+                    alt={`착용샷 ${currentWearingIndex + 1}`}
+                    className={styles.fullImage}
+                  />
+                </div>
+
+                {wearingImages.length > 1 && (
+                  <button 
+                    onClick={handleNextWearing}
+                    className={`${styles.sliderButton} ${styles.sliderButtonNext}`}
+                    aria-label="다음 이미지"
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
+
+              {/* 인디케이터 */}
+              {wearingImages.length > 1 && (
+                <div className={styles.indicators}>
+                  {wearingImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentWearingIndex(index)}
+                      className={`${styles.indicator} ${
+                        index === currentWearingIndex ? styles.indicatorActive : ''
+                      }`}
+                      aria-label={`${index + 1}번째 이미지로 이동`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
+          {/* 노드표 */}
           {nodeChartImage?.url && (
-            <div className={styles.imageCard}>
-              <h3 className={styles.imageTitle}>노드표</h3>
-              <img 
-                src={nodeChartImage.url} 
-                alt="노드표"
-                className={styles.additionalImage}
-              />
+            <div className={styles.fullWidthImageCard}>
+              <h3 className={styles.sectionTitle}>🗺️ 노드표</h3>
+              <div className={styles.fullImageWrapper}>
+                <img 
+                  src={nodeChartImage.url} 
+                  alt="노드표"
+                  className={styles.fullImage}
+                />
+              </div>
             </div>
           )}
         </div>

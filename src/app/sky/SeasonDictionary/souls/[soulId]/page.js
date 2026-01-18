@@ -112,10 +112,10 @@ export default function SoulDetailPage() {
             <h1 className={styles.soulName}>{soul.name}</h1>
 
             <div className={styles.infoGrid}>
-              <div className={styles.infoItem}>
+              {/* <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>순서</span>
                 <span className={styles.infoValue}>#{soul.orderNum}</span>
-              </div>
+              </div> */}
               
               {/* {soul.creator && (
                 <div className={styles.infoItem}>

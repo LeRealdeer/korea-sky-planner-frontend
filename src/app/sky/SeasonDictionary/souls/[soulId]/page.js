@@ -112,7 +112,7 @@ export default function SoulDetailPage() {
             <h1 className={styles.soulName}>{soul.name}</h1>
 
             <div className={styles.infoGrid}>
-              <div className={styles.infoItem}>
+              {/* <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>순서</span>
                 <span className={styles.infoValue}>#{soul.orderNum}</span>
               </div>
@@ -122,7 +122,7 @@ export default function SoulDetailPage() {
                   <span className={styles.infoLabel}>제작자</span>
                   <span className={styles.infoValue}>{soul.creator}</span>
                 </div>
-              )}
+              )} */}
 
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>복각 횟수</span>

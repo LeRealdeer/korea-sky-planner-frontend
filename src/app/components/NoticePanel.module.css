@@ -212,3 +212,72 @@
     font-size: 0.85rem;
   }
 }
+
+/* 기존 스타일은 그대로 유지하고 아래 스타일을 추가하세요 */
+
+/* 출처 정보 섹션 */
+.creditSection {
+  
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border: 2px solid #bae6fd;
+}
+
+.creditTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0c4a6e;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.creditList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.creditList li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #0c4a6e;
+}
+
+.creditList strong {
+  color: #075985;
+  font-weight: 600;
+}
+
+.creditLink {
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  border-bottom: 1px solid transparent;
+}
+
+.creditLink:hover {
+  color: #0369a1;
+  border-bottom-color: #0369a1;
+}
+
+/* 반응형 */
+@media screen and (max-width: 768px) {
+  .creditSection {
+    padding: 1rem;
+  }
+
+  .creditTitle {
+    font-size: 0.9rem;
+  }
+
+  .creditList li {
+    font-size: 0.85rem;
+  }
+}

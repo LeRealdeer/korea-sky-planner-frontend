@@ -210,7 +210,7 @@ export function CalculationResult({
     fontWeight: 'bold',
     marginBottom: '6px'
   }}>
-    <span>{t.neededCandles}</span>
+    <span style={{ whiteSpace: 'pre-line' }}>{t.neededCandles}</span>
     <span>{calcResult.neededCandles}{t.bonusCandles}</span>
   </div>
   <div style={{

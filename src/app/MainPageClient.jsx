@@ -16,7 +16,7 @@ export default function MainPageClient() {
 
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
-    { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/temp' }, //candlecalculator
+    { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' }, //candlecalculator
     //{ title: '시즌 대백과', img: '/sky/extra/seasonDictionary.png', path: '/sky/SeasonDictionary' },
     { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
     { title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
@@ -35,7 +35,7 @@ export default function MainPageClient() {
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
             {/* <strong>스카이 플래너 만족도 조사</strong> */}
-            <span className={styles.surveyDesc}>유랑대백과와 오래된 유랑이 베타 버전으로 임시 운영됩니다. 자료 보강 중입니다.</span>
+            <span className={styles.surveyDesc}>유랑대백과 자료 보강을 완료하였습니다. 일부 영혼을 제외하고 착용샷/위치샷/노드표를 확인할 수 있습니다.</span>
 
           </div>
           {/* <button 

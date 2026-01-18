@@ -26,6 +26,7 @@ export const SEASON_LIST = [
   { name: "광채", color: "#FF1493" },
   { name: "파랑새", color: "#1E90FF" },
   { name: "불씨", color: "#FF4500" },
+  { name: "이주", color: "#00FA9A" }
 ];
 
 // 시즌 이름으로 색상 찾기 헬퍼 함수

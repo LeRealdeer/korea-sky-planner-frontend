@@ -125,7 +125,7 @@ export const spiritsData = [
       {
         level: 3,
         leftNodes: [
-          { id: "s3_l3_n1", type: "normal", cost: 24 },
+          { id: "s3_l3_n1", type: "normal", cost: 28 },
           { id: "s3_l3_n2", type: "normal", cost: 30 }
         ],
         rightNodes: [{ id: "s3_l3_s1", type: "season", cost: 0 }]
@@ -133,7 +133,7 @@ export const spiritsData = [
       {
         level: 2,
         leftNodes: [
-          { id: "s3_l2_n1", type: "normal", cost: 6 }
+          { id: "s3_l2_n1", type: "normal", cost: 25 }
         ],
         rightNodes: [{ id: "s3_l2_s1", type: "season", cost: 0 }]
       },
@@ -141,19 +141,19 @@ export const spiritsData = [
         level: 1,
         leftNodes: [
           { id: "s3_l1_n1", type: "normal", cost: 0 },
-          { id: "s3_l1_n2", type: "normal", cost: 2 }
+          { id: "s3_l1_n2", type: "normal", cost: 4 }
         ],
-        rightNodes: [{ id: "s3_l1_s1", type: "season", cost: 0 }]
+        rightNodes: [{ id: "s3_l1_s1", type: "normal", cost: 0 }]
       }
     ]
   },
   {
     id: 4,
     name: {
-      ko: "이주하는 새 소리꾼",
-      en: "Migrating Bird Whisperer"
+      ko: "빛수선 빛잡이",
+      en: "Lightmending Light Catcher"
     },
-    totalCandles: 75,
+    totalCandles: 105,
     levels: [
       {
         level: 5,
@@ -163,7 +163,7 @@ export const spiritsData = [
       {
         level: 4,
         leftNodes: [
-          { id: "s4_l4_n1", type: "normal", cost: 12 },
+          { id: "s4_l4_n1", type: "normal", cost: 38 },
           { id: "s4_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
@@ -174,15 +174,15 @@ export const spiritsData = [
       {
         level: 3,
         leftNodes: [
-          { id: "s4_l3_n1", type: "normal", cost: 24 },
-          { id: "s4_l3_n2", type: "normal", cost: 30 }
+          { id: "s4_l3_n1", type: "normal", cost: 28 },
+          { id: "s4_l3_n2", type: "normal", cost: 11 }
         ],
         rightNodes: [{ id: "s4_l3_s1", type: "season", cost: 0 }]
       },
       {
         level: 2,
         leftNodes: [
-          { id: "s4_l2_n1", type: "normal", cost: 4 }
+          { id: "s4_l2_n1", type: "normal", cost: 6 }
         ],
         rightNodes: [{ id: "s4_l2_s1", type: "season", cost: 0 }]
       },
@@ -190,9 +190,9 @@ export const spiritsData = [
         level: 1,
         leftNodes: [
           { id: "s4_l1_n1", type: "normal", cost: 0 },
-          { id: "s4_l1_n2", type: "normal", cost: 2 }
+          { id: "s4_l1_n2", type: "normal", cost: 19 }
         ],
-        rightNodes: [{ id: "s4_l1_s1", type: "season", cost: 0 }]
+        rightNodes: [{ id: "s4_l1_s1", type: "normal", cost: 0 }]
       }
     ]
   },

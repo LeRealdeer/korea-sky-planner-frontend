@@ -17,7 +17,7 @@ export const theme = {
 export const translations = {
   ko: {
     title: '스카이 양초 계산기',
-    subtitle: '이주의 시즌',
+    subtitle: '빛수선의 시즌',
     remainingDays: '남은 시즌 일수',
     currentCandles: '현재 보유 양초',
     ownsSeasonPass: '시즌 패스 소유',
@@ -39,7 +39,7 @@ export const translations = {
     remainingPeriodCandles: '남은 기간 획득 양초',
     seasonPassBonus: '시패 보너스',
     totalObtainableCandles: '총 획득 가능 양초',
-    neededCandles: '필요한 양초',
+    neededCandles: '필요한 추가 양초\n(선택 양초 - 현재 양초)',
     remainingCandles: '남는 양초',
     shortageCandles: '부족한 양초',
     daysNeeded: '⏱️ 선택한 아이템까지 필요 일수',
@@ -55,7 +55,7 @@ export const translations = {
   },
   en: {
     title: 'Sky Candle Calculator',
-    subtitle: 'Season of Migration',
+    subtitle: 'Season of Lightmending',
     remainingDays: 'Remaining Season Days',
     currentCandles: 'Current Candles',
     ownsSeasonPass: 'Season Pass',

@@ -9,11 +9,43 @@ export default function NoticePanel({
   onSeasonClick, 
   onAllView, 
   onGoHome,
-  onWarbandClick // ✅ 추가
+  onWarbandClick
 }) {
   return (
     <div className={styles.noticePanel}>
       <h2 className={styles.noticeTitle}>유랑 대백과</h2>
+      {/* 출처 정보 */}
+      <div className={styles.creditSection}>
+        {/* <h3 className={styles.creditTitle}>📸 이미지 출처</h3> */}
+        <ul className={styles.creditList}>
+          <li>
+            <strong>노드표 & 위치:</strong>{" "}
+            <a
+              href="https://discord.gg/skyinfographicsdatabase"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.creditLink}
+            >
+              Sky Infographics Database (공식 디스코드)
+            </a>
+          </li>
+          <li>
+            <strong>대표 이미지:</strong>{" "}
+            <a
+              href="https://sky-children-of-the-light.fandom.com/wiki/Sky:_Children_of_the_Light_Wiki"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.creditLink}
+            >
+              Sky Wiki
+            </a>
+          </li>
+          <li>
+            <strong>착용샷:</strong> 망고님, 엔님, 무륵님께서 도와주셨습니다
+          </li>
+        </ul>
+      </div>
+      
       <p className={styles.noticeDescription}>
         찾고 있는 유랑이 기억나지 않을 때 검색창에 키워드를 입력해
         검색해주세요.
@@ -56,7 +88,6 @@ export default function NoticePanel({
           전체보기
         </button>
       </div>
-      
     </div>
   );
 }

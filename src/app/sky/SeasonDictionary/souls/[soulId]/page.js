@@ -117,12 +117,12 @@ export default function SoulDetailPage() {
                 <span className={styles.infoValue}>#{soul.orderNum}</span>
               </div>
               
-              {soul.creator && (
+              {/* {soul.creator && (
                 <div className={styles.infoItem}>
                   <span className={styles.infoLabel}>제작자</span>
                   <span className={styles.infoValue}>{soul.creator}</span>
                 </div>
-              )}
+              )} */}
 
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>복각 횟수</span>

@@ -112,17 +112,17 @@ export default function SoulDetailPage() {
             <h1 className={styles.soulName}>{soul.name}</h1>
 
             <div className={styles.infoGrid}>
-              {/* <div className={styles.infoItem}>
+              <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>순서</span>
                 <span className={styles.infoValue}>#{soul.orderNum}</span>
-              </div> */}
+              </div>
               
-              {/* {soul.creator && (
+              {soul.creator && (
                 <div className={styles.infoItem}>
                   <span className={styles.infoLabel}>제작자</span>
                   <span className={styles.infoValue}>{soul.creator}</span>
                 </div>
-              )} */}
+              )}
 
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>복각 횟수</span>
@@ -146,17 +146,30 @@ export default function SoulDetailPage() {
               <div className={styles.visitsBox}>
                 <h3 className={styles.boxTitle}>유랑 이력</h3>
                 <div className={styles.visitsList}>
-                  {soul.travelingVisits.map((visit, index) => (
-                    <div key={index} className={styles.visitItem}>
-                      <span className={styles.visitNumber}>
-                        {visit.visitNumber}차
-                        {visit.isWarbandVisit && " (유랑단)"}
-                      </span>
-                      <span className={styles.visitDate}>
-                        {visit.startDate} ~ {visit.endDate}
-                      </span>
-                    </div>
-                  ))}
+                  {soul.travelingVisits.map((visit, index) => {
+                    const isWarband = visit.isWarbandVisit || (visit.globalOrder && visit.globalOrder < 0);
+                    const displayOrder = visit.globalOrder ? Math.abs(visit.globalOrder) : null;
+                    
+                    return (
+                      <div key={index} className={styles.visitItem}>
+                        <div className={styles.visitInfo}>
+                          <div className={styles.visitHeader}>
+                            <span className={styles.visitNumber}>
+                              {visit.visitNumber}차
+                            </span>
+                            {displayOrder && (
+                              <span className={isWarband ? styles.globalOrderWarband : styles.globalOrder}>
+                                {displayOrder}번째 {isWarband ? "유랑단" : "유랑"}
+                              </span>
+                            )}
+                          </div>
+                          <span className={styles.visitDate}>
+                            {visit.startDate} ~ {visit.endDate}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

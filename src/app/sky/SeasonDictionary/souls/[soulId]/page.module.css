@@ -187,10 +187,46 @@
   border-radius: 8px;
 }
 
+.visitInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.visitHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .visitNumber {
   font-weight: 700;
   color: #495057;
   font-size: 0.9rem;
+}
+
+.globalOrder {
+  font-size: 0.75rem;
+  color: #667eea;
+  font-weight: 600;
+  background: #e8eaf6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.globalOrderWarband {
+  font-size: 0.75rem;
+  color: #f57c00;
+  font-weight: 600;
+  background: #fff3e0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+  border: 1px solid #ffb74d;
 }
 
 .visitDate {
@@ -223,7 +259,7 @@
 
 .fullImageWrapper {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   background: #f8f9fa;
   border-radius: 12px;
@@ -240,7 +276,7 @@
 .sliderWrapper {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -277,11 +313,11 @@
 }
 
 .sliderButtonPrev {
-  left: -70px;
+  left: 1rem;
 }
 
 .sliderButtonNext {
-  right: -70px;
+  right: 1rem;
 }
 
 /* 인디케이터 */
@@ -362,17 +398,17 @@
   }
 
   .sliderButton {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     font-size: 1.5rem;
   }
 
   .sliderButtonPrev {
-    left: -20px;
+    left: 0.5rem;
   }
 
   .sliderButtonNext {
-    right: -20px;
+    right: 0.5rem;
   }
 
   .indicators {
@@ -382,5 +418,43 @@
   .indicator {
     width: 10px;
     height: 10px;
+  }
+
+  /* 유랑 이력 모바일 최적화 - 슬림 버전 */
+  .visitsList {
+    gap: 0.5rem;
+  }
+
+  .visitItem {
+    padding: 0.6rem;
+    margin-bottom: 0;
+  }
+
+  .visitInfo {
+    gap: 0.4rem;
+  }
+
+  .visitHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .visitNumber {
+    font-size: 0.95rem;
+  }
+
+  .globalOrder,
+  .globalOrderWarband {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    margin: 0;
+  }
+
+  .visitDate {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.2rem;
   }
 }

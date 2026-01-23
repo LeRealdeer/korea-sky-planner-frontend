@@ -697,7 +697,7 @@ export default function BusTable() {
             <input
               type="text"
               className={styles.departureTimeInput}
-              placeholder={language === 'ko' ? '예: 오후 3시, 15:00' : 'e.g., 3 PM, 15:00'}
+              // placeholder={language === 'ko' ? '예: 오후 3시, 15:00' : 'e.g., 3 PM, 15:00'}
               value={departureTime}
               onChange={(e) => setDepartureTime(e.target.value)}
               style={{ 

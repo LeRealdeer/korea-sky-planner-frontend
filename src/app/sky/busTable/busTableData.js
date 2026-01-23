@@ -169,8 +169,8 @@ export const seasonMaps = {
   en: [
     { id: 'starlight', name: 'Starlight Desert', icon: '⭐' },
     { id: 'oasis', name: 'Crescent Oasis', icon: '🌙' },
-    { id: 'moomin', name: 'Moomin Valley', icon: '🏔️' },
-    { id: 'alice', name: 'Alice Cafe', icon: '☕' }
+    { id: 'moomin', name: 'Moomin', icon: '🏔️' },
+    { id: 'alice', name: 'Alice', icon: '☕' }
   ]
 };
 

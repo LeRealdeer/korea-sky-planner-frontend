@@ -110,18 +110,27 @@ function hslToHex(h, s, l) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-// 메인 색상에서 조화로운 테마 생성
+// 메인 색상에서 조화로운 테마 생성 (기존 프리셋 비율 유지)
 function generateThemeFromColor(mainColor) {
   const [h, s, l] = hexToHSL(mainColor);
   
+  // 기존 blue 테마의 명도(Lightness) 비율 분석:
+  // background gradient: 95% -> 85% -> 75% -> 65%
+  // border: 55%
+  // title: 25%
+  // mainBorder: 50%
+  // selected: 50%
+  // selectedText: 25%
+  // line: 65%
+  
   return {
-    background: `linear-gradient(180deg, ${hslToHex(h, Math.min(s, 40), 95)} 0%, ${hslToHex(h, Math.min(s, 50), 85)} 30%, ${hslToHex(h, s, 75)} 60%, ${hslToHex(h, s, 65)} 100%)`,
-    border: hslToHex(h, s, 55),
-    title: hslToHex(h, Math.max(s, 60), 25),
-    mainBorder: hslToHex(h, s, 50),
-    selected: hslToHex(h, s, 50),
-    selectedText: hslToHex(h, Math.max(s, 60), 25),
-    line: hslToHex(h, s, 65)
+    background: `linear-gradient(180deg, ${hslToHex(h, s * 0.8, 92)} 0%, ${hslToHex(h, s * 0.9, 82)} 30%, ${hslToHex(h, s, 70)} 60%, ${hslToHex(h, s, 58)} 100%)`,
+    border: hslToHex(h, s, 50),
+    title: hslToHex(h, Math.min(s * 1.2, 100), 22),
+    mainBorder: hslToHex(h, s, 48),
+    selected: hslToHex(h, s, 48),
+    selectedText: hslToHex(h, Math.min(s * 1.2, 100), 22),
+    line: hslToHex(h, s, 62)
   };
 }
 
@@ -130,6 +139,10 @@ export default function BusTable() {
   const [theme, setTheme] = useState('blue');
   const [customColor, setCustomColor] = useState('#3b82f6');
   const [useCustomColor, setUseCustomColor] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [hue, setHue] = useState(210); // 0-360
+  const [saturation, setSaturation] = useState(80); // 0-100
+  const [lightness, setLightness] = useState(55); // 0-100
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState({});
   const [profileImage, setProfileImage] = useState(null);
@@ -204,6 +217,36 @@ export default function BusTable() {
 
   const handleCustomColorChange = (e) => {
     setCustomColor(e.target.value);
+    setUseCustomColor(true);
+  };
+
+  const handleHueChange = (newHue) => {
+    setHue(newHue);
+    const color = hslToHex(newHue, saturation, lightness);
+    setCustomColor(color);
+    setUseCustomColor(true);
+  };
+
+  const handleSaturationChange = (newSat) => {
+    setSaturation(newSat);
+    const color = hslToHex(hue, newSat, lightness);
+    setCustomColor(color);
+    setUseCustomColor(true);
+  };
+
+  const handleLightnessChange = (newLight) => {
+    setLightness(newLight);
+    const color = hslToHex(hue, saturation, newLight);
+    setCustomColor(color);
+    setUseCustomColor(true);
+  };
+
+  const handleCustomColorSelect = (color) => {
+    const [h, s, l] = hexToHSL(color);
+    setHue(h);
+    setSaturation(s);
+    setLightness(l);
+    setCustomColor(color);
     setUseCustomColor(true);
   };
 
@@ -364,16 +407,166 @@ export default function BusTable() {
             style={{ background: 'linear-gradient(135deg, #d8b4fe, #a855f7)' }}
           />
           <div className={styles.colorPickerWrapper}>
-            <input
-              type="color"
-              value={customColor}
-              onChange={handleCustomColorChange}
-              className={styles.colorPicker}
-              title="커스텀 색상 선택"
-            />
-            <span className={styles.colorPickerLabel}>🎨</span>
+            <button
+              className={`${styles.colorButton} ${useCustomColor ? styles.activeColor : ''}`}
+              onClick={() => setShowColorPicker(!showColorPicker)}
+              style={{ 
+                background: useCustomColor ? customColor : 'linear-gradient(135deg, #ffffff, #e5e7eb)',
+                position: 'relative'
+              }}
+            >
+              <span className={styles.colorPickerLabel}>🎨</span>
+            </button>
           </div>
         </div>
+
+        {/* 커스텀 컬러 피커 모달 */}
+        {showColorPicker && (
+          <div className={styles.colorPickerModal} onClick={() => setShowColorPicker(false)}>
+            <div className={styles.colorPickerContent} onClick={(e) => e.stopPropagation()}>
+              <h4 className={styles.colorPickerTitle}>
+                {language === 'ko' ? '원하는 색상을 선택하세요' : 'Choose Your Color'}
+              </h4>
+              
+              {/* 선택된 색상 미리보기 */}
+              <div className={styles.colorPreview}>
+                <div 
+                  className={styles.colorPreviewBox}
+                  style={{ background: customColor }}
+                />
+                <span className={styles.colorPreviewText}>{customColor.toUpperCase()}</span>
+              </div>
+
+              {/* Hue 슬라이더 */}
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>
+                  {language === 'ko' ? '색상 (Hue)' : 'Hue'}
+                </label>
+                <div className={styles.sliderWrapper}>
+                  <div 
+                    className={styles.hueSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const percentage = x / rect.width;
+                      handleHueChange(Math.round(percentage * 360));
+                    }}
+                  >
+                    <div 
+                      className={styles.sliderThumb}
+                      style={{ left: `${(hue / 360) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Saturation 슬라이더 */}
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>
+                  {language === 'ko' ? '채도 (Saturation)' : 'Saturation'}
+                </label>
+                <div className={styles.sliderWrapper}>
+                  <div 
+                    className={styles.saturationSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const percentage = x / rect.width;
+                      handleSaturationChange(Math.round(percentage * 100));
+                    }}
+                    style={{
+                      background: `linear-gradient(to right, 
+                        ${hslToHex(hue, 0, lightness)}, 
+                        ${hslToHex(hue, 100, lightness)})`
+                    }}
+                  >
+                    <div 
+                      className={styles.sliderThumb}
+                      style={{ left: `${saturation}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Lightness 슬라이더 */}
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>
+                  {language === 'ko' ? '밝기 (Lightness)' : 'Lightness'}
+                </label>
+                <div className={styles.sliderWrapper}>
+                  <div 
+                    className={styles.lightnessSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const percentage = x / rect.width;
+                      handleLightnessChange(Math.round(percentage * 100));
+                    }}
+                    style={{
+                      background: `linear-gradient(to right, 
+                        ${hslToHex(hue, saturation, 0)}, 
+                        ${hslToHex(hue, saturation, 50)}, 
+                        ${hslToHex(hue, saturation, 100)})`
+                    }}
+                  >
+                    <div 
+                      className={styles.sliderThumb}
+                      style={{ left: `${lightness}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 프리셋 색상들 */}
+              <div className={styles.presetColors}>
+                <label className={styles.sliderLabel}>
+                  {language === 'ko' ? '빠른 선택' : 'Quick Select'}
+                </label>
+                <div className={styles.colorPalette}>
+                  <div className={styles.colorRow}>
+                    {['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6'].map(color => (
+                      <button
+                        key={color}
+                        className={styles.paletteColor}
+                        style={{ background: color }}
+                        onClick={() => handleCustomColorSelect(color)}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.colorRow}>
+                    {['#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899'].map(color => (
+                      <button
+                        key={color}
+                        className={styles.paletteColor}
+                        style={{ background: color }}
+                        onClick={() => handleCustomColorSelect(color)}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.colorRow}>
+                    {['#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#fde047', '#bef264', '#86efac', '#6ee7b7'].map(color => (
+                      <button
+                        key={color}
+                        className={styles.paletteColor}
+                        style={{ background: color }}
+                        onClick={() => handleCustomColorSelect(color)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.colorPickerActions}>
+                <button 
+                  className={styles.colorPickerCancel}
+                  onClick={() => setShowColorPicker(false)}
+                >
+                  {language === 'ko' ? '완료' : 'Done'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div 
@@ -504,7 +697,7 @@ export default function BusTable() {
             <input
               type="text"
               className={styles.departureTimeInput}
-              
+              placeholder={language === 'ko' ? '예: 오후 3시, 15:00' : 'e.g., 3 PM, 15:00'}
               value={departureTime}
               onChange={(e) => setDepartureTime(e.target.value)}
               style={{ 

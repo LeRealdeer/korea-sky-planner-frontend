@@ -313,7 +313,7 @@ export default function BusTable() {
                     1:1 비율의 정사각형 이미지를 권장합니다.
                   </div>
                   <div className={styles.instructionItem}>
-                    <strong>✍️ 정보 입력:</strong> 버스 기사 이름, 소개 문구, 출발 시간을 자유롭게 입력하세요.
+                    <strong>✍️ 정보 입력:</strong> 버스 기사 이름, 소개 문구을 자유롭게 입력하세요.
                   </div>
                   <div className={styles.instructionItem}>
                     <strong>📋 운행 옵션:</strong> 운행 유형, 모집 인원, 소요 시간 등 다양한 옵션을 중복 선택할 수 있습니다.
@@ -343,7 +343,7 @@ export default function BusTable() {
                     Square images with 1:1 ratio are recommended.
                   </div>
                   <div className={styles.instructionItem}>
-                    <strong>✍️ Information Input:</strong> Enter driver name, introduction, and departure time freely.
+                    <strong>✍️ Information Input:</strong> Enter driver name, introduction freely.
                   </div>
                   <div className={styles.instructionItem}>
                     <strong>📋 Run Options:</strong> Multiple selections available for run type, group size, estimated time, and more.
@@ -684,7 +684,7 @@ export default function BusTable() {
           </div>
           
           {/* 출발 시간 입력 */}
-          <div 
+          {/* <div 
             className={styles.departureTimeSection}
             style={{ borderColor: currentTheme.mainBorder }}
           >
@@ -705,7 +705,7 @@ export default function BusTable() {
                 color: currentTheme.title
               }}
             />
-          </div>
+          </div> */}
           
           {/* 시즌맵 */}
           <div className={styles.seasonMapSection}>

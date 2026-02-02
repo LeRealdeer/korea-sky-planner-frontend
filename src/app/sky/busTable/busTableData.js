@@ -241,10 +241,10 @@ export const guideCategories = {
           multiple: true
         },
         {
-          id: 'calling',
+          id: 'mushroom',
           icon: '💫',
-          title: '삥삥은 당신을 부르는 소리!',
-          options: ['삥하면 화면을 봐주세요!'],
+          title: '왕버섯은',
+          options: ['함께 태워요', '혼자 가능해요', '지나갈게요'],
           multiple: true
         },
         {
@@ -350,13 +350,13 @@ export const guideCategories = {
           options: ['Please hold hands first!', 'I\'ll offer first!'],
           multiple: true
         },
-        {
-          id: 'calling',
-          icon: '💫',
-          title: 'Honking',
-          options: ['Check screen when honked!'],
-          multiple: true
-        },
+      {
+        id: 'mushroom',
+        icon: '💫',
+        title: 'Big Mushrooms',
+        options: ['Together', 'Solo', 'Skip'],
+        multiple: true
+      },
         {
           id: 'rest',
           icon: '🏠',

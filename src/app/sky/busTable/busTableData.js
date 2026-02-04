@@ -244,7 +244,7 @@ export const guideCategories = {
           id: 'mushroom',
           icon: '💫',
           title: '왕버섯은',
-          options: ['함께 태워요', '혼자 가능해요', '지나갈게요'],
+          options: ['함께 태워요', '혼자 가능해요', '스킵할게요'],
           multiple: true
         },
         {

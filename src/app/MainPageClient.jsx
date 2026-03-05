@@ -35,7 +35,7 @@ export default function MainPageClient() {
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
             {/* <strong>스카이 플래너 만족도 조사</strong> */}
-            <span className={styles.surveyDesc}>유랑대백과 자료 보강을 완료하였습니다.</span>
+            <span className={styles.surveyDesc}>3월 모의고사가 게시되었습니다.</span>
 
           </div>
           {/* <button 

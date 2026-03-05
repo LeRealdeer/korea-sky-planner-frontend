@@ -177,7 +177,7 @@ export default function TravelingVisitEditPage() {
               value={formData.visitNumber}
               onChange={handleChange}
               className={styles.input}
-              min="1"
+             
               required
             />
             <p className={styles.hint}>해당 영혼의 몇 번째 유랑인지 (1차, 2차, 3차...)</p>
@@ -192,7 +192,7 @@ export default function TravelingVisitEditPage() {
               value={formData.globalOrder}
               onChange={handleChange}
               className={styles.input}
-              min="1"
+             
               placeholder="예: 342 (전체 342번째 유랑)"
             />
             <p className={styles.hint}>전체 유랑 중 몇 번째인지 (선택사항, 예: 342번째)</p>

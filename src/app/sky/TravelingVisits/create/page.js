@@ -133,7 +133,7 @@ export default function TravelingVisitCreatePage() {
               value={formData.visitNumber}
               onChange={handleChange}
               className={styles.input}
-              min="1"
+
               placeholder="예: 1"
               required
             />
@@ -149,7 +149,7 @@ export default function TravelingVisitCreatePage() {
               value={formData.globalOrder}
               onChange={handleChange}
               className={styles.input}
-              min="1"
+      
               placeholder="예: 342 (전체 342번째 유랑)"
             />
             <p className={styles.hint}>전체 유랑 중 몇 번째인지 (선택사항, 예: 342번째)</p>

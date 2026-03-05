@@ -55,7 +55,7 @@ export const quizData = [
   {
     question: '9. 다음 사진 속 장소는 어느 맵에 위치해있나요?',
     options: ['햇빛 초원', '비밀의 숲', '승리의 계곡', '지식의 도서관', '황금 황무지'],
-    answer: '비밀의 숲',
+    answer: '햇빛 초원',
     image: '/sky/test/9.jpg',
   },
   {

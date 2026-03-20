@@ -29,7 +29,7 @@ export default function MainPageClient() {
 
   return (
     <>
-{/* 
+
       <div className={styles.surveyBanner}>
         <div className={styles.surveyContent}>
           <span className={styles.surveyIcon}>📋</span>
@@ -45,7 +45,7 @@ export default function MainPageClient() {
             바로가기
           </button>
         </div>
-      </div> */}
+      </div>
 
       <main className={styles.container}>
         {/* 메뉴 그리드 */}

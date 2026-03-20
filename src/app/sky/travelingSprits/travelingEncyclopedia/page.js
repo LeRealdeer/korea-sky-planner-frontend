@@ -289,6 +289,7 @@ function TravelingEncyclopediaContent() {
     파랑새: "#1E90FF",
     불씨: "#FF4500",
     이주: "#00FA9A",
+    빛수선 : "#7c00ea"
   };
 
   const filteredVisits = showWarbandOnly 

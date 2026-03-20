@@ -162,6 +162,7 @@ export default function OldestSpiritsPage() {
     파랑새: "#1E90FF",
     불씨: "#FF4500",
     이주: "#00FA9A",
+    빛수선 : "#7c00ea"
   };
 
   if (loading) {

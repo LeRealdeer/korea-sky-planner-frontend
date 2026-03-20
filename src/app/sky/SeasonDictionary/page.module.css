@@ -22,6 +22,15 @@
   flex-wrap: wrap;
 }
 
+.bannerItem {
+  font-size: 0.78rem;
+  color: #868e96;
+}
+.bannerItem strong {
+  font-weight: 600;
+  color: #495057;
+}
+
 .wikiLink {
   font-size: 0.78rem;
   font-weight: 600;
@@ -38,15 +47,6 @@
   color: #ced4da;
   font-size: 0.85rem;
   user-select: none;
-}
-
-.creditText {
-  font-size: 0.78rem;
-  color: #868e96;
-}
-.creditText strong {
-  font-weight: 600;
-  color: #495057;
 }
 
 /* ── 헤더 ── */
@@ -82,7 +82,6 @@
 .seasonInfoStrip {
   display: inline-flex;
   align-items: stretch;
-  gap: 0;
   margin-top: 2rem;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -132,7 +131,7 @@
 .infoStripLoading {
   padding: 1rem 2rem;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 600;
 }
 
@@ -141,7 +140,7 @@
   font-weight: 800;
   color: white;
   padding: 0.25rem 0.75rem;
-  border: 1.5px solid rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
   border-radius: 99px;
   white-space: nowrap;
   margin-top: 0.2rem;
@@ -286,7 +285,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
-  padding: 0 2rem 4rem;
+  padding: 0 2rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -368,7 +367,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 2rem 4rem;
+  padding: 0 2rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -469,6 +468,31 @@
   font-weight: 600;
 }
 
+/* ── 무한스크롤 하단 스피너 ── */
+.loadingMoreSpinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 0 3rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── 반응형 ── */
 @media screen and (max-width: 768px) {
   .infoBannerInner {
@@ -538,7 +562,7 @@
 
   .cardsGrid {
     grid-template-columns: repeat(3, 1fr);
-    padding: 0 1rem 3rem;
+    padding: 0 1rem 2rem;
   }
 
   .imageSection {
@@ -556,6 +580,6 @@
   }
 
   .spiritsList {
-    padding: 0 1rem 3rem;
+    padding: 0 1rem 2rem;
   }
 }

@@ -17,7 +17,7 @@ export default function MainPageClient() {
   const menu = [
     { title: '키 재기', img: '/sky/extra/height.png', path: '/sky/height' },
     { title: '양초 계산기', img: '/sky/extra/calculator.png', path: '/sky/candlecalculator' }, //candlecalculator
-    { title: '시즌 대백과', img: '/sky/extra/seasonDictionary.png', path: '/sky/SeasonDictionary' },
+    //{ title: '시즌 대백과', img: '/sky/extra/seasonDictionary.png', path: '/sky/SeasonDictionary' },
     { title: '유랑 대백과', img: '/sky/extra/dictionary.png', path: '/sky/travelingSprits/travelingEncyclopedia' },
     { title: '오래된 유랑', img: '/sky/extra/oldestSprits.png', path: '/sky/travelingSprits/oldestSprits' },
     { title: '버스 노선표', img: '/sky/extra/busTable.png', path: '/sky/busTable' },
@@ -29,12 +29,12 @@ export default function MainPageClient() {
 
   return (
     <>
-      {/* 만족도 조사 배너 */}
+{/* 
       <div className={styles.surveyBanner}>
         <div className={styles.surveyContent}>
           <span className={styles.surveyIcon}>📋</span>
           <div className={styles.surveyText}>
-            {/* <strong>스카이 플래너 만족도 조사</strong> */}
+           
             <span className={styles.surveyDesc}>✨ [NEW] 시즌 대백과 오픈 — 지금 바로 확인해보세요!</span>
 
           </div>
@@ -45,7 +45,7 @@ export default function MainPageClient() {
             바로가기
           </button>
         </div>
-      </div>
+      </div> */}
 
       <main className={styles.container}>
         {/* 메뉴 그리드 */}

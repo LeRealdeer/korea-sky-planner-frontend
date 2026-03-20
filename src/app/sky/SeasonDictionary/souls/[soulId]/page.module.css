@@ -259,7 +259,7 @@
 
 .fullImageWrapper {
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;   /* 800 → 600 */
   margin: 0 auto;
   background: #f8f9fa;
   border-radius: 12px;
@@ -269,6 +269,8 @@
 .fullImage {
   width: 100%;
   height: auto;
+  max-height: 500px;  /* 높이 제한 추가 */
+  object-fit: contain; /* 비율 유지하면서 잘리지 않게 */
   display: block;
 }
 
@@ -276,7 +278,7 @@
 .sliderWrapper {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;   /* 800 → 600 */
   margin: 0 auto;
   overflow: visible;
 }

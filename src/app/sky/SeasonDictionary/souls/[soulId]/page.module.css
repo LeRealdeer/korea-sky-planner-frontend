@@ -278,6 +278,7 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  overflow: visible;
 }
 
 .sliderImageWrapper {
@@ -313,11 +314,11 @@
 }
 
 .sliderButtonPrev {
-  left: 1rem;
+  left: -3rem;
 }
 
 .sliderButtonNext {
-  right: 1rem;
+  right: -3rem;
 }
 
 /* 인디케이터 */
@@ -404,11 +405,11 @@
   }
 
   .sliderButtonPrev {
-    left: 0.5rem;
+    left: -1.25rem;
   }
 
   .sliderButtonNext {
-    right: 0.5rem;
+    right: -1.25rem;
   }
 
   .indicators {

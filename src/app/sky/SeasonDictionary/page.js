@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { seasonColors, seasons } from "../../constants/seasonColors";
+import { seasonColors, seasons as SEASON_ORDER } from "../../constants/seasonColors";
 import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -13,189 +13,115 @@ function SeasonDictionaryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [souls, setSouls] = useState([]);
+  const [allSouls, setAllSouls] = useState([]);
+  const [grouped, setGrouped] = useState([]);
+  const [openSeasons, setOpenSeasons] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState("");
-  const [viewMode, setViewMode] = useState("card");
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
 
-  const [seasonInfo, setSeasonInfo] = useState(null);
-  const [seasonInfoLoading, setSeasonInfoLoading] = useState(false);
-
-  const bottomSentinelRef = useRef(null);
-  const isRestoringScroll = useRef(false);
+  // 시즌 섹션 ref (스크롤용)
+  const sectionRefs = useRef({});
 
   useEffect(() => {
-    const saveState = () => {
-      sessionStorage.setItem('seasonDict_scrollY', window.scrollY.toString());
-      sessionStorage.setItem('seasonDict_viewMode', viewMode);
-      sessionStorage.setItem('seasonDict_season', selectedSeason);
-      sessionStorage.setItem('seasonDict_query', submittedQuery);
-      sessionStorage.setItem('seasonDict_page', page.toString());
-      sessionStorage.setItem('seasonDict_souls', JSON.stringify(souls));
-    };
-    const links = document.querySelectorAll('a[href*="/souls/"]');
-    links.forEach(link => link.addEventListener('click', saveState));
-    return () => links.forEach(link => link.removeEventListener('click', saveState));
-  }, [viewMode, selectedSeason, submittedQuery, page, souls]);
+    const urlQuery = searchParams.get("query") || "";
+    setSearchQuery(urlQuery);
+    setSubmittedQuery(urlQuery);
+    fetchAllSouls();
+  }, []);
 
   useEffect(() => {
-    const urlMode = searchParams.get("mode");
-    const urlSeason = searchParams.get("season");
-    const urlQuery = searchParams.get("query");
+    if (allSouls.length > 0) buildGroups(allSouls, submittedQuery);
+  }, [allSouls, submittedQuery]);
 
-    const savedScrollY = sessionStorage.getItem('seasonDict_scrollY');
-    const savedMode = sessionStorage.getItem('seasonDict_viewMode');
-    const savedSeason = sessionStorage.getItem('seasonDict_season');
-    const savedQuery = sessionStorage.getItem('seasonDict_query');
-    const savedPage = sessionStorage.getItem('seasonDict_page');
-    const savedSouls = sessionStorage.getItem('seasonDict_souls');
-
-    const isBack = savedScrollY !== null;
-
-    if (isBack) {
-      const restoredSeason = savedSeason || urlSeason || "";
-      setViewMode(savedMode || urlMode || "card");
-      setSelectedSeason(restoredSeason);
-      setSearchQuery(savedQuery || urlQuery || "");
-      setSubmittedQuery(savedQuery || urlQuery || "");
-      setPage(parseInt(savedPage || "0"));
-      if (savedSouls) {
-        try { setSouls(JSON.parse(savedSouls)); setLoading(false); } catch (e) {}
-      }
-      isRestoringScroll.current = true;
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedScrollY));
-        isRestoringScroll.current = false;
-        sessionStorage.removeItem('seasonDict_scrollY');
-        sessionStorage.removeItem('seasonDict_souls');
-      }, 100);
-      if (restoredSeason) fetchSeasonInfo(restoredSeason);
-    } else {
-      const initialSeason = urlSeason || "";
-      setViewMode(urlMode || "card");
-      setSelectedSeason(initialSeason);
-      setSearchQuery(urlQuery || "");
-      setSubmittedQuery(urlQuery || "");
-      if (initialSeason) fetchSeasonInfo(initialSeason);
-    }
-  }, [searchParams]);
-
-  const fetchSeasonInfo = async (seasonName) => {
-    if (!seasonName) { setSeasonInfo(null); return; }
-    setSeasonInfoLoading(true);
-    try {
-      const res = await fetch(`${BASE_URL}/api/v1/seasons`);
-      if (res.ok) {
-        const data = await res.json();
-        const found = (data.data || []).find(s => s.name === seasonName);
-        setSeasonInfo(found || null);
-      }
-    } catch (e) { setSeasonInfo(null); }
-    finally { setSeasonInfoLoading(false); }
-  };
-
-  const fetchSouls = async (pageNum = 0, query = "", season = "", isAppend = false) => {
-    isAppend ? setLoadingMore(true) : setLoading(true);
+  const fetchAllSouls = async () => {
+    setLoading(true);
     setError(null);
     try {
-      let url = `${BASE_URL}/api/v1/souls?page=${pageNum}&size=20`;
-      if (query.trim()) url += `&query=${encodeURIComponent(query)}`;
-      if (season) url += `&seasonName=${encodeURIComponent(season)}`;
-      const res = await fetch(url);
+      const res = await fetch(`${BASE_URL}/api/v1/souls/all`);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-      const pageData = data.data;
-      if (isAppend) setSouls(prev => [...prev, ...(pageData.content || [])]);
-      else setSouls(pageData.content || []);
-      setHasMore(!pageData.last);
-      setPage(pageNum);
+      setAllSouls(data.data || []);
     } catch (err) {
-      setError(err.message); setSouls([]);
+      setError(err.message);
     } finally {
-      setLoading(false); setLoadingMore(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (isRestoringScroll.current) return;
-    fetchSouls(0, submittedQuery, selectedSeason, false);
-  }, [submittedQuery, selectedSeason]);
+  const buildGroups = (souls, query) => {
+    const q = query.trim().toLowerCase();
 
-  useEffect(() => {
-    if (!bottomSentinelRef.current || !hasMore) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading && !loadingMore)
-          fetchSouls(page + 1, submittedQuery, selectedSeason, true);
-      },
-      { root: null, rootMargin: "100px", threshold: 0 }
-    );
-    observer.observe(bottomSentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, loading, loadingMore, page, submittedQuery, selectedSeason]);
+    const filtered = q
+      ? souls.filter(s =>
+          s.name?.toLowerCase().includes(q) ||
+          s.keywords?.some(k => k.toLowerCase().includes(q)) ||
+          s.seasonName?.toLowerCase().includes(q)
+        )
+      : souls;
+
+    const map = new Map();
+    filtered.forEach(soul => {
+      const sn = soul.seasonName || "기타";
+      if (!map.has(sn)) map.set(sn, []);
+      map.get(sn).push(soul);
+    });
+
+    // 각 시즌 내 영혼을 orderNum 오름차순 정렬
+    map.forEach((soulsInSeason, sn) => {
+      soulsInSeason.sort((a, b) => (a.orderNum ?? 999) - (b.orderNum ?? 999));
+    });
+
+    // SEASON_ORDER 기준 정렬
+    const sortedGroups = [];
+    SEASON_ORDER.forEach(sn => {
+      if (map.has(sn)) sortedGroups.push({ seasonName: sn, souls: map.get(sn) });
+    });
+    map.forEach((s, sn) => {
+      if (!SEASON_ORDER.includes(sn)) sortedGroups.push({ seasonName: sn, souls: s });
+    });
+
+    setGrouped(sortedGroups);
+
+    // 기본: 전부 펼침
+    const newOpen = {};
+    sortedGroups.forEach(g => { newOpen[g.seasonName] = true; });
+    setOpenSeasons(newOpen);
+  };
+
+  const toggleSeason = (seasonName) => {
+    setOpenSeasons(prev => ({ ...prev, [seasonName]: !prev[seasonName] }));
+  };
+
+  // 시즌칩 클릭 → 해당 섹션으로 스크롤 + 펼치기
+  const handleChipClick = (seasonName) => {
+    setOpenSeasons(prev => ({ ...prev, [seasonName]: true }));
+    setTimeout(() => {
+      sectionRefs.current[seasonName]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-    params.set("mode", viewMode);
-    if (searchQuery) params.set("query", searchQuery);
-    if (selectedSeason) params.set("season", selectedSeason);
     setSubmittedQuery(searchQuery);
-    setPage(0);
-    sessionStorage.removeItem('seasonDict_scrollY');
-    sessionStorage.removeItem('seasonDict_souls');
-    router.push(`/sky/SeasonDictionary?${params.toString()}`);
-  };
-
-  const handleSeasonClick = (seasonName) => {
     const params = new URLSearchParams();
-    params.set("mode", viewMode);
     if (searchQuery) params.set("query", searchQuery);
-    params.set("season", seasonName);
-    setSelectedSeason(seasonName);
-    setPage(0);
-    fetchSeasonInfo(seasonName);
-    sessionStorage.removeItem('seasonDict_scrollY');
-    sessionStorage.removeItem('seasonDict_souls');
     router.push(`/sky/SeasonDictionary?${params.toString()}`);
   };
 
-  const handleAllView = () => {
-    setSelectedSeason(""); setSearchQuery(""); setSubmittedQuery(""); setPage(0); setSeasonInfo(null);
-    sessionStorage.removeItem('seasonDict_scrollY');
-    sessionStorage.removeItem('seasonDict_souls');
-    router.push(`/sky/SeasonDictionary?mode=${viewMode}`);
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSubmittedQuery("");
+    router.push("/sky/SeasonDictionary");
   };
 
-  const handleViewModeChange = (mode) => {
-    const params = new URLSearchParams();
-    params.set("mode", mode);
-    if (submittedQuery) params.set("query", submittedQuery);
-    if (selectedSeason) params.set("season", selectedSeason);
-    setViewMode(mode);
-    sessionStorage.removeItem('seasonDict_scrollY');
-    sessionStorage.removeItem('seasonDict_souls');
-    router.push(`/sky/SeasonDictionary?${params.toString()}`);
-  };
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    const [y, m, d] = dateStr.split("-");
-    return `${y}.${m}.${d}`;
-  };
-
-  const seasonColor = selectedSeason ? (seasonColors[selectedSeason] || "#667eea") : undefined;
+  const totalCount = grouped.reduce((sum, g) => sum + g.souls.length, 0);
 
   return (
     <div className={styles.container}>
 
-      {/* ── 출처 박스 (최상단) ── */}
+      {/* ── 출처 박스 ── */}
       <div className={styles.creditSection}>
         <div className={styles.creditBox}>
           <p className={styles.creditLine}>
@@ -217,172 +143,124 @@ function SeasonDictionaryContent() {
       </div>
 
       {/* ── 헤더 ── */}
-      <div className={styles.header} style={seasonColor ? { background: seasonColor } : undefined}>
+      <div className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>
-            {selectedSeason ? `${selectedSeason} 시즌` : "시즌 대백과"}
-          </h1>
+          <h1 className={styles.title}>시즌 대백과</h1>
+          <p className={styles.subtitle}>영혼 이름이나 외형 키워드로 검색해보세요</p>
+        </div>
+      </div>
 
-          {selectedSeason && (
-            <div className={styles.seasonInfoStrip}>
-              {seasonInfoLoading ? (
-                <span className={styles.infoStripLoading}>로딩 중...</span>
-              ) : seasonInfo ? (
-                <>
-                  {seasonInfo.orderNum != null && (
-                    <div className={styles.infoStripItem}>
-                      <span className={styles.infoStripLabel}>시즌 순서</span>
-                      <span className={styles.infoStripValue}>{seasonInfo.orderNum}번째 시즌</span>
-                    </div>
-                  )}
-                  {seasonInfo.startDate && seasonInfo.endDate && (
-                    <>
-                      <div className={styles.infoStripDivider} />
-                      <div className={styles.infoStripItem}>
-                        <span className={styles.infoStripLabel}>진행 기간</span>
-                        <span className={styles.infoStripValue}>
-                          {formatDate(seasonInfo.startDate)} – {formatDate(seasonInfo.endDate)}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                  {seasonInfo.durationDays && (
-                    <>
-                      <div className={styles.infoStripDivider} />
-                      <div className={styles.infoStripItem}>
-                        <span className={styles.infoStripLabel}>진행일수</span>
-                        <span className={styles.infoStripValue}>{seasonInfo.durationDays}일</span>
-                      </div>
-                    </>
-                  )}
-                  {seasonInfo.isCollaboration && (
-                    <>
-                      <div className={styles.infoStripDivider} />
-                      <div className={styles.infoStripItem}>
-                        <span className={styles.collabTag}>콜라보 시즌</span>
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : null}
-            </div>
+      {/* ── 컨트롤 카드 (칩 + 검색) ── */}
+      <div className={styles.controlCard}>
+
+        {/* 시즌 칩 */}
+        <p className={styles.chipGuide}>시즌 이름을 클릭하면 해당 시즌으로 이동합니다:</p>
+        <div className={styles.seasonChips}>
+          {SEASON_ORDER.map(season => {
+            const color = seasonColors[season] || "#888";
+            const exists = grouped.some(g => g.seasonName === season);
+            return (
+              <button
+                key={season}
+                onClick={() => handleChipClick(season)}
+                className={styles.seasonChip}
+                style={{ backgroundColor: color, opacity: exists ? 1 : 0.35 }}
+                disabled={!exists}
+              >
+                {season}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 검색창 */}
+        <div className={styles.searchWrapper}>
+          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="영혼 이름, 키워드 검색..."
+              className={styles.searchInput}
+            />
+            {searchQuery && (
+              <button type="button" className={styles.clearBtn} onClick={handleClearSearch}>✕</button>
+            )}
+            <button type="submit" className={styles.searchButton}>검색</button>
+          </form>
+          {submittedQuery && (
+            <p className={styles.searchResult}>
+              <strong>"{submittedQuery}"</strong> 검색 결과 — {totalCount}개 영혼
+            </p>
           )}
         </div>
       </div>
 
-      {/* ── 흰 컨트롤 카드 ── */}
-      <div className={styles.controlCard}>
-        <p className={styles.guideText}>
-          찾고 있는 영혼이 기억나지 않을 때 검색창에 키워드를 입력해 검색해주세요.
-        </p>
-        <p className={styles.chipGuide}>아래 시즌 이름을 클릭하면 자동 검색됩니다:</p>
-
-        {/* 시즌 칩 - 5개씩 */}
-        <div className={styles.seasonChips}>
-          {seasons.map((season) => (
-            <button
-              key={season}
-              onClick={() => handleSeasonClick(season)}
-              className={`${styles.seasonChip} ${selectedSeason === season ? styles.chipActive : ""}`}
-              style={{ backgroundColor: seasonColors[season] || "#888" }}
-            >
-              {season}
-            </button>
-          ))}
-        </div>
-
-        {/* 전체보기 */}
-        <div className={styles.allViewRow}>
-          <button
-            onClick={handleAllView}
-            className={`${styles.allViewBtn} ${!selectedSeason ? styles.allViewBtnActive : ""}`}
-          >
-            전체보기
-          </button>
-        </div>
-      </div>
-
-      {/* ── 검색 + 뷰 토글 ── */}
-      <div className={styles.searchAndFilter}>
-        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="영혼 이름, 키워드 검색..."
-            className={styles.searchInput}
-          />
-          <button type="submit" className={styles.searchButton}>검색</button>
-        </form>
-        <div className={styles.viewModeToggle}>
-          <button onClick={() => handleViewModeChange("card")} className={`${styles.viewButton} ${viewMode === "card" ? styles.activeView : ""}`}>카드 뷰</button>
-          <button onClick={() => handleViewModeChange("list")} className={`${styles.viewButton} ${viewMode === "list" ? styles.activeView : ""}`}>리스트 뷰</button>
-        </div>
-      </div>
-
       {/* ── 영혼 목록 ── */}
-      {loading && page === 0 ? (
+      {loading ? (
         <LoadingSpinner />
       ) : error ? (
-        <div className={styles.error}>Error: {error}</div>
-      ) : souls.length === 0 ? (
-        <p className={styles.noData}>해당 조건에 맞는 영혼이 없습니다.</p>
-      ) : viewMode === "card" ? (
-        <>
-          <div className={styles.cardsGrid}>
-            {souls.map((soul, index) => {
-              const repImg = soul.images?.find(img => img.imageType === "REPRESENTATIVE");
-              const isLast = index === souls.length - 1;
-              return (
-                <Link key={soul.id} href={`/sky/SeasonDictionary/souls/${soul.id}`} className={styles.soulCard} ref={isLast ? bottomSentinelRef : null}>
-                  <div className={styles.imageWrapper}>
-                    {repImg?.url
-                      ? <img src={repImg.url} alt={soul.name} className={styles.cardImage} />
-                      : <div className={styles.noImage}>—</div>
-                    }
-                  </div>
-                  <div className={styles.cardContent}>
-                    <span className={styles.seasonBadge} style={{ backgroundColor: seasonColors[soul.seasonName] || "#888" }}>{soul.seasonName}</span>
-                    <h3 className={styles.soulName}>{soul.name}</h3>
-                    {soul.isSeasonGuide && <span className={styles.guideBadge}>가이드</span>}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          {loadingMore && <div className={styles.loadingMoreSpinner}><div className={styles.spinner} /><span>불러오는 중...</span></div>}
-          {!loadingMore && hasMore && <div ref={bottomSentinelRef} style={{ height: 1 }} />}
-        </>
+        <p className={styles.stateMsg}>오류: {error}</p>
+      ) : grouped.length === 0 ? (
+        <p className={styles.stateMsg}>검색 결과가 없습니다.</p>
       ) : (
-        <>
-          <div className={styles.spiritsList}>
-            {souls.map((soul, index) => {
-              const repImg = soul.images?.find(img => img.imageType === "REPRESENTATIVE");
-              const isLast = index === souls.length - 1;
-              return (
-                <Link key={soul.id} href={`/sky/SeasonDictionary/souls/${soul.id}`} className={styles.spiritCard} ref={isLast ? bottomSentinelRef : null}>
-                  <div className={styles.imageSection}>
-                    {repImg?.url ? <img src={repImg.url} alt={soul.name} className={styles.spiritImage} /> : <div className={styles.noImage}>—</div>}
+        <div className={styles.accordionList}>
+          {grouped.map(({ seasonName, souls }) => {
+            const color = seasonColors[seasonName] || "#888";
+            const isOpen = openSeasons[seasonName] ?? true;
+
+            return (
+              <div
+                key={seasonName}
+                className={styles.seasonSection}
+                ref={el => { sectionRefs.current[seasonName] = el; }}
+              >
+                {/* 시즌 헤더 */}
+                <button
+                  className={styles.seasonHeader}
+                  onClick={() => toggleSeason(seasonName)}
+                  style={{ borderLeftColor: color }}
+                >
+                  <div className={styles.seasonHeaderLeft}>
+                    <span className={styles.seasonDot} style={{ backgroundColor: color }} />
+                    <span className={styles.seasonName}>{seasonName}</span>
+                    <span className={styles.seasonCount}>{souls.length}개</span>
                   </div>
-                  <div className={styles.infoSection}>
-                    <div className={styles.nameRow}>
-                      <span className={styles.seasonBadge} style={{ backgroundColor: seasonColors[soul.seasonName] || "#888" }}>{soul.seasonName}</span>
-                      <h3 className={styles.spiritName}>{soul.name}</h3>
-                      {soul.isSeasonGuide && <span className={styles.guideBadge}>가이드</span>}
-                    </div>
-                    {soul.keywords?.length > 0 && (
-                      <div className={styles.keywords}>
-                        {soul.keywords.slice(0, 3).map((kw, i) => <span key={i} className={styles.keyword}>{kw}</span>)}
-                      </div>
-                    )}
+                  <span className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}>›</span>
+                </button>
+
+                {/* 영혼 카드 그리드 */}
+                {isOpen && (
+                  <div className={styles.soulsGrid}>
+                    {souls.map(soul => {
+                      const repImg = soul.images?.find(img => img.imageType === "REPRESENTATIVE");
+                      return (
+                        <Link
+                          key={soul.id}
+                          href={`/sky/SeasonDictionary/souls/${soul.id}`}
+                          className={styles.soulCard}
+                        >
+                          <div className={styles.imageWrapper}>
+                            {repImg?.url
+                              ? <img src={repImg.url} alt={soul.name} className={styles.cardImage} />
+                              : <div className={styles.noImage}>—</div>
+                            }
+                          </div>
+                          <div className={styles.cardContent}>
+                            <p className={styles.soulName}>{soul.name}</p>
+                            {soul.isSeasonGuide && (
+                              <span className={styles.guideBadge}>가이드</span>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-          {loadingMore && <div className={styles.loadingMoreSpinner}><div className={styles.spinner} /><span>불러오는 중...</span></div>}
-          {!loadingMore && hasMore && <div ref={bottomSentinelRef} style={{ height: 1 }} />}
-        </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -6,9 +6,7 @@
   min-height: 100vh;
 }
 
-/* ═══════════════════════════════
-   출처 박스 (최상단, 헤더 위)
-═══════════════════════════════ */
+/* ── 출처 박스 ── */
 .creditSection {
   background: white;
   padding: 0.75rem 1rem;
@@ -31,139 +29,42 @@
 }
 .creditLine:last-child { margin-bottom: 0; }
 .creditLine strong { font-weight: 700; }
-
-.creditLink {
-  color: #2980b9;
-  font-weight: 700;
-  text-decoration: none;
-}
+.creditLink { color: #2980b9; font-weight: 700; text-decoration: none; }
 .creditLink:hover { text-decoration: underline; }
 
-/* ═══════════════════════════════
-   헤더 - 패딩 추가
-═══════════════════════════════ */
+/* ── 헤더 ── */
 .header {
   background: #667eea;
-  padding: 2rem 1rem 1.75rem; /* ← 1.5→2rem, 1.25→1.75rem */
+  padding: 2rem 1.25rem 1.75rem;
   text-align: center;
   color: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: background 0.35s ease;
 }
 
 .headerContent { max-width: 1400px; margin: 0 auto; }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 900;
-  margin: 0;
+  margin: 0 0 0.4rem 0;
   letter-spacing: -0.3px;
 }
 
-/* ═══════════════════════════════
-   시즌 인포 스트립
-   모바일: 시즌순서 1줄 / 진행기간+진행일수 2줄
-   데스크탑: 전부 1줄
-═══════════════════════════════ */
-.seasonInfoStrip {
-  display: inline-flex;
-  align-items: stretch;
-  margin-top: 1rem;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 10px;
-  overflow: hidden;
-  animation: fadeUp 0.2s ease;
-  /* 모바일: 줄바꿈 허용 */
-  flex-wrap: wrap;
-  justify-content: center;
-  /* 너비를 컨텐츠에 맞게 */
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
+.subtitle {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin: 0;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(5px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.infoStripItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-  padding: 0.6rem 1rem;
-  /* 모바일: 시즌순서는 혼자 한 줄 차지하도록 */
-  flex-shrink: 0;
-}
-
-/* 시즌순서 아이템만 모바일에서 100% 폭으로 강제 */
-.infoStripItem:first-child {
-  width: 100%;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.infoStripLabel {
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.75;
-  color: white;
-  white-space: nowrap;
-}
-
-.infoStripValue {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: white;
-  white-space: nowrap;
-}
-
-.infoStripDivider {
-  width: 1px;
-  background: rgba(255,255,255,0.25);
-  flex-shrink: 0;
-  margin: 0.4rem 0;
-}
-
-.infoStripLoading {
-  padding: 0.6rem 1rem;
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.7);
-  font-weight: 600;
-}
-
-.collabTag {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: white;
-  padding: 0.15rem 0.5rem;
-  border: 1.5px solid rgba(255,255,255,0.6);
-  border-radius: 99px;
-  white-space: nowrap;
-}
-
-/* ═══════════════════════════════
-   컨트롤 카드 (칩 + 검색)
-═══════════════════════════════ */
+/* ── 컨트롤 카드 ── */
 .controlCard {
   background: white;
-  margin: -1rem 0.75rem 0.75rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  padding: 1rem 0.875rem 0.875rem;
+  margin: -1.25rem 0.875rem 0.875rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  padding: 1.25rem 1rem 1rem;
   position: relative;
   z-index: 10;
-}
-
-.guideText {
-  font-size: 0.75rem;
-  color: #495057;
-  text-align: center;
-  margin: 0 0 0.75rem 0;
-  line-height: 1.5;
 }
 
 .chipGuide {
@@ -174,11 +75,12 @@
   margin: 0 0 0.5rem 0;
 }
 
+/* 시즌 칩 5개씩 */
 .seasonChips {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.3rem;
-  margin-bottom: 0.625rem;
+  margin-bottom: 1rem;
 }
 
 .seasonChip {
@@ -196,71 +98,58 @@
   word-break: keep-all;
   line-height: 1.2;
 }
-
-.seasonChip:hover { opacity: 0.88; transform: translateY(-1px); }
-.chipActive {
-  outline: 2px solid rgba(255,255,255,0.8);
-  outline-offset: 1px;
-  transform: scale(1.04);
+.seasonChip:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
+.seasonChip:disabled { cursor: default; }
 
-.allViewRow {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.allViewBtn {
-  padding: 0.45rem 2rem;
-  border: none;
-  border-radius: 7px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  background: #667eea;
-  color: white;
-  transition: all 0.15s;
-}
-.allViewBtn:hover { background: #5568d3; }
-.allViewBtnActive { background: #495057; }
-
-/* ═══════════════════════════════
-   검색 + 뷰 토글 - 마진 추가
-═══════════════════════════════ */
-.searchAndFilter {
-  padding: 0 0.75rem;
-  max-width: 1400px;
-  margin: 0 auto 1.25rem; /* ← 하단 마진 증가 */
-}
+/* 검색 */
+.searchWrapper { }
 
 .searchForm {
   display: flex;
-  gap: 0.35rem;
-  margin-bottom: 0.75rem; /* ← 0.5→0.75rem */
-  background: white;
+  gap: 0.4rem;
+  background: #f8f9fa;
   padding: 0.35rem;
   border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  border: 1px solid #e9ecef;
+  position: relative;
 }
 
 .searchInput {
   flex: 1;
-  padding: 0.6rem 0.65rem; /* ← 0.5→0.6rem */
+  padding: 0.55rem 0.65rem;
   border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  font-size: 0.8rem;
-  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  background: white;
   font-family: inherit;
 }
-.searchInput:focus { outline: none; border-color: #667eea; background: white; }
+.searchInput:focus { outline: none; border-color: #667eea; }
+
+.clearBtn {
+  position: absolute;
+  right: 5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #adb5bd;
+  cursor: pointer;
+  font-size: 0.72rem;
+  padding: 0.2rem;
+  line-height: 1;
+}
+.clearBtn:hover { color: #495057; }
 
 .searchButton {
-  padding: 0.6rem 1rem; /* ← 0.5→0.6rem */
+  padding: 0.55rem 1rem;
   background: #667eea;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -268,65 +157,126 @@
 }
 .searchButton:hover { background: #5568d3; }
 
-.viewModeToggle {
-  display: flex;
-  background: #f1f5f9;
-  border-radius: 7px;
-  padding: 3px;
-  border: 1px solid #e2e8f0;
-  width: 100%;
+.searchResult {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin: 0.5rem 0 0 0.2rem;
 }
 
-.viewButton {
-  flex: 1;
-  padding: 0.55rem; /* ← 0.4→0.55rem */
+/* ── 아코디언 목록 ── */
+.accordionList {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0.875rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* ── 시즌 섹션 ── */
+.seasonSection {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 1px solid #e9ecef;
+  /* 시즌칩 스크롤 시 헤더에 가리지 않게 */
+  scroll-margin-top: 12px;
+}
+
+.seasonHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
   background: transparent;
   border: none;
-  font-size: 0.8rem; /* ← 0.75→0.8rem */
-  font-weight: 600;
+  border-left: 4px solid;
   cursor: pointer;
-  border-radius: 5px;
-  color: #64748b;
-  text-align: center;
+  text-align: left;
+  transition: background 0.15s;
   font-family: inherit;
-  transition: all 0.2s;
 }
-.viewButton.activeView {
-  background: white;
-  color: #1e293b;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.seasonHeader:hover { background: #f8f9fa; }
+
+.seasonHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-/* ═══════════════════════════════
-   카드 그리드
-═══════════════════════════════ */
-.cardsGrid {
+.seasonDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.seasonName {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #212529;
+}
+
+.seasonCount {
+  font-size: 0.72rem;
+  color: #868e96;
+  font-weight: 500;
+  background: #f1f3f5;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+}
+
+.chevron {
+  font-size: 1.2rem;
+  color: #adb5bd;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.2s ease;
+  transform: rotate(90deg);
+}
+.chevronOpen {
+  transform: rotate(-90deg);
+}
+
+/* ── 영혼 카드 그리드 ── */
+.soulsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.4rem;
-  padding: 0 0.75rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0.5rem 0.75rem 0.875rem;
+  border-top: 1px solid #f1f3f5;
+  animation: slideDown 0.15s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .soulCard {
   display: flex;
   flex-direction: column;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e9ecef;
   border-radius: 7px;
-  background: white;
+  background: #fafafa;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
 }
-.soulCard:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.soulCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-color: #dee2e6;
+  background: white;
+}
 
 .imageWrapper {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #fff;
+  background: white;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -342,7 +292,7 @@
 .soulCard:hover .cardImage { transform: scale(1.04); }
 
 .cardContent {
-  padding: 0.4rem;
+  padding: 0.4rem 0.4rem 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -350,20 +300,10 @@
   text-align: center;
 }
 
-.seasonBadge {
-  display: inline-block;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: white;
-  line-height: 1.3;
-}
-
 .soulName {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #212529;
+  color: #343a40;
   margin: 0;
   line-height: 1.3;
   word-break: keep-all;
@@ -371,7 +311,7 @@
 
 .guideBadge {
   display: inline-block;
-  padding: 0.12rem 0.35rem;
+  padding: 0.1rem 0.35rem;
   background: #fbbf24;
   color: white;
   font-size: 0.58rem;
@@ -379,186 +319,58 @@
   border-radius: 4px;
 }
 
-/* ═══════════════════════════════
-   리스트 뷰
-═══════════════════════════════ */
-.spiritsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0 0.75rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.spiritCard {
-  display: flex;
-  align-items: center;
-  padding: 0.65rem 0.75rem;
-  background: white;
-  border-radius: 9px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  border: 1px solid #e9ecef;
-  gap: 0.65rem;
-}
-.spiritCard:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-
-.imageSection {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.spiritImage { width: 100%; height: 100%; object-fit: contain; }
-
-.infoSection { flex: 1; min-width: 0; }
-
-.nameRow {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  margin-bottom: 0.2rem;
-}
-
-.spiritName {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #1f2937;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-
-.keywords {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  margin-top: 0.2rem;
-}
-
-.keyword {
-  padding: 0.1rem 0.35rem;
-  background: #f1f3f5;
-  color: #6b7280;
-  font-size: 0.65rem;
-  border-radius: 3px;
-  font-weight: 500;
-  border: 1px solid #e9ecef;
-}
-
 .noImage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
   color: #ced4da;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
 }
 
-.noData {
+.stateMsg {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 4rem 1rem;
   color: #adb5bd;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.95rem;
 }
 
-.error {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #dc3545;
-  font-size: 0.875rem;
-}
-
-.loadingMoreSpinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem 0 2rem;
-  color: #9ca3af;
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-
-.spinner {
-  width: 26px;
-  height: 26px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ═══════════════════════════════
-   데스크탑 (769px+)
-═══════════════════════════════ */
+/* ── 데스크탑 ── */
 @media screen and (min-width: 769px) {
   .creditSection { padding: 1rem 2rem; }
   .creditLine { font-size: 0.875rem; }
 
   .header { padding: 3rem 2rem 2.5rem; }
   .title { font-size: 2.75rem; }
-
-  /* 데스크탑: 인포스트립 완전 1줄 */
-  .seasonInfoStrip { flex-wrap: nowrap; width: auto; }
-  .infoStripItem:first-child {
-    width: auto;
-    border-bottom: none;
-  }
-  .infoStripItem { padding: 0.875rem 1.75rem; }
-  .infoStripLabel { font-size: 0.65rem; }
-  .infoStripValue { font-size: 1rem; }
+  .subtitle { font-size: 1rem; }
 
   .controlCard {
     margin: -1.5rem 2rem 1.5rem;
-    padding: 1.75rem 2rem;
-    border-radius: 12px;
+    padding: 1.75rem 2rem 1.5rem;
+    border-radius: 14px;
   }
 
-  .guideText { font-size: 1rem; }
-  .chipGuide { font-size: 0.9rem; }
+  .chipGuide { font-size: 0.875rem; margin-bottom: 0.625rem; }
 
   .seasonChips {
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
     gap: 0.6rem;
+    margin-bottom: 1.25rem;
   }
   .seasonChip { font-size: 0.875rem; padding: 0.6rem 0.4rem; border-radius: 8px; }
 
-  .allViewBtn { padding: 0.6rem 3rem; font-size: 0.95rem; }
+  .searchInput { padding: 0.65rem 0.875rem; font-size: 0.95rem; }
+  .searchButton { padding: 0.65rem 1.5rem; font-size: 0.95rem; }
+  .clearBtn { right: 6.5rem; }
 
-  .searchAndFilter { padding: 0 2rem; margin-bottom: 1.5rem; }
-  .searchForm { padding: 0.5rem; margin-bottom: 1.25rem; }
-  .searchInput { padding: 0.75rem 1rem; font-size: 1rem; }
-  .searchButton { padding: 0.75rem 2rem; font-size: 1rem; }
-  .viewModeToggle { width: 300px; margin: 0 auto; border-radius: 12px; }
-  .viewButton { padding: 0.75rem 1rem; font-size: 1rem; }
+  .accordionList { padding: 0 2rem 3rem; gap: 0.875rem; }
 
-  .cardsGrid {
+  .seasonHeader { padding: 1rem 1.25rem; }
+  .seasonName { font-size: 1.1rem; }
+  .seasonCount { font-size: 0.78rem; }
+
+  .soulsGrid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 0.5rem;
-    padding: 0 2rem 2rem;
+    gap: 0.6rem;
+    padding: 0.75rem 1.25rem 1.25rem;
   }
-  .cardContent { align-items: flex-start; text-align: left; padding: 0.5rem; }
-  .seasonBadge { font-size: 0.75rem; }
-  .soulName { font-size: 0.9rem; font-weight: 500; }
-  .guideBadge { font-size: 0.7rem; }
 
-  .spiritsList { gap: 0.75rem; padding: 0 2rem 2rem; }
-  .spiritCard { padding: 1.25rem 1.5rem; gap: 1.25rem; border-radius: 12px; }
-  .imageSection { width: 80px; height: 80px; }
-  .spiritName { font-size: 1.1rem; font-weight: 500; }
-  .keyword { font-size: 0.75rem; }
+  .soulName { font-size: 0.875rem; }
+  .guideBadge { font-size: 0.7rem; }
 }

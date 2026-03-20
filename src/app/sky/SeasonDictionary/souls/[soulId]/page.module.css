@@ -18,35 +18,17 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.backButton,
-.editButton {
+.backButton {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.backButton {
   background: #6c757d;
   color: white;
 }
-
-.backButton:hover {
-  background: #5a6268;
-}
-
-.editButton {
-  background: #667eea;
-  color: white;
-}
-
-.editButton:hover {
-  background: #5568d3;
-}
+.backButton:hover { background: #5a6268; }
 
 /* 메인 콘텐츠 */
 .mainContent {
@@ -74,7 +56,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s;
 }
+.imageWrapper:hover { opacity: 0.88; }
 
 .mainImage {
   width: 100%;
@@ -108,10 +92,7 @@
   font-weight: 700;
   color: white;
 }
-
-.guideBadge {
-  background: #fbbf24;
-}
+.guideBadge { background: #fbbf24; }
 
 .soulName {
   font-size: 2rem;
@@ -144,6 +125,70 @@
   font-weight: 700;
 }
 
+/* 키워드 */
+.keywordsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.keywordsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.keywordsTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.editBtn {
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  border: 1.5px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.editBtn:hover { border-color: #667eea; color: #667eea; background: #f0f3ff; }
+
+.editActions { display: flex; gap: 0.4rem; }
+
+.saveBtn {
+  padding: 0.3rem 0.875rem;
+  background: #667eea;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.saveBtn:hover:not(:disabled) { background: #5568d3; }
+.saveBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.cancelBtn {
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  border: 1.5px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cancelBtn:hover:not(:disabled) { border-color: #adb5bd; color: #495057; }
+.cancelBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
 .keywordsBox {
   display: flex;
   flex-wrap: wrap;
@@ -160,6 +205,98 @@
   border: 1px solid #e9ecef;
 }
 
+.noKeywords {
+  font-size: 0.82rem;
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.keywordsEditBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+}
+
+.editKeywordsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 32px;
+}
+
+.editKeywordTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+  background: white;
+  border: 1.5px solid #dee2e6;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #343a40;
+  transition: border-color 0.15s;
+}
+.editKeywordTag:hover { border-color: #ff6b6b; }
+
+.keywordDeleteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #ff6b6b;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.keywordDeleteBtn:hover { background: #e03131; }
+
+.keywordInputRow {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.keywordInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #dee2e6;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: white;
+  transition: border-color 0.15s;
+}
+.keywordInput:focus { outline: none; border-color: #667eea; }
+
+.keywordAddBtn {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.keywordAddBtn:hover:not(:disabled) { background: #5568d3; }
+.keywordAddBtn:disabled { background: #ced4da; cursor: not-allowed; }
+
+.editHint { font-size: 0.72rem; color: #adb5bd; margin: 0; }
+
+/* 유랑 이력 */
 .visitsBox {
   border-top: 2px solid #e9ecef;
   padding-top: 1.5rem;
@@ -200,11 +337,7 @@
   flex-wrap: wrap;
 }
 
-.visitNumber {
-  font-weight: 700;
-  color: #495057;
-  font-size: 0.9rem;
-}
+.visitNumber { font-weight: 700; color: #495057; font-size: 0.9rem; }
 
 .globalOrder {
   font-size: 0.75rem;
@@ -213,8 +346,6 @@
   background: #e8eaf6;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  display: inline-block;
-  width: fit-content;
 }
 
 .globalOrderWarband {
@@ -224,17 +355,12 @@
   background: #fff3e0;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  display: inline-block;
-  width: fit-content;
   border: 1px solid #ffb74d;
 }
 
-.visitDate {
-  font-size: 0.85rem;
-  color: #6c757d;
-}
+.visitDate { font-size: 0.85rem; color: #6c757d; }
 
-/* ========== 개선된 이미지 섹션 ========== */
+/* 이미지 섹션 */
 .imagesSection {
   display: flex;
   flex-direction: column;
@@ -257,28 +383,31 @@
   border-bottom: 2px solid #e9ecef;
 }
 
+/* 이미지 래퍼 - 크기 제한 */
 .fullImageWrapper {
   width: 100%;
-  max-width: 600px;   /* 800 → 600 */
+  max-width: 600px;
   margin: 0 auto;
   background: #f8f9fa;
   border-radius: 12px;
   overflow: hidden;
+  transition: opacity 0.2s;
 }
+.fullImageWrapper:hover { opacity: 0.88; }
 
 .fullImage {
   width: 100%;
   height: auto;
-  max-height: 500px;  /* 높이 제한 추가 */
-  object-fit: contain; /* 비율 유지하면서 잘리지 않게 */
+  max-height: 500px;
+  object-fit: contain;
   display: block;
 }
 
-/* ========== 슬라이더 스타일 ========== */
+/* 슬라이더 */
 .sliderWrapper {
   position: relative;
   width: 100%;
-  max-width: 600px;   /* 800 → 600 */
+  max-width: 600px;
   margin: 0 auto;
   overflow: visible;
 }
@@ -288,7 +417,9 @@
   background: #f8f9fa;
   border-radius: 12px;
   overflow: hidden;
+  transition: opacity 0.2s;
 }
+.sliderImageWrapper:hover { opacity: 0.88; }
 
 .sliderButton {
   position: absolute;
@@ -309,21 +440,13 @@
   justify-content: center;
   line-height: 1;
 }
-
 .sliderButton:hover {
   background: rgba(0, 0, 0, 0.8);
   transform: translateY(-50%) scale(1.1);
 }
+.sliderButtonPrev { left: -1.25rem; }
+.sliderButtonNext { right: -1.25rem; }
 
-.sliderButtonPrev {
-  left: -3rem;
-}
-
-.sliderButtonNext {
-  right: -3rem;
-}
-
-/* 인디케이터 */
 .indicators {
   display: flex;
   justify-content: center;
@@ -341,324 +464,117 @@
   transition: all 0.2s;
   padding: 0;
 }
+.indicator:hover { border-color: #6c757d; }
+.indicatorActive { background: #667eea; border-color: #667eea; }
 
-.indicator:hover {
-  border-color: #6c757d;
+/* ── 라이트박스 ── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.18s ease;
 }
 
-.indicatorActive {
-  background: #667eea;
-  border-color: #667eea;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-.error,
-.noData {
+.lightboxClose {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s;
+  font-weight: 300;
+}
+.lightboxClose:hover { background: rgba(255, 255, 255, 0.28); }
+
+.lightboxImage {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.18s ease;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.lightboxHint {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 에러/노데이터 */
+.error, .noData {
   text-align: center;
   padding: 4rem 2rem;
   font-size: 1.1rem;
   font-weight: 600;
 }
-
-.error {
-  color: #dc3545;
-}
-
-.noData {
-  color: #adb5bd;
-}
+.error { color: #dc3545; }
+.noData { color: #adb5bd; }
 
 /* 반응형 */
 @media screen and (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
+  .container { padding: 1rem; }
 
-  .header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .backButton,
-  .editButton {
-    width: 100%;
-    text-align: center;
-  }
+  .header { flex-direction: column; gap: 1rem; padding: 1rem; }
+  .backButton { width: 100%; text-align: center; }
 
   .mainSection {
     grid-template-columns: 1fr;
+    padding: 1.25rem;
+    gap: 1.25rem;
   }
 
-  .soulName {
-    font-size: 1.5rem;
-  }
+  .soulName { font-size: 1.5rem; }
+  .infoGrid { grid-template-columns: 1fr; }
 
-  .infoGrid {
-    grid-template-columns: 1fr;
-  }
+  .fullWidthImageCard { padding: 1.25rem; }
+  .sectionTitle { font-size: 1.2rem; }
 
-  .sectionTitle {
-    font-size: 1.2rem;
-  }
+  /* 모바일: 크기 제한 해제 */
+  .fullImage { max-height: none; }
+  .fullImageWrapper { max-width: 100%; }
+  .sliderWrapper { max-width: 100%; }
 
-  .sliderButton {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5rem;
-  }
+  .sliderButton { width: 40px; height: 40px; font-size: 1.5rem; }
+  .sliderButtonPrev { left: -1rem; }
+  .sliderButtonNext { right: -1rem; }
 
-  .sliderButtonPrev {
-    left: -1.25rem;
-  }
+  .indicators { gap: 0.5rem; }
+  .indicator { width: 10px; height: 10px; }
 
-  .sliderButtonNext {
-    right: -1.25rem;
-  }
+  .lightboxImage { max-width: 95vw; max-height: 80vh; }
+  .lightboxClose { top: 0.75rem; right: 0.75rem; }
 
-  .indicators {
-    gap: 0.5rem;
-  }
-
-  .indicator {
-    width: 10px;
-    height: 10px;
-  }
-
-  /* 유랑 이력 모바일 최적화 - 슬림 버전 */
-  .visitsList {
-    gap: 0.5rem;
-  }
-
-  .visitItem {
-    padding: 0.6rem;
-    margin-bottom: 0;
-  }
-
-  .visitInfo {
-    gap: 0.4rem;
-  }
-
-  .visitHeader {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  .visitNumber {
-    font-size: 0.95rem;
-  }
-
-  .globalOrder,
-  .globalOrderWarband {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.4rem;
-    margin: 0;
-  }
-
-  .visitDate {
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-top: 0.2rem;
-  }
-}
-
-/* ═══════════════════════════════════════
-   키워드 편집 UI (기존 page.module.css 하단에 추가)
-═══════════════════════════════════════ */
-
-.keywordsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.keywordsHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.keywordsTitle {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #6c757d;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* 편집 / 저장 / 취소 버튼 */
-.editBtn {
-  padding: 0.3rem 0.75rem;
-  background: transparent;
-  border: 1.5px solid #dee2e6;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6c757d;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.editBtn:hover {
-  border-color: #667eea;
-  color: #667eea;
-  background: #f0f3ff;
-}
-
-.editActions {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.saveBtn {
-  padding: 0.3rem 0.875rem;
-  background: #667eea;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: white;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.saveBtn:hover:not(:disabled) { background: #5568d3; }
-.saveBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.cancelBtn {
-  padding: 0.3rem 0.75rem;
-  background: transparent;
-  border: 1.5px solid #dee2e6;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6c757d;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.cancelBtn:hover:not(:disabled) {
-  border-color: #adb5bd;
-  color: #495057;
-}
-.cancelBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-/* 보기 모드 키워드 */
-.keywordsBox {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.keyword {
-  padding: 0.5rem 1rem;
-  background: #f8f9fa;
-  color: #495057;
-  font-size: 0.85rem;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 1px solid #e9ecef;
-}
-
-.noKeywords {
-  font-size: 0.82rem;
-  color: #adb5bd;
-  font-style: italic;
-}
-
-/* 편집 모드 */
-.keywordsEditBox {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.875rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  border: 1.5px solid #e2e8f0;
-}
-
-.editKeywordsList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  min-height: 32px;
-}
-
-.editKeywordTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.35rem 0.5rem 0.35rem 0.75rem;
-  background: white;
-  border: 1.5px solid #dee2e6;
-  border-radius: 99px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #343a40;
-  transition: border-color 0.15s;
-}
-.editKeywordTag:hover {
-  border-color: #ff6b6b;
-}
-
-.keywordDeleteBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  background: #ff6b6b;
-  border: none;
-  border-radius: 50%;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: white;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-  transition: background 0.15s;
-  flex-shrink: 0;
-}
-.keywordDeleteBtn:hover { background: #e03131; }
-
-/* 새 키워드 입력 */
-.keywordInputRow {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.keywordInput {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1.5px solid #dee2e6;
-  border-radius: 7px;
-  font-size: 0.85rem;
-  font-family: inherit;
-  background: white;
-  transition: border-color 0.15s;
-}
-.keywordInput:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.keywordAddBtn {
-  padding: 0.5rem 1rem;
-  background: #667eea;
-  border: none;
-  border-radius: 7px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: white;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s;
-}
-.keywordAddBtn:hover:not(:disabled) { background: #5568d3; }
-.keywordAddBtn:disabled {
-  background: #ced4da;
-  cursor: not-allowed;
-}
-
-.editHint {
-  font-size: 0.72rem;
-  color: #adb5bd;
-  margin: 0;
+  .visitsList { gap: 0.5rem; }
+  .visitItem { padding: 0.6rem; }
+  .visitHeader { gap: 0.4rem; }
+  .visitNumber { font-size: 0.95rem; }
+  .globalOrder, .globalOrderWarband { font-size: 0.7rem; padding: 0.15rem 0.4rem; }
+  .visitDate { font-size: 0.85rem; }
 }

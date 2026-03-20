@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 import { seasonColors } from "../../../../constants/seasonColors";
 import styles from "./page.module.css";
@@ -19,7 +18,10 @@ export default function SoulDetailPage() {
   const [error, setError] = useState(null);
   const [currentWearingIndex, setCurrentWearingIndex] = useState(0);
 
-  // 키워드 편집 상태
+  // 라이트박스
+  const [lightboxSrc, setLightboxSrc] = useState(null);
+
+  // 키워드 편집
   const [isEditingKeywords, setIsEditingKeywords] = useState(false);
   const [editKeywords, setEditKeywords] = useState([]);
   const [newKeyword, setNewKeyword] = useState("");
@@ -30,12 +32,28 @@ export default function SoulDetailPage() {
     if (soulId) fetchSoulDetail();
   }, [soulId]);
 
-  // 편집 모드 진입 시 input 포커스
   useEffect(() => {
-    if (isEditingKeywords && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (isEditingKeywords && inputRef.current) inputRef.current.focus();
   }, [isEditingKeywords]);
+
+  // ESC로 라이트박스 닫기
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") setLightboxSrc(null);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  // 라이트박스 열릴 때 스크롤 막기
+  useEffect(() => {
+    if (lightboxSrc) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [lightboxSrc]);
 
   const fetchSoulDetail = async () => {
     setLoading(true);
@@ -55,44 +73,29 @@ export default function SoulDetailPage() {
   const getImagesByType = (type) => soul?.images?.filter(img => img.imageType === type) || [];
   const getImageByType = (type) => soul?.images?.find(img => img.imageType === type);
 
-  // ── 키워드 편집 핸들러 ──
-
+  // 키워드 편집
   const handleEditStart = () => {
     setEditKeywords([...(soul.keywords || [])]);
     setNewKeyword("");
     setIsEditingKeywords(true);
   };
-
   const handleEditCancel = () => {
     setIsEditingKeywords(false);
     setNewKeyword("");
   };
-
   const handleKeywordDelete = (index) => {
     setEditKeywords(prev => prev.filter((_, i) => i !== index));
   };
-
   const handleKeywordAdd = () => {
     const trimmed = newKeyword.trim();
-    if (!trimmed) return;
-    if (editKeywords.includes(trimmed)) {
-      setNewKeyword("");
-      return;
-    }
+    if (!trimmed || editKeywords.includes(trimmed)) { setNewKeyword(""); return; }
     setEditKeywords(prev => [...prev, trimmed]);
     setNewKeyword("");
   };
-
   const handleInputKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleKeywordAdd();
-    }
-    if (e.key === "Escape") {
-      handleEditCancel();
-    }
+    if (e.key === "Enter") { e.preventDefault(); handleKeywordAdd(); }
+    if (e.key === "Escape") handleEditCancel();
   };
-
   const handleSaveKeywords = async () => {
     setSavingKeywords(true);
     try {
@@ -113,7 +116,6 @@ export default function SoulDetailPage() {
         }),
       });
       if (!response.ok) throw new Error("저장에 실패했습니다.");
-      // 로컬 상태 업데이트 (재fetch 없이)
       setSoul(prev => ({ ...prev, keywords: editKeywords }));
       setIsEditingKeywords(false);
     } catch (err) {
@@ -141,6 +143,30 @@ export default function SoulDetailPage() {
 
   return (
     <div className={styles.container}>
+
+      {/* ── 라이트박스 ── */}
+      {lightboxSrc && (
+        <div
+          className={styles.lightboxOverlay}
+          onClick={() => setLightboxSrc(null)}
+        >
+          <button
+            className={styles.lightboxClose}
+            onClick={() => setLightboxSrc(null)}
+            aria-label="닫기"
+          >
+            ×
+          </button>
+          <img
+            src={lightboxSrc}
+            alt="확대 이미지"
+            className={styles.lightboxImage}
+            onClick={e => e.stopPropagation()}
+          />
+          <p className={styles.lightboxHint}>클릭하거나 ESC를 눌러 닫기</p>
+        </div>
+      )}
+
       {/* 헤더 */}
       <div className={styles.header}>
         <button onClick={() => router.back()} className={styles.backButton}>
@@ -150,9 +176,13 @@ export default function SoulDetailPage() {
 
       {/* 메인 콘텐츠 */}
       <div className={styles.mainContent}>
-        {/* 대표 이미지 및 기본 정보 */}
         <div className={styles.mainSection}>
-          <div className={styles.imageWrapper}>
+          {/* 대표 이미지 */}
+          <div
+            className={styles.imageWrapper}
+            onClick={() => representativeImage?.url && setLightboxSrc(representativeImage.url)}
+            style={{ cursor: representativeImage?.url ? "zoom-in" : "default" }}
+          >
             {representativeImage?.url ? (
               <img src={representativeImage.url} alt={soul.name} className={styles.mainImage} />
             ) : (
@@ -168,9 +198,7 @@ export default function SoulDetailPage() {
               >
                 {soul.seasonName}
               </span>
-              {soul.isSeasonGuide && (
-                <span className={styles.guideBadge}>시즌 가이드</span>
-              )}
+              {soul.isSeasonGuide && <span className={styles.guideBadge}>시즌 가이드</span>}
             </div>
 
             <h1 className={styles.soulName}>{soul.name}</h1>
@@ -182,42 +210,25 @@ export default function SoulDetailPage() {
               </div>
             </div>
 
-            {/* ── 키워드 영역 ── */}
+            {/* 키워드 */}
             <div className={styles.keywordsSection}>
               <div className={styles.keywordsHeader}>
                 <span className={styles.keywordsTitle}>키워드</span>
                 {!isEditingKeywords ? (
-                  <button
-                    className={styles.editBtn}
-                    onClick={handleEditStart}
-                    title="키워드 편집"
-                  >
-                    ✏️ 편집
-                  </button>
+                  <button className={styles.editBtn} onClick={handleEditStart}>✏️ 편집</button>
                 ) : (
                   <div className={styles.editActions}>
-                    <button
-                      className={styles.saveBtn}
-                      onClick={handleSaveKeywords}
-                      disabled={savingKeywords}
-                    >
+                    <button className={styles.saveBtn} onClick={handleSaveKeywords} disabled={savingKeywords}>
                       {savingKeywords ? "저장 중..." : "저장"}
                     </button>
-                    <button
-                      className={styles.cancelBtn}
-                      onClick={handleEditCancel}
-                      disabled={savingKeywords}
-                    >
-                      취소
-                    </button>
+                    <button className={styles.cancelBtn} onClick={handleEditCancel} disabled={savingKeywords}>취소</button>
                   </div>
                 )}
               </div>
 
-              {/* 보기 모드 */}
               {!isEditingKeywords && (
                 <div className={styles.keywordsBox}>
-                  {soul.keywords && soul.keywords.length > 0 ? (
+                  {soul.keywords?.length > 0 ? (
                     soul.keywords.map((keyword, index) => (
                       <span key={index} className={styles.keyword}>{keyword}</span>
                     ))
@@ -227,48 +238,32 @@ export default function SoulDetailPage() {
                 </div>
               )}
 
-              {/* 편집 모드 */}
               {isEditingKeywords && (
                 <div className={styles.keywordsEditBox}>
-                  {/* 기존 키워드 (X 버튼으로 삭제) */}
                   <div className={styles.editKeywordsList}>
                     {editKeywords.length > 0 ? (
                       editKeywords.map((kw, i) => (
                         <span key={i} className={styles.editKeywordTag}>
                           {kw}
-                          <button
-                            className={styles.keywordDeleteBtn}
-                            onClick={() => handleKeywordDelete(i)}
-                            aria-label={`${kw} 삭제`}
-                          >
-                            ×
-                          </button>
+                          <button className={styles.keywordDeleteBtn} onClick={() => handleKeywordDelete(i)}>×</button>
                         </span>
                       ))
                     ) : (
                       <span className={styles.noKeywords}>키워드를 추가해보세요</span>
                     )}
                   </div>
-
-                  {/* 새 키워드 입력 */}
                   <div className={styles.keywordInputRow}>
                     <input
                       ref={inputRef}
                       type="text"
                       value={newKeyword}
-                      onChange={(e) => setNewKeyword(e.target.value)}
+                      onChange={e => setNewKeyword(e.target.value)}
                       onKeyDown={handleInputKeyDown}
                       placeholder="키워드 입력 후 Enter"
                       className={styles.keywordInput}
                       maxLength={20}
                     />
-                    <button
-                      className={styles.keywordAddBtn}
-                      onClick={handleKeywordAdd}
-                      disabled={!newKeyword.trim()}
-                    >
-                      추가
-                    </button>
+                    <button className={styles.keywordAddBtn} onClick={handleKeywordAdd} disabled={!newKeyword.trim()}>추가</button>
                   </div>
                   <p className={styles.editHint}>Enter로 추가 · Esc로 취소</p>
                 </div>
@@ -276,7 +271,7 @@ export default function SoulDetailPage() {
             </div>
 
             {/* 유랑 이력 */}
-            {soul.travelingVisits && soul.travelingVisits.length > 0 && (
+            {soul.travelingVisits?.length > 0 && (
               <div className={styles.visitsBox}>
                 <h3 className={styles.boxTitle}>유랑 이력</h3>
                 <div className={styles.visitsList}>
@@ -294,9 +289,7 @@ export default function SoulDetailPage() {
                               </span>
                             )}
                           </div>
-                          <span className={styles.visitDate}>
-                            {visit.startDate} ~ {visit.endDate}
-                          </span>
+                          <span className={styles.visitDate}>{visit.startDate} ~ {visit.endDate}</span>
                         </div>
                       </div>
                     );
@@ -307,17 +300,24 @@ export default function SoulDetailPage() {
           </div>
         </div>
 
-        {/* 추가 이미지 */}
+        {/* 추가 이미지 섹션 */}
         <div className={styles.imagesSection}>
+
+          {/* 위치 */}
           {locationImage?.url && (
             <div className={styles.fullWidthImageCard}>
               <h3 className={styles.sectionTitle}>📍 위치</h3>
-              <div className={styles.fullImageWrapper}>
+              <div
+                className={styles.fullImageWrapper}
+                onClick={() => setLightboxSrc(locationImage.url)}
+                style={{ cursor: "zoom-in" }}
+              >
                 <img src={locationImage.url} alt="위치" className={styles.fullImage} />
               </div>
             </div>
           )}
 
+          {/* 착용샷 슬라이더 */}
           {wearingImages.length > 0 && (
             <div className={styles.fullWidthImageCard}>
               <h3 className={styles.sectionTitle}>
@@ -327,8 +327,16 @@ export default function SoulDetailPage() {
                 {wearingImages.length > 1 && (
                   <button onClick={handlePrevWearing} className={`${styles.sliderButton} ${styles.sliderButtonPrev}`} aria-label="이전 이미지">‹</button>
                 )}
-                <div className={styles.sliderImageWrapper}>
-                  <img src={wearingImages[currentWearingIndex].url} alt={`착용샷 ${currentWearingIndex + 1}`} className={styles.fullImage} />
+                <div
+                  className={styles.sliderImageWrapper}
+                  onClick={() => setLightboxSrc(wearingImages[currentWearingIndex].url)}
+                  style={{ cursor: "zoom-in" }}
+                >
+                  <img
+                    src={wearingImages[currentWearingIndex].url}
+                    alt={`착용샷 ${currentWearingIndex + 1}`}
+                    className={styles.fullImage}
+                  />
                 </div>
                 {wearingImages.length > 1 && (
                   <button onClick={handleNextWearing} className={`${styles.sliderButton} ${styles.sliderButtonNext}`} aria-label="다음 이미지">›</button>
@@ -340,7 +348,7 @@ export default function SoulDetailPage() {
                     <button
                       key={index}
                       onClick={() => setCurrentWearingIndex(index)}
-                      className={`${styles.indicator} ${index === currentWearingIndex ? styles.indicatorActive : ''}`}
+                      className={`${styles.indicator} ${index === currentWearingIndex ? styles.indicatorActive : ""}`}
                       aria-label={`${index + 1}번째 이미지로 이동`}
                     />
                   ))}
@@ -349,10 +357,15 @@ export default function SoulDetailPage() {
             </div>
           )}
 
+          {/* 노드표 */}
           {nodeChartImage?.url && (
             <div className={styles.fullWidthImageCard}>
               <h3 className={styles.sectionTitle}>🗺️ 노드표</h3>
-              <div className={styles.fullImageWrapper}>
+              <div
+                className={styles.fullImageWrapper}
+                onClick={() => setLightboxSrc(nodeChartImage.url)}
+                style={{ cursor: "zoom-in" }}
+              >
                 <img src={nodeChartImage.url} alt="노드표" className={styles.fullImage} />
               </div>
             </div>

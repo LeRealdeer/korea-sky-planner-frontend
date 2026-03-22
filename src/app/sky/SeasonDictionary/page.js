@@ -9,37 +9,120 @@ import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const SK_SOULS    = "seasonDict_souls";
+const SK_QUERY    = "seasonDict_query";
+const SK_SEASON   = "seasonDict_season";
+const SK_SCROLL   = "seasonDict_scroll";
+const SK_OPEN     = "seasonDict_open";
+
 function SeasonDictionaryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [allSouls, setAllSouls] = useState([]);
-  const [grouped, setGrouped] = useState([]);       // 표시할 그룹 (필터 적용)
+  const [allSouls, setAllSouls]       = useState([]);
+  const [grouped, setGrouped]         = useState([]);
   const [openSeasons, setOpenSeasons] = useState({});
 
-  const [selectedSeason, setSelectedSeason] = useState(""); // 선택된 시즌
-  const [seasonInfo, setSeasonInfo] = useState(null);
+  const [selectedSeason, setSelectedSeason]       = useState("");
+  const [seasonInfo, setSeasonInfo]               = useState(null);
   const [seasonInfoLoading, setSeasonInfoLoading] = useState(false);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery]       = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState(null);
 
+  const isRestoring = useRef(false);
+
+  // ── 초기화: 세션 복원 or 새 로드 ──
   useEffect(() => {
-    const urlQuery = searchParams.get("query") || "";
+    const urlQuery  = searchParams.get("query")  || "";
     const urlSeason = searchParams.get("season") || "";
-    setSearchQuery(urlQuery);
-    setSubmittedQuery(urlQuery);
-    setSelectedSeason(urlSeason);
-    if (urlSeason) fetchSeasonInfo(urlSeason);
-    fetchAllSouls();
+
+    const savedSouls  = sessionStorage.getItem(SK_SOULS);
+    const savedScroll = sessionStorage.getItem(SK_SCROLL);
+    const savedQuery  = sessionStorage.getItem(SK_QUERY);
+    const savedSeason = sessionStorage.getItem(SK_SEASON);
+    const savedOpen   = sessionStorage.getItem(SK_OPEN);
+
+    const isBack = savedSouls !== null;
+
+    if (isBack) {
+      // 세션 복원
+      isRestoring.current = true;
+      try {
+        const souls   = JSON.parse(savedSouls);
+        const query   = savedQuery  ?? urlQuery;
+        const season  = savedSeason ?? urlSeason;
+        const openMap = savedOpen ? JSON.parse(savedOpen) : null;
+
+        setAllSouls(souls);
+        setSearchQuery(query);
+        setSubmittedQuery(query);
+        setSelectedSeason(season);
+        setLoading(false);
+        if (season) fetchSeasonInfo(season);
+
+        // 그룹 빌드 후 스크롤 복원
+        buildGroupsSync(souls, query, season, openMap);
+
+        if (savedScroll) {
+          setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScroll));
+            isRestoring.current = false;
+          }, 120);
+        } else {
+          isRestoring.current = false;
+        }
+      } catch {
+        isRestoring.current = false;
+        setSearchQuery(urlQuery);
+        setSubmittedQuery(urlQuery);
+        setSelectedSeason(urlSeason);
+        if (urlSeason) fetchSeasonInfo(urlSeason);
+        fetchAllSouls();
+      }
+    } else {
+      // 새 로드
+      setSearchQuery(urlQuery);
+      setSubmittedQuery(urlQuery);
+      setSelectedSeason(urlSeason);
+      if (urlSeason) fetchSeasonInfo(urlSeason);
+      fetchAllSouls();
+    }
   }, []);
 
+  // allSouls 바뀌면 그룹 재계산 (새 로드 시)
   useEffect(() => {
-    if (allSouls.length > 0) buildGroups(allSouls, submittedQuery, selectedSeason);
-  }, [allSouls, submittedQuery, selectedSeason]);
+    if (allSouls.length > 0 && !isRestoring.current) {
+      buildGroupsSync(allSouls, submittedQuery, selectedSeason, null);
+    }
+  }, [allSouls]);
 
+  // submittedQuery / selectedSeason 바뀌면 재계산 (세션 복원 후 변경 시)
+  useEffect(() => {
+    if (allSouls.length > 0 && !isRestoring.current) {
+      buildGroupsSync(allSouls, submittedQuery, selectedSeason, null);
+    }
+  }, [submittedQuery, selectedSeason]);
+
+  // 카드 클릭 시 상태 저장
+  const saveSession = () => {
+    sessionStorage.setItem(SK_SOULS,  JSON.stringify(allSouls));
+    sessionStorage.setItem(SK_QUERY,  submittedQuery);
+    sessionStorage.setItem(SK_SEASON, selectedSeason);
+    sessionStorage.setItem(SK_SCROLL, window.scrollY.toString());
+    sessionStorage.setItem(SK_OPEN,   JSON.stringify(openSeasons));
+  };
+
+  // 세션 초기화 (검색/시즌 변경 시)
+  const clearSession = () => {
+    sessionStorage.removeItem(SK_SOULS);
+    sessionStorage.removeItem(SK_SCROLL);
+    sessionStorage.removeItem(SK_OPEN);
+  };
+
+  // ── fetch ──
   const fetchAllSouls = async () => {
     setLoading(true);
     setError(null);
@@ -62,17 +145,16 @@ function SeasonDictionaryContent() {
       const res = await fetch(`${BASE_URL}/api/v1/seasons`);
       if (res.ok) {
         const data = await res.json();
-        const found = (data.data || []).find(s => s.name === seasonName);
-        setSeasonInfo(found || null);
+        setSeasonInfo((data.data || []).find(s => s.name === seasonName) || null);
       }
-    } catch (e) { setSeasonInfo(null); }
+    } catch { setSeasonInfo(null); }
     finally { setSeasonInfoLoading(false); }
   };
 
-  const buildGroups = (souls, query, season) => {
+  // ── 그룹 빌드 ──
+  const buildGroupsSync = (souls, query, season, openMap) => {
     const q = query.trim().toLowerCase();
 
-    // 1) 키워드 검색 필터
     let filtered = q
       ? souls.filter(s =>
           s.name?.toLowerCase().includes(q) ||
@@ -81,12 +163,8 @@ function SeasonDictionaryContent() {
         )
       : souls;
 
-    // 2) 시즌 필터
-    if (season) {
-      filtered = filtered.filter(s => s.seasonName === season);
-    }
+    if (season) filtered = filtered.filter(s => s.seasonName === season);
 
-    // 3) 시즌별 그룹핑
     const map = new Map();
     filtered.forEach(soul => {
       const sn = soul.seasonName || "기타";
@@ -94,12 +172,10 @@ function SeasonDictionaryContent() {
       map.get(sn).push(soul);
     });
 
-    // 4) orderNum 오름차순 정렬
     map.forEach(soulsInSeason => {
       soulsInSeason.sort((a, b) => (a.orderNum ?? 999) - (b.orderNum ?? 999));
     });
 
-    // 5) SEASON_ORDER 기준 정렬
     const sortedGroups = [];
     SEASON_ORDER.forEach(sn => {
       if (map.has(sn)) sortedGroups.push({ seasonName: sn, souls: map.get(sn) });
@@ -110,18 +186,22 @@ function SeasonDictionaryContent() {
 
     setGrouped(sortedGroups);
 
-    // 전부 펼침
-    const newOpen = {};
-    sortedGroups.forEach(g => { newOpen[g.seasonName] = true; });
-    setOpenSeasons(newOpen);
+    if (openMap) {
+      setOpenSeasons(openMap);
+    } else {
+      const newOpen = {};
+      sortedGroups.forEach(g => { newOpen[g.seasonName] = true; });
+      setOpenSeasons(newOpen);
+    }
   };
 
   const toggleSeason = (seasonName) => {
     setOpenSeasons(prev => ({ ...prev, [seasonName]: !prev[seasonName] }));
   };
 
-  // 시즌칩 클릭
+  // ── 핸들러 ──
   const handleSeasonClick = (seasonName) => {
+    clearSession();
     setSelectedSeason(seasonName);
     fetchSeasonInfo(seasonName);
     setSubmittedQuery("");
@@ -131,8 +211,8 @@ function SeasonDictionaryContent() {
     router.push(`/sky/SeasonDictionary?${params.toString()}`);
   };
 
-  // 전체보기
   const handleAllView = () => {
+    clearSession();
     setSelectedSeason("");
     setSeasonInfo(null);
     setSearchQuery("");
@@ -142,6 +222,7 @@ function SeasonDictionaryContent() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    clearSession();
     setSubmittedQuery(searchQuery);
     setSelectedSeason("");
     setSeasonInfo(null);
@@ -151,6 +232,7 @@ function SeasonDictionaryContent() {
   };
 
   const handleClearSearch = () => {
+    clearSession();
     setSearchQuery("");
     setSubmittedQuery("");
     router.push("/sky/SeasonDictionary");
@@ -189,7 +271,7 @@ function SeasonDictionaryContent() {
         </div>
       </div>
 
-      {/* ── 헤더 (시즌 선택 시 색 변경 + 인포 스트립) ── */}
+      {/* ── 헤더 ── */}
       <div
         className={styles.header}
         style={seasonColor ? { background: seasonColor } : undefined}
@@ -200,7 +282,6 @@ function SeasonDictionaryContent() {
           </h1>
           <p className={styles.subtitle}>영혼 이름이나 외형 키워드로 검색해보세요</p>
 
-          {/* 시즌 인포 스트립 */}
           {selectedSeason && (
             <div className={styles.seasonInfoStrip}>
               {seasonInfoLoading ? (
@@ -252,7 +333,6 @@ function SeasonDictionaryContent() {
       <div className={styles.controlCard}>
         <p className={styles.chipGuide}>시즌 이름을 클릭하면 해당 시즌만 볼 수 있어요:</p>
 
-        {/* 시즌 칩 */}
         <div className={styles.seasonChips}>
           {SEASON_ORDER.map(season => (
             <button
@@ -266,7 +346,6 @@ function SeasonDictionaryContent() {
           ))}
         </div>
 
-        {/* 전체보기 */}
         <div className={styles.allViewRow}>
           <button
             onClick={handleAllView}
@@ -276,7 +355,6 @@ function SeasonDictionaryContent() {
           </button>
         </div>
 
-        {/* 검색창 */}
         <div className={styles.searchWrapper}>
           <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
             <input
@@ -336,6 +414,7 @@ function SeasonDictionaryContent() {
                           key={soul.id}
                           href={`/sky/SeasonDictionary/souls/${soul.id}`}
                           className={styles.soulCard}
+                          onClick={saveSession}
                         >
                           <div className={styles.imageWrapper}>
                             {repImg?.url
@@ -345,9 +424,7 @@ function SeasonDictionaryContent() {
                           </div>
                           <div className={styles.cardContent}>
                             <p className={styles.soulName}>{soul.name}</p>
-                            {soul.isSeasonGuide && (
-                              <span className={styles.guideBadge}>가이드</span>
-                            )}
+
                           </div>
                         </Link>
                       );

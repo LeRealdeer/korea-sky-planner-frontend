@@ -62,7 +62,7 @@ export default function SoulEditPage() {
         name: soulData.name || "",
         seasonId: soulData.seasonId || "",
         orderNum: soulData.orderNum || "",
-        isSeasonGuide: soulData.isSeasonGuide || false,
+        isSeasonGuide: soulData.seasonGuide || false,
         keywords: soulData.keywords?.join(", ") || "",
         description: soulData.description || "",
         creator: soulData.creator || "",
@@ -105,7 +105,7 @@ export default function SoulEditPage() {
         startDate: selectedSeason.startDate,
         endDate: selectedSeason.endDate,
       };
-
+      console.log("payload:", JSON.stringify(payload));
       const response = await fetch(`${BASE_URL}/api/v1/souls/${soulId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

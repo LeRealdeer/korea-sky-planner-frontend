@@ -30,22 +30,27 @@ export default function MainPageClient() {
   return (
     <>
 
-      <div className={styles.surveyBanner}>
-        <div className={styles.surveyContent}>
-          <span className={styles.surveyIcon}>📋</span>
-          <div className={styles.surveyText}>
-           
-            <span className={styles.surveyDesc}>✨ [NEW] 시즌 대백과 오픈 — 지금 바로 확인해보세요!</span>
-
-          </div>
-          <button 
-            className={styles.surveyButton}
-            onClick={() => navigateTo('/sky/SeasonDictionary')}
-          >
-            바로가기
-          </button>
-        </div>
-      </div>
+<div className={styles.announcementBanner}>
+  <div className={styles.announceItem}>
+    <span className={styles.announceIcon}>📖</span>
+    <span className={styles.announceText}>
+      <strong>[NEW]</strong> 시즌 대백과 오픈 — 영혼을 키워드로 검색해보세요!
+    </span>
+    <button className={styles.announceBtn} onClick={() => navigateTo('/sky/SeasonDictionary')}>
+      바로가기
+    </button>
+  </div>
+  <div className={styles.announceDivider} />
+  <div className={styles.announceItem}>
+    <span className={styles.announceIcon}>💤</span>
+    <span className={styles.announceText}>
+      <strong>[NEW]</strong> 미복각 영혼 — 한 번도 유랑을 오지 않은 영혼들을 확인해보세요!
+    </span>
+    <button className={styles.announceBtn} onClick={() => navigateTo('/sky/travelingSprits/oldestSprits')}>
+      바로가기
+    </button>
+  </div>
+</div>
 
       <main className={styles.container}>
         {/* 메뉴 그리드 */}

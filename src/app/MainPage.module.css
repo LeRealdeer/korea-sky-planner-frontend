@@ -238,3 +238,96 @@
     font-size: 0.8rem;
   }
 }
+
+/* ── 공지 배너 (2개) ── */
+.announcementBanner {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.announceItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  color: white;
+}
+
+.announceDivider {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  height: 1px;
+  background: rgba(255,255,255,0.25);
+}
+
+.announceIcon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.announceText {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.announceText strong {
+  font-weight: 700;
+}
+
+.announceBtn {
+  padding: 6px 16px;
+  background: white;
+  color: #1976d2;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.announceBtn:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+/* 모바일 */
+@media (max-width: 640px) {
+  .announcementBanner {
+    padding: 8px 14px;
+  }
+
+  .announceItem {
+    gap: 8px;
+    padding: 8px 0;
+    flex-wrap: wrap;  /* 줄 바꿈 허용 */
+  }
+
+  .announceIcon {
+    font-size: 1.1rem;
+  }
+
+  .announceText {
+    font-size: 0.78rem;
+    flex: 1 1 60%;   /* 텍스트가 아이콘 옆 채움 */
+  }
+
+  .announceBtn {
+    flex: 0 0 auto;
+    margin-left: auto; /* 버튼 오른쪽 정렬 */
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    border-radius: 5px;
+  }
+}

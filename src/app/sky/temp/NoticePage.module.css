@@ -1,66 +1,73 @@
 .card {
-    max-width: 500px;
-    margin: 3rem auto;
-    background-color: #2c2c2c;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    color: #f1c40f;
+  max-width: 500px;
+  margin: 3rem auto;
+  background-color: #ffffff; /* 깨끗한 흰색 배경 */
+  border-radius: 16px;
+  padding: 2.5rem;
+  text-align: center;
+  color: #212529; /* 신뢰감을 주는 어두운 텍스트 */
+  border: 1px solid #e9ecef; /* 연한 회색 테두리 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 */
+}
+
+.title {
+  margin-bottom: 2rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #007bff; /* 포인트가 되는 메인 블루 */
+}
+
+.imageContainer {
+  margin-bottom: 2rem;
+}
+
+.description {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #495057; /* 가독성 좋은 진한 회색 */
+}
+
+.optionButton {
+  margin-top: 2rem;
+  display: block;
+  width: 100%;
+  padding: 0.85rem;
+  margin-bottom: 0.75rem;
+  background-color: #007bff; /* 블루 배경 */
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff; /* 버튼 글자는 흰색 */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.optionButton:hover {
+  background-color: #0056b3; /* 호버 시 더 진한 블루 */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+/* 반응형 모바일 디자인 */
+@media (max-width: 600px) {
+  .card {
+    padding: 1.5rem;
+    margin: 2rem 1rem;
   }
   
   .title {
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
-  }
-  
-  .imageContainer {
-    margin-bottom: 2rem;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
   }
   
   .description {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color: #ddd;
+    font-size: 0.95rem;
   }
   
   .optionButton {
-    margin-top: 2rem;
-    display: block;
-    width: 100%;
+    font-size: 0.95rem;
     padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    background-color: #444;
-    border: 1px solid #555;
-    border-radius: 8px;
-    font-size: 1rem;
-    line-height: 1.4;
-    color: #f1c40f;
-    transition: background 0.2s;
   }
-  
-  .optionButton:hover {
-    background-color: #555;
-  }
-  
-  /* 반응형 모바일 디자인 */
-  @media (max-width: 600px) {
-    .card {
-      padding: 1rem;
-      margin: 2rem auto;
-    }
-    
-    .title {
-      font-size: 1.3rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .description {
-      font-size: 0.9rem;
-    }
-    
-    .optionButton {
-      font-size: 0.9rem;
-      padding: 0.6rem;
-    }
-  }
-  
+}

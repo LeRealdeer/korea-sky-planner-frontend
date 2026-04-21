@@ -34,7 +34,7 @@ export default function CandleCalculator() {
   const [calcResult, setCalcResult] = useState("");
 
   const BONUS_CANDLES = 31;
-  const seasonEnd = new Date("2026-04-03T17:00:00+09:00");
+  const seasonEnd = new Date("2026-07-03T16:00:00+09:00");
   
   const t = translations[language];
 

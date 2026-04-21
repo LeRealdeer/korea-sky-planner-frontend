@@ -17,7 +17,7 @@ export const theme = {
 export const translations = {
   ko: {
     title: '스카이 양초 계산기',
-    subtitle: '빛수선의 시즌',
+    subtitle: '카니발의 시즌', 
     remainingDays: '남은 시즌 일수',
     currentCandles: '현재 보유 양초',
     ownsSeasonPass: '시즌 패스 소유',
@@ -55,7 +55,7 @@ export const translations = {
   },
   en: {
     title: 'Sky Candle Calculator',
-    subtitle: 'Season of Lightmending',
+    subtitle: 'Season of Carnival',
     remainingDays: 'Remaining Season Days',
     currentCandles: 'Current Candles',
     ownsSeasonPass: 'Season Pass',

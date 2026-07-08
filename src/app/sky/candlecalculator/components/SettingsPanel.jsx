@@ -1,6 +1,150 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { theme, translations } from '../styles/theme';
+
+const BONUS_CANDLES = 31;
+
+function GuideBox({ title, children }) {
+  return (
+    <div style={{
+      background: '#F8FBFF', border: `1px solid ${theme.colors.border}`,
+      borderRadius: '8px', padding: '12px 14px', marginBottom: '10px'
+    }}>
+      <div style={{ fontWeight: 'bold', fontSize: '13px', color: theme.colors.primary, marginBottom: '8px' }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function GuideLine({ children, indent = false, color }) {
+  return (
+    <div style={{
+      fontSize: '12px', lineHeight: '1.7',
+      color: color || theme.colors.textLight,
+      paddingLeft: indent ? '16px' : '0'
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function GuideSection({ label, children }) {
+  return (
+    <div style={{ marginBottom: '8px' }}>
+      <div style={{ fontSize: '12px', fontWeight: 'bold', color: theme.colors.text, marginBottom: '3px' }}>
+        {label}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function SimpleGuide({ language }) {
+  const isKo = language === 'ko';
+  return (
+    <>
+      <GuideBox title={isKo ? '🕯️ 간단 계산기 사용법' : '🕯️ Simple Calculator Guide'}>
+        <GuideSection label={isKo ? '사용 순서' : 'How to use'}>
+          <GuideLine>① {isKo ? '구매하고 싶은 아이템을 클릭하세요 → 파란색으로 표시됩니다' : 'Click items you want to buy → they turn blue'}</GuideLine>
+          <GuideLine>② {isKo ? '현재 보유 양초, 시즌패스 여부를 입력하세요' : 'Enter your current candles and season pass status'}</GuideLine>
+          <GuideLine>③ {isKo ? '\'계산하기\'를 눌러 달성 가능 여부를 확인하세요' : 'Press \'Calculate\' to check if you can afford it'}</GuideLine>
+        </GuideSection>
+        <GuideSection label={isKo ? '참고사항' : 'Notes'}>
+          <GuideLine>• {isKo ? '오전 5시 리셋 이후 양초를 이미 획득했다는 가정으로 계산합니다. 아직 오늘 일일 퀘스트를 하지 않으셨다면 해당 양초도 현재 보유량에 포함해주세요.' : 'Assumes you\'ve already collected today\'s candles after 5AM reset. Include today\'s candles if not yet collected.'}</GuideLine>
+          <GuideLine>• {isKo ? `시패 구입 예정이라면 시즌패스 소유 '아니오' 선택 후 구매예정 체크를 눌러주세요. (+${BONUS_CANDLES}개 보너스)` : `If planning to buy season pass, select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} bonus candles)`}</GuideLine>
+          <GuideLine>• {isKo ? '시즌패스 소유 시 일일 양초 6개, 미소유 시 5개로 계산합니다.' : 'Daily candles: 6 with season pass, 5 without.'}</GuideLine>
+        </GuideSection>
+      </GuideBox>
+    </>
+  );
+}
+
+function FullGuide({ language }) {
+  const isKo = language === 'ko';
+  return (
+    <>
+      <GuideBox title={isKo ? '🤝 호감도 계산기 사용법' : '🤝 Affinity Calculator Guide'}>
+        <GuideSection label={isKo ? '📌 사용 순서' : '📌 How to use'}>
+          <GuideLine color={theme.colors.owned}>
+            ① {isKo ? '보유 표시 모드' : 'Owned mode'} —
+          </GuideLine>
+          <GuideLine indent>
+            {isKo
+              ? '이미 가진 아이템을 클릭하세요 (회색으로 표시). 왼쪽 2개 아이템만 호감도에 반영됩니다. 오른쪽 아이템(시즌 아이템, 무료 이모트)은 호감도에 포함되지 않습니다.'
+              : 'Click items you already own (turns grey). Only the 2 left-column items count for affinity. Right-column items (season items / free emotes) do NOT affect affinity.'}
+          </GuideLine>
+          <GuideLine color={theme.colors.affinity} indent={false}>
+            ② {isKo ? '동행 일수 입력 (영혼 카드 내)' : 'Enter companion days (in each spirit card)'}
+          </GuideLine>
+          <GuideLine indent>
+            {isKo
+              ? '해당 영혼과 이미 동행한 날 수를 입력하세요. 동행 1일 = 호감도 1점 추가. 시즌 시작부터 매일 동행했다면 오늘까지의 날 수를 입력하세요.'
+              : 'Enter how many days you\'ve already accompanied this spirit. 1 companion day = +1 affinity point.'}
+          </GuideLine>
+          <GuideLine color={theme.colors.target}>
+            ③ {isKo ? '목표 지정 모드' : 'Target mode'} —
+          </GuideLine>
+          <GuideLine indent>
+            {isKo
+              ? '구매하고 싶은 아이템을 클릭하세요 (파란색으로 표시). 해당 아이템의 단계에 맞는 호감도가 필요합니다.'
+              : 'Click items you want to buy (turns blue). You need sufficient affinity for that tier.'}
+          </GuideLine>
+          <GuideLine>④ {isKo ? '계산 방식 선택 후 \'계산하기\' 버튼' : 'Select calculation mode and press the button'}</GuideLine>
+        </GuideSection>
+      </GuideBox>
+
+      <GuideBox title={isKo ? '💡 호감도 단계 상세' : '💡 Affinity Level Details'}>
+        <GuideLine>
+          {isKo
+            ? '호감도는 아이템 구매와 동행으로 누적됩니다. 단계마다 필요 누적 포인트:'
+            : 'Affinity accumulates from item purchases and companion days. Required cumulative points per level:'}
+        </GuideLine>
+        <div style={{
+          margin: '6px 0', padding: '8px 10px',
+          background: '#F1F8E9', borderRadius: '6px',
+          fontSize: '11px', lineHeight: '2', color: theme.colors.text
+        }}>
+          <div>1단계 → 2단계: <b style={{ color: theme.colors.affinity }}>누적 4점</b> {isKo ? '(1단계 왼쪽 아이템 각 2점)' : '(Lv1 left items: 2pts each)'}</div>
+          <div>2단계 → 3단계: <b style={{ color: theme.colors.affinity }}>누적 10점</b> {isKo ? '(2단계 왼쪽 아이템 각 3점)' : '(Lv2 left items: 3pts each)'}</div>
+          <div>3단계 → 4단계: <b style={{ color: theme.colors.affinity }}>누적 18점 + 4단계 상호작용</b> {isKo ? '(3단계 각 4점)' : '(Lv3: 4pts each, + interaction)'}</div>
+          <div>4단계 → 5단계: <b style={{ color: theme.colors.affinity }}>누적 28점</b> {isKo ? '(4단계 왼쪽 아이템 각 5점)' : '(Lv4 left items: 5pts each)'}</div>
+        </div>
+        <GuideLine>
+          {isKo
+            ? '※ 각 레벨의 전환 포인트(4/6/8/10)가 해당 레벨의 일반(왼쪽) 아이템 수로 균등 분배됩니다. 보유 표시 시 자동 계산됩니다.'
+            : '※ Transition points (4/6/8/10) are divided equally among normal (left-column) items per level. Auto-calculated when items are marked owned.'}
+        </GuideLine>
+      </GuideBox>
+
+      <GuideBox title={isKo ? '🔄 계산 방식 안내' : '🔄 Calculation Modes'}>
+        <GuideSection label={isKo ? '양초 절약 모드' : 'Candle Saving Mode'}>
+          <GuideLine>
+            {isKo
+              ? '현재 보유 양초 + 남은 시즌 기간 획득 양초로, 목표 아이템을 달성할 수 있는지 계산합니다. 부족한 호감도는 남은 동행일수를 영혼별로 배분하여 채웁니다. 동행일수가 부족해도 일부 목표만 달성 가능한 상황을 확인할 수 있습니다.'
+              : 'Calculates whether your current candles + remaining season candles can cover all target items. Allocates remaining companion days to spirits with affinity shortfalls.'}
+          </GuideLine>
+        </GuideSection>
+        <GuideSection label={isKo ? '최단 획득 모드' : 'Fastest Route Mode'}>
+          <GuideLine>
+            {isKo
+              ? '오늘부터 매일 시뮬레이션해서, 며칠 후에 모든 목표 아이템을 달성할 수 있는지 알려줍니다. 기다릴수록 양초와 동행일수가 쌓이므로, 지금 당장은 불가능해도 며칠 후면 가능한 경우를 찾아줍니다.'
+              : 'Simulates day by day from today to find the earliest date when all target items become achievable. Useful when current state is not enough but a few more days would do it.'}
+          </GuideLine>
+        </GuideSection>
+      </GuideBox>
+
+      <GuideBox title={isKo ? '⚠️ 참고사항' : '⚠️ Notes'}>
+        <GuideLine>• {isKo ? '오전 5시 리셋 이후 양초를 이미 획득했다는 가정으로 계산합니다.' : 'Assumes daily candles already collected after 5AM reset.'}</GuideLine>
+        <GuideLine>• {isKo ? `시패 구입 예정이라면 시즌패스 소유 '아니오' 선택 후 구매예정 체크. (+${BONUS_CANDLES}개 보너스)` : `Plan to buy season pass? Select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} bonus candles)`}</GuideLine>
+        <GuideLine>• {isKo ? '\'오늘 동행 완료\' 체크 시, 오늘의 동행 1점을 남은 동행일수에서 제외합니다.' : '\'Today\'s companion done\' excludes today from remaining companion day count.'}</GuideLine>
+        <GuideLine>• {isKo ? '시즌패스 소유 시 일일 양초 6개, 미소유 시 5개로 계산합니다.' : 'Daily candles: 6 with season pass, 5 without.'}</GuideLine>
+        <GuideLine>• {isKo ? '아이콘은 Sky Wiki 참고, 양초·하트 아이콘은 햇비님 제작 자료입니다.' : 'Icons from Sky Wiki; candle & heart icons by 햇비 Sky Solar.'}</GuideLine>
+      </GuideBox>
+    </>
+  );
+}
 
 export function SettingsPanel({
   currentCandles, setCurrentCandles,
@@ -11,8 +155,8 @@ export function SettingsPanel({
   todayCompanionDone, setTodayCompanionDone,
   language, isSimpleMode
 }) {
-  const BONUS_CANDLES = 31;
   const t = translations[language];
+  const [guideOpen, setGuideOpen] = useState(true);
 
   return (
     <div style={{
@@ -21,29 +165,25 @@ export function SettingsPanel({
       border: `2px solid ${theme.colors.border}`,
       boxShadow: '0 2px 8px rgba(0,0,0,0.08)', maxWidth: '800px'
     }}>
-      {/* 공지 */}
-      <div style={{
-        marginBottom: '16px', padding: '12px', background: theme.colors.background,
-        borderRadius: '6px', fontSize: '12px', lineHeight: '1.6', color: theme.colors.textLight
-      }}>
-        {t.notices.map((notice, index) => {
-          const text = notice.replace('{BONUS_CANDLES}', BONUS_CANDLES);
-          if (index === 0) {
-            const parts = text.split('Sky Wiki');
-            return (
-              <div key={index} style={{ marginBottom: '4px' }}>
-                {parts[0]}
-                <a href="https://sky-children-of-the-light.fandom.com/wiki/Season_of_Carnival"
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ color: theme.colors.primary, textDecoration: 'underline', fontWeight: 'bold' }}>
-                  Sky Wiki
-                </a>
-                {parts[1]}
-              </div>
-            );
-          }
-          return <div key={index} style={{ marginBottom: index < t.notices.length - 1 ? '4px' : '0' }}>{text}</div>;
-        })}
+      {/* 접을 수 있는 가이드 섹션 */}
+      <div style={{ marginBottom: '16px' }}>
+        <button
+          onClick={() => setGuideOpen(o => !o)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: theme.colors.primary, fontWeight: 'bold', fontSize: '13px',
+            padding: '0 0 8px 0'
+          }}
+        >
+          <span>{guideOpen ? '▾' : '▸'}</span>
+          <span>{language === 'ko' ? '사용 방법 및 안내' : 'How to Use'}</span>
+        </button>
+        {guideOpen && (
+          isSimpleMode
+            ? <SimpleGuide language={language} />
+            : <FullGuide language={language} />
+        )}
       </div>
 
       <div style={{ marginBottom: '14px', fontWeight: 'bold', fontSize: '15px', color: theme.colors.primary }}>

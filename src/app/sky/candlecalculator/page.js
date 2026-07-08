@@ -12,7 +12,7 @@ import { planCandleSavingRoute, planFastestRoute } from './lib/routePlanner';
 import { toggleNodeInMode } from './lib/nodeUtils';
 import { computeAffinityFromOwned, MAX_AFFINITY } from './lib/affinity';
 
-const SEASON_END = new Date("2026-07-03T16:00:00+09:00");
+const SEASON_END = new Date("2026-08-03T16:00:00+09:00");
 
 function getRemainingDays() {
   const diffMs = SEASON_END.getTime() - Date.now();
@@ -30,7 +30,7 @@ export default function CandleCalculator() {
   }, []);
 
   // ── 뷰 모드 ────────────────────────────────────────
-  const [viewMode, setViewMode] = useState('simple'); // 'simple' | 'full'
+  const [viewMode, setViewMode] = useState('full'); // 'simple' | 'full'
 
   // ── 기본 설정 ──────────────────────────────────────
   const [currentCandles, setCurrentCandles] = useState(0);

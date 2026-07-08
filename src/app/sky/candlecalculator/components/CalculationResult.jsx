@@ -83,7 +83,7 @@ function SpiritRouteCard({ route, t, language, unit }) {
       }}>
         <span style={{ fontWeight: 'bold', fontSize: '13px', color: theme.colors.text }}>{name}</span>
         <span style={{ fontSize: '12px', fontWeight: 'bold', color: isOk ? theme.colors.affinity : '#F57F17' }}>
-          {route.targetLevel}단계 목표
+          {route.targetLevel}{language === 'ko' ? '단계 목표' : ' target'}
         </span>
       </div>
 
@@ -91,12 +91,12 @@ function SpiritRouteCard({ route, t, language, unit }) {
         {/* 호감도 현황 */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
           <span style={{ color: theme.colors.textLight }}>
-            {t.affinityStatus}: <b style={{ color: theme.colors.affinity }}>{route.currentAffinity}</b>
+            {t.affinityStatus}: <b style={{ color: theme.colors.affinity }}>{route.currentAffinity.toFixed ? route.currentAffinity.toFixed(1) : route.currentAffinity}</b>
             {' / '}{route.requiredAffinity}
           </span>
           {route.affinityShortfall > 0
             ? <span style={{ color: '#E65100' }}>({t.affinityShortfall}: {route.affinityShortfall}{t.points})</span>
-            : <span style={{ color: theme.colors.affinity }}>✅ 충족</span>}
+            : <span style={{ color: theme.colors.affinity }}>✅ {language === 'ko' ? '충족' : 'Met'}</span>}
         </div>
 
         {/* 동행 사용 */}
@@ -107,36 +107,18 @@ function SpiritRouteCard({ route, t, language, unit }) {
           </div>
         )}
 
-        {/* 후보 아이템 — 영혼이름 + N단계 */}
-        {route.candidateItemsPicked.length > 0 && (
-          <div style={{ marginBottom: '4px' }}>
-            <div style={{ color: theme.colors.candidate, fontWeight: 'bold', marginBottom: '2px', fontSize: '11px' }}>
-              🛒 {t.candidateItemsNeeded}:
-            </div>
-            {route.candidateItemsPicked.map((item, i) => {
-              const sName = typeof route.name === 'object' ? route.name[language] : route.name;
-              return (
-                <div key={i} style={{ paddingLeft: '12px', color: theme.colors.textLight, fontSize: '11px' }}>
-                  · {sName} {item.level}단계 — {item.cost}{unit} (+{item.affinityGain.toFixed(1)}{t.points})
-                </div>
-              );
-            })}
-            <div style={{ paddingLeft: '12px', color: theme.colors.candidate, fontWeight: 'bold', fontSize: '11px' }}>
-              후보 소계: {route.candidateCost}{unit}
-            </div>
-          </div>
-        )}
-
         {/* 호감도 여전히 부족 */}
         {route.affinityStillShort > 0 && (
           <div style={{ padding: '4px 8px', background: '#FFEBEE', borderRadius: '4px',
             color: '#C62828', fontSize: '11px', marginBottom: '4px' }}>
-            ⚠️ 호감도 {route.affinityStillShort.toFixed(1)}{t.points} 부족 — 더 많은 동행일수가 필요합니다
+            ⚠️ {language === 'ko'
+              ? `호감도 ${route.affinityStillShort.toFixed(1)}점 부족 — 더 많은 동행일수가 필요합니다`
+              : `Affinity short by ${route.affinityStillShort.toFixed(1)} pts — more companion days needed`}
           </div>
         )}
 
         <div style={{ marginTop: '4px', textAlign: 'right', color: theme.colors.primary, fontWeight: 'bold' }}>
-          목표 비용: {route.targetCost}{unit}
+          {language === 'ko' ? '목표 비용' : 'Target cost'}: {route.targetCost}{unit}
         </div>
       </div>
     </div>
@@ -159,9 +141,6 @@ function FullResult({ r, t, unit, language, remainingDays }) {
       <InfoRow label={`💎 ${t.totalObtainableCandles}`} value={`${r.totalAvailableCandles}${unit}`} color={theme.colors.primary} bold />
       <Divider />
       <InfoRow label={`🎯 ${t.targetItemCost}`} value={`${r.totalTargetCost}${unit}`} />
-      {r.totalCandidateCost > 0 && (
-        <InfoRow label={`🛒 ${t.affinityBoostCost}`} value={`+${r.totalCandidateCost}${unit}`} color={theme.colors.candidate} />
-      )}
       <InfoRow label={`📦 ${t.totalNeededCandles}`} value={`${r.totalNeeded}${unit}`} bold />
       <Divider />
       <div style={{ background: r.canAfford ? '#E8F5E9' : '#FFEBEE', padding: '12px', borderRadius: '8px', marginBottom: '10px' }}>

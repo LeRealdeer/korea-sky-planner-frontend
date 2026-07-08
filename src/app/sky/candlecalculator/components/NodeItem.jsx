@@ -2,32 +2,29 @@
 import React from 'react';
 import { theme } from '../styles/theme';
 
-// nodeState: 'owned' | 'target' | 'candidate' | null
+// nodeState: 'owned' | 'target' | null
 export function NodeItem({ node, nodeState, onToggle, isSeasonLocked }) {
   const isSeason = node.type === 'season';
   const imagePath = `/sky/calculator/${node.id}.webp`;
 
   const getBorder = () => {
-    if (isSeasonLocked) return `2px solid ${theme.colors.seasonLocked}`;
-    if (nodeState === 'target')    return `3px solid ${theme.colors.target}`;
-    if (nodeState === 'owned')     return `2px solid ${theme.colors.owned}`;
-    if (nodeState === 'candidate') return `2px dashed ${theme.colors.candidate}`;
+    if (isSeasonLocked)          return `2px solid ${theme.colors.seasonLocked}`;
+    if (nodeState === 'target')  return `3px solid ${theme.colors.target}`;
+    if (nodeState === 'owned')   return `2px solid ${theme.colors.owned}`;
     return `2px solid ${theme.colors.border}`;
   };
 
   const getBackground = () => {
-    if (isSeasonLocked)             return '#F5F5F5';
-    if (nodeState === 'target')     return '#E3F2FD';
-    if (nodeState === 'owned')      return '#F5F5F5';
-    if (nodeState === 'candidate')  return '#FFF3E0';
+    if (isSeasonLocked)          return '#F5F5F5';
+    if (nodeState === 'target')  return '#E3F2FD';
+    if (nodeState === 'owned')   return '#F5F5F5';
     return theme.colors.white;
   };
 
   const getCostColor = () => {
-    if (isSeasonLocked)             return '#9E9E9E';
-    if (nodeState === 'candidate')  return theme.colors.candidate;
-    if (nodeState === 'owned')      return theme.colors.owned;
-    if (nodeState === 'target')     return theme.colors.primary;
+    if (isSeasonLocked)          return '#9E9E9E';
+    if (nodeState === 'owned')   return theme.colors.owned;
+    if (nodeState === 'target')  return theme.colors.primary;
     return '#90A4AE';
   };
 
@@ -37,8 +34,7 @@ export function NodeItem({ node, nodeState, onToggle, isSeasonLocked }) {
         onClick={isSeasonLocked ? undefined : onToggle}
         style={{
           width: '70px', height: '70px',
-          border: getBorder(),
-          borderRadius: '8px',
+          border: getBorder(), borderRadius: '8px',
           cursor: isSeasonLocked ? 'not-allowed' : 'pointer',
           background: getBackground(),
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -72,7 +68,6 @@ export function NodeItem({ node, nodeState, onToggle, isSeasonLocked }) {
           </div>
         )}
 
-        {/* 보유 체크 */}
         {nodeState === 'owned' && (
           <div style={{
             position: 'absolute', top: '2px', left: '2px',

@@ -45,11 +45,10 @@ export default function CandleCalculator() {
     return () => clearInterval(interval);
   }, []);
 
-  // ── 노드 상태 (3-way: owned / target / candidate) ──
+  // ── 노드 상태 (2-way: owned / target) ─────────────
   const [nodeStates, setNodeStates] = useState({
     owned: new Set(),
-    target: new Set(),
-    candidate: new Set()
+    target: new Set()
   });
 
   // ── 선택 모드 (호감도 탭에서만 표시) ───────────────
@@ -99,19 +98,16 @@ export default function CandleCalculator() {
     setNodeStates(prev => {
       const newOwned = new Set(prev.owned);
       const newTarget = new Set(prev.target);
-      const newCandidate = new Set(prev.candidate);
       spirit.levels.forEach(levelData =>
         [...levelData.leftNodes, ...levelData.rightNodes].forEach(node => {
           if (node.type === 'season' && !hasSeasonPass) return;
           newOwned.delete(node.id);
           newTarget.delete(node.id);
-          newCandidate.delete(node.id);
-          if (mode === 'owned')     newOwned.add(node.id);
-          else if (mode === 'target')    newTarget.add(node.id);
-          else if (mode === 'candidate') newCandidate.add(node.id);
+          if (mode === 'owned')  newOwned.add(node.id);
+          else if (mode === 'target') newTarget.add(node.id);
         })
       );
-      return { owned: newOwned, target: newTarget, candidate: newCandidate };
+      return { owned: newOwned, target: newTarget };
     });
   };
 
@@ -119,15 +115,13 @@ export default function CandleCalculator() {
     setNodeStates(prev => {
       const newOwned = new Set(prev.owned);
       const newTarget = new Set(prev.target);
-      const newCandidate = new Set(prev.candidate);
       spirit.levels.forEach(levelData =>
         [...levelData.leftNodes, ...levelData.rightNodes].forEach(node => {
           newOwned.delete(node.id);
           newTarget.delete(node.id);
-          newCandidate.delete(node.id);
         })
       );
-      return { owned: newOwned, target: newTarget, candidate: newCandidate };
+      return { owned: newOwned, target: newTarget };
     });
   };
 

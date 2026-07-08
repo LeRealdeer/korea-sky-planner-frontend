@@ -20,9 +20,8 @@ export function LevelRow({ level, nodeStates, onToggleNode, spiritId, currentAff
   const isNodeSeasonLocked = (node) => node.type === 'season' && !hasSeasonPass;
 
   const getNodeState = (nodeId) => {
-    if (nodeStates.owned.has(nodeId))     return 'owned';
-    if (nodeStates.target.has(nodeId))    return 'target';
-    if (nodeStates.candidate.has(nodeId)) return 'candidate';
+    if (nodeStates.owned.has(nodeId))  return 'owned';
+    if (nodeStates.target.has(nodeId)) return 'target';
     return null;
   };
 

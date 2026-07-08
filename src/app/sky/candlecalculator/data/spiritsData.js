@@ -16,7 +16,7 @@ export const spiritsData = [
         level: 4,
         leftNodes: [
           { id: "s1_l4_n1", type: "normal", cost: 28 },
-          { id: "s1_l4_n2", type: "normal", cost: 0 }
+          //{ id: "s1_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s1_l4_s1", type: "season", cost: 0 },
@@ -66,7 +66,7 @@ export const spiritsData = [
         level: 4,
         leftNodes: [
           { id: "s2_l4_n1", type: "normal", cost: 28 },
-          { id: "s2_l4_n2", type: "normal", cost: 0 }
+          //{ id: "s2_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s2_l4_s1", type: "season", cost: 0 },
@@ -116,7 +116,7 @@ export const spiritsData = [
         level: 4,
         leftNodes: [
           { id: "s3_l4_n1", type: "normal", cost: 28 },
-          { id: "s3_l4_n2", type: "normal", cost: 0 }
+          //{ id: "s3_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s3_l4_s1", type: "season", cost: 0 },
@@ -166,7 +166,7 @@ export const spiritsData = [
         level: 4,
         leftNodes: [
           { id: "s4_l4_n1", type: "normal", cost: 28 },
-          { id: "s4_l4_n2", type: "normal", cost: 0 }
+          //{ id: "s4_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s4_l4_s1", type: "season", cost: 0 },

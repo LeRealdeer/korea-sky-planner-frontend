@@ -99,7 +99,7 @@ function Guide({ isKo }) {
         </div>
       </GuideSection>
 
-      <div style={{ fontSize: '11px', color: '#BDBDBD', paddingBottom: '4px' }}>
+      <div style={{ fontSize: '11px', color: '#888', paddingBottom: '4px', fontWeight: 'bold' }}>
         {isKo ? '• 아이콘은 Sky Wiki 참고, 양초·하트 아이콘은 햇비님 제작 자료입니다.' : '• Icons from Sky Wiki; candle & heart icons by 햇비 Sky Solar.'}
       </div>
     </div>

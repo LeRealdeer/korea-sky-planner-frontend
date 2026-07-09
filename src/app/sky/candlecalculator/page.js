@@ -127,6 +127,7 @@ export default function CandleCalculator() {
         cashPackCount={cashPackCount}
         setCashPackCount={setCashPackCount}
         remainingDays={remainingDays}
+        seasonEnd={SEASON_END}
         cashCandles={simResult.cashCandles}
         showCashPack={isKo}
         language={language}

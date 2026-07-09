@@ -95,6 +95,7 @@ export function SettingsPanel({
   buySeasonPass, setBuySeasonPass,
   cashPackCount, setCashPackCount,
   remainingDays,
+  seasonEnd,
   cashCandles = 0,
   showCashPack = true,
   language
@@ -224,6 +225,19 @@ export function SettingsPanel({
         background: '#F0F7FF', borderRadius: '8px', padding: '10px 14px',
         border: `1px solid ${theme.colors.border}`, fontSize: '13px', marginBottom: '12px'
       }}>
+        {seasonEnd && (
+          <div style={{
+            fontSize: '11px', color: theme.colors.textLight,
+            marginBottom: '8px', paddingBottom: '7px',
+            borderBottom: `1px solid ${theme.colors.border}`
+          }}>
+            {isKo ? '⏰ 시즌 종료' : '⏰ Season ends'}{' '}
+            <b style={{ color: theme.colors.primary }}>
+              {seasonEnd.toLocaleDateString(isKo ? 'ko-KR' : 'en-US', { month: 'long', day: 'numeric', weekday: 'short' })}
+            </b>
+            <span style={{ marginLeft: '6px', color: '#E65100' }}>({remainingDays}{isKo ? '일 남음' : 'd left'})</span>
+          </div>
+        )}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
           <span style={{ color: theme.colors.textLight }}>{isKo ? '현재 보유' : 'Current candles'}</span>
           <span>{currentCandles}{t.bonusCandles}</span>

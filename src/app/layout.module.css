@@ -1,228 +1,119 @@
-/* 배너 배경 */
+/* ── 슬림 스티키 네브바 ── */
 .banner {
-  position: relative;
-  /* ▼▼▼ 수정된 부분 ▼▼▼ */
-  max-width: 1200px;      /* 최대 너비를 설정합니다. */
-  width: 100%;            /* 너비를 100%로 채워 반응형으로 만듭니다. */
-  margin: 0 auto;         /* 좌우 여백을 auto로 주어 중앙 정렬합니다. */
-  /* ▲▲▲ 수정된 부분 ▲▲▲ */
-  height: 300px;
-  background: url('/sky/extra/layout.png') center / cover no-repeat;
-  overflow: hidden;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  width: 100%;
+  height: 56px;
+  background: rgba(8, 12, 28, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #ffffff;
+  color: #fff;
 }
 
-/* 오버레이 */
+/* 오버레이 — 네브바에서는 내부 레이아웃 컨테이너로 재활용 */
 .overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 20px;
+  gap: 0;
 }
 
-/* 타이틀(링크 포함) ─ 색상 유지 */
+/* 타이틀 */
 .titleLink,
-.titleLink:visited,
-.titleLink:hover {
-  color: #ffffff;
+.titleLink:visited {
+  color: #fff;
   text-decoration: none;
+  flex-shrink: 0;
 }
+.titleLink:hover { opacity: 0.85; }
+
 .title {
-  font-size: 2.8rem;
+  font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
-/* 부제목 */
-.subtitle {
-  margin-top: 8px;
-  font-size: 0.95rem;
-  opacity: 0.85;
-}
+/* 부제목 — 네브바에서는 숨김 */
+.subtitle { display: none; }
 
-/* CTA 래퍼 : PC 기준(버튼 중간 아래) */
+/* CTA 버튼 묶음 — 오른쪽으로 밀기 */
 .ctaWrapper {
-  position: absolute;
-  right: 40px;
-  top: 65%;
-  transform: translateY(-50%);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 6px;
+  margin-left: auto;
 }
 
-/* CTA 버튼 */
 .ctaButton {
   display: flex;
   align-items: center;
-  /* ▼▼▼ 수정된 부분 ▼▼▼ */
-  gap: 6px;                 /* 아이콘과 텍스트 간격 축소 */
-  font-size: 0.9rem;        /* 폰트 크기 축소 */
-  padding: 8px 14px;        /* 내부 여백 축소 */
-  /* ▲▲▲ 수정된 부분 ▲▲▲ */
-  background: rgba(255, 255, 255, 0.9);
-  color: #1f2a3a;
+  gap: 5px;
+  font-size: 0.78rem;
   font-weight: 600;
-  border-radius: 8px;
+  padding: 5px 12px;
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
   text-decoration: none;
-  transition: background 0.25s ease;
+  transition: background 0.18s, border-color 0.18s;
   white-space: nowrap;
 }
-.ctaButton:hover { background: #ffffff; }
+.ctaButton:hover {
+  background: rgba(255,255,255,0.20);
+  border-color: rgba(255,255,255,0.38);
+  color: #fff;
+}
 
-/* 아이콘 */
 .icon {
-  /* ▼▼▼ 수정된 부분 ▼▼▼ */
-  width: 20px;              /* 아이콘 너비 축소 */
-  height: 20px;             /* 아이콘 높이 축소 */
-  /* ▲▲▲ 수정된 부분 ▲▲▲ */
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }
 
-/* 만든이: 좌측 하단 고정 */
-.maker {
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
+/* 만든이 — 네브바에서는 숨김 */
+.maker { display: none; }
 
-/* children 영역 */
+/* 크레딧 링크 */
+.creditLink {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.45);
+  text-decoration: underline;
+  margin-left: 16px;
+  transition: color 0.18s;
+  flex-shrink: 0;
+}
+.creditLink:hover { color: rgba(255,255,255,0.8); }
+
+/* 콘텐츠 영역 */
 .content {
   max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 0;
 }
 
-.mobileBreak {
-  display: none;
-}
-.ogImage {
-  display: none;
-}
+.mobileBreak { display: none; }
+.ogImage { display: none; }
 
-/* 좌상단 크레딧 링크 */
-.creditLink {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 1000;
-  font-size: 0.75rem;
-  color: #fff;
-  text-decoration: underline;
-  opacity: 0.85;
-  transition: opacity 0.2s;
-}
-.creditLink:hover {
-  opacity: 1;
-}
-/* ... 다른 CSS 코드는 그대로 ... */
-
-/* CTA 래퍼 : PC 기준(버튼 중간 아래) */
-.ctaWrapper {
-  position: absolute;
-  right: 40px;
-  /* ▼▼▼ 수정 ▼▼▼ */
-  top: 70%;                 /* 기존 65% -> 80%로 내려서 위치 조정 */
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* CTA 버튼 */
-.ctaButton {
-  display: flex;
-  align-items: center;
-  /* ▼▼▼ 수정 ▼▼▼ */
-  gap: 8px;                 /* 간격 다시 살짝 넓힘 */
-  font-size: 0.95rem;       /* 폰트 크기 미세 조정 */
-  padding: 10px 16px;       /* 패딩을 다시 늘려 도톰하게 */
-  /* ▲▲▲ 수정 ▲▲▲ */
-  background: rgba(255, 255, 255, 0.9);
-  color: #1f2a3a;
-  font-weight: 600;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background 0.25s ease;
-  white-space: nowrap;
-}
-.ctaButton:hover { background: #ffffff; }
-
-/* 아이콘 */
-.icon {
-  /* ▼▼▼ 수정 ▼▼▼ */
-  width: 22px;              /* 아이콘 크기 미세 조정 */
-  height: 22px;             /* 아이콘 크기 미세 조정 */
-  /* ▲▲▲ 수정 ▲▲▲ */
-}
-
-/* ... 나머지 코드는 그대로 ... */
-/* ─── 모바일(≤768px) ─── */
+/* ── 모바일 ── */
 @media (max-width: 768px) {
-  .banner {
-    height: 190px;
-    margin: 0;
-    border: none;
-  }
-
-  .content {
-    margin: 24px 0; /* 모바일에서 위아래 여백 추가 */
-    padding: 0 12px;
-  }
-
-  .ctaWrapper {
-    top: 24px;
-    right: 12px;
-    flex-direction: row;
-    gap: 6px;
-  }
-
+  .overlay { padding: 0 14px; }
+  .title { font-size: 1rem; }
   .ctaButton {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
     font-size: 0;
-    background: rgba(255, 255, 255, 0.88);
-    transition: background 0.25s ease;
+    padding: 6px 8px;
+    gap: 0;
   }
-  .ctaButton:hover { background: #ffffff; }
-
-  .icon {
-    width: 70%;
-    height: 70%;
-    display: block;
-    margin: auto;
-    object-fit: contain;
-  }
-  
-  .mobileBreak {
-    display: inline;
-  }
-  
-  .title { font-size: 2rem; }
-  
-  .subtitle {
-    position: absolute;
-    right: 12px;
-    bottom: 24px;
-    text-align: right;
-    font-size: 0.6rem;
-    margin: 0;
-  }
-  
-  .maker { font-size: 0.75rem; }
+  .icon { width: 18px; height: 18px; }
+  .creditLink { display: none; }
+  .content { padding: 0; }
 }

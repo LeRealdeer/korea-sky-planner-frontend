@@ -72,10 +72,10 @@ function Guide({ isKo }) {
           fontSize: '11px', lineHeight: '2.1', border: `1px solid ${theme.colors.border}`
         }}>
           {[
-            { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '총 4점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계' : '→ 4 total = Lv.2' },
-            { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '총 6점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계' : '→ 10 total = Lv.3' },
-            { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '총 8점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계' : '→ 18 total = Lv.4' },
-            { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '총 10점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계' : '→ 28 total = Lv.5' },
+            { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '총 4점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계 개발' : '→ 4 total = Lv.2' },
+            { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '총 6점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계 개방' : '→ 10 total = Lv.3' },
+            { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '총 8점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계 개방' : '→ 18 total = Lv.4' },
+            { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '총 10점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계 개방' : '→ 28 total = Lv.5' },
           ].map(r => (
             <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text }}>
               <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '126px', flexShrink: 0 }}>{r.lv}</span>
@@ -86,7 +86,7 @@ function Guide({ isKo }) {
           ))}
           <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: `1px solid ${theme.colors.border}`, color: '#555', fontSize: '11px' }}>
             {isKo
-              ? '4단계 개방 조건: 누적 18점 이상 + 4단계 상호작용 완료 (본 계산기는 완료 가정)'
+              ? '5단계 개방 조건: 누적 28점 이상 + 4단계 상호작용 완료 (본 계산기는 완료 가정)'
               : 'Lv.4 requires 18+ pts + Lv.4 interaction (assumed done in this calculator)'}
           </div>
         </div>

@@ -151,6 +151,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
 .colorButton:hover {
@@ -164,237 +168,42 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* 컬러 피커 */
-.colorPickerWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* 컬러 피커 등 원본 유지 영역 */
+.colorPickerWrapper { position: relative; display: flex; align-items: center; justify-content: center; }
+.colorPickerLabel { position: absolute; pointer-events: none; font-size: 1.2rem; }
+.colorPickerModal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+.colorPickerContent { background: white; border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: slideUp 0.3s ease-out; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.colorPickerTitle { color: #1e40af; font-size: 1.5rem; font-weight: 700; margin: 0 0 1.5rem 0; text-align: center; }
+.colorPreview { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding: 1rem; background: #f8fafc; border-radius: 12px; }
+.colorPreviewBox { width: 80px; height: 80px; border-radius: 12px; border: 3px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+.colorPreviewText { font-size: 1.2rem; font-weight: 700; color: #374151; font-family: 'Courier New', monospace; }
+.sliderGroup { margin-bottom: 1.5rem; }
+.sliderLabel { display: block; color: #374151; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.6rem; }
+.sliderWrapper { position: relative; padding: 0.5rem 0; }
+.hueSlider { height: 40px; border-radius: 20px; background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); position: relative; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+.saturationSlider { height: 40px; border-radius: 20px; position: relative; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+.lightnessSlider { height: 40px; border-radius: 20px; position: relative; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+.sliderThumb { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: white; border: 4px solid #1e40af; border-radius: 50%; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); cursor: pointer; transition: transform 0.1s ease; pointer-events: none; }
+.sliderThumb:hover { transform: translate(-50%, -50%) scale(1.15); }
+.presetColors { margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid #e5e7eb; }
+.colorPalette { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.8rem; }
+.colorRow { display: flex; gap: 0.6rem; justify-content: center; }
+.paletteColor { width: 40px; height: 40px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); }
+.paletteColor:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); border-color: #1e40af; }
+.paletteColor:active { transform: scale(1.05); }
+.colorPickerActions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+.colorPickerCancel { padding: 0.9rem 2.5rem; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+.colorPickerCancel:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4); }
 
-.colorPickerLabel {
-  position: absolute;
-  pointer-events: none;
-  font-size: 1.2rem;
-}
-
-/* 커스텀 컬러 피커 모달 */
-.colorPickerModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.colorPickerContent {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.colorPickerTitle {
-  color: #1e40af;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 1.5rem 0;
-  text-align: center;
-}
-
-/* 색상 미리보기 */
-.colorPreview {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 12px;
-}
-
-.colorPreviewBox {
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
-  border: 3px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.colorPreviewText {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #374151;
-  font-family: 'Courier New', monospace;
-}
-
-/* 슬라이더 그룹 */
-.sliderGroup {
-  margin-bottom: 1.5rem;
-}
-
-.sliderLabel {
-  display: block;
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 0.6rem;
-}
-
-.sliderWrapper {
-  position: relative;
-  padding: 0.5rem 0;
-}
-
-/* Hue 슬라이더 */
-.hueSlider {
-  height: 40px;
-  border-radius: 20px;
-  background: linear-gradient(to right, 
-    #ff0000 0%, 
-    #ffff00 17%, 
-    #00ff00 33%, 
-    #00ffff 50%, 
-    #0000ff 67%, 
-    #ff00ff 83%, 
-    #ff0000 100%);
-  position: relative;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Saturation 슬라이더 */
-.saturationSlider {
-  height: 40px;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Lightness 슬라이더 */
-.lightnessSlider {
-  height: 40px;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* 슬라이더 thumb */
-.sliderThumb {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
-  background: white;
-  border: 4px solid #1e40af;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: transform 0.1s ease;
-  pointer-events: none;
-}
-
-.sliderThumb:hover {
-  transform: translate(-50%, -50%) scale(1.15);
-}
-
-/* 프리셋 색상 */
-.presetColors {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid #e5e7eb;
-}
-
-.colorPalette {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 0.8rem;
-}
-
-.colorRow {
-  display: flex;
-  gap: 0.6rem;
-  justify-content: center;
-}
-
-.paletteColor {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.paletteColor:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  border-color: #1e40af;
-}
-
-.paletteColor:active {
-  transform: scale(1.05);
-}
-
-.colorPickerActions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.colorPickerCancel {
-  padding: 0.9rem 2.5rem;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.colorPickerCancel:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-}
-
+/* 캡처 영역 (원본 레이아웃) */
 .captureArea {
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
   border: 3px solid #0ea5e9;
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .header {
@@ -415,7 +224,7 @@
 
 .profileSection {
   display: flex;
-  alignItems: center;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -625,52 +434,6 @@
   font-weight: 700;
 }
 
-/* 출발 시간 섹션 */
-.departureTimeSection {
-  position: absolute;
-  left: 2rem;
-  bottom: 2rem;
-  background: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  border: 3px solid #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.departureTimeLabel {
-  color: #1e40af;
-  font-size: 1.1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.departureTimeInput {
-  padding: 0.6rem 1rem;
-  border: 2px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e40af;
-  min-width: 200px;
-  transition: all 0.2s ease;
-}
-
-.departureTimeInput:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.departureTimeInput::placeholder {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
 /* 시즌맵 */
 .seasonMapSection {
   position: absolute;
@@ -812,23 +575,6 @@
   font-weight: 700;
 }
 
-.noteArea {
-  width: 100%;
-  min-height: 220px;
-  padding: 0.6rem;
-  border: 2px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  line-height: 1.5;
-  resize: vertical;
-  font-family: inherit;
-}
-
-.noteArea:focus {
-  outline: none;
-  border-color: #3b82f6;
-}
-
 /* 다운로드 */
 .downloadSection {
   text-align: center;
@@ -853,4 +599,182 @@
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
   background: #2563eb;
+}
+
+/* =======================================================
+   ✨ NEW: 빈티지 마법서 테마 오버라이드 (image_c52522.png 완벽 재현)
+   ======================================================= */
+
+.captureArea[data-theme="vintage"] {
+  background: #e3dcd1 !important; /* 양피지 배경색 */
+  border: none !important;
+  box-shadow: inset 0 0 50px rgba(100, 80, 60, 0.1), 0 10px 40px rgba(0,0,0,0.1) !important;
+  padding: 2.5rem;
+  border-radius: 8px;
+}
+
+/* 헤더: 청록색 바 & 양피지 타이틀 조합 */
+.captureArea[data-theme="vintage"] .header {
+  background: #183e42;
+  border: 4px solid #8c7355;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.captureArea[data-theme="vintage"] .title {
+  background: #e3dcd1;
+  color: #7a5a3a !important; /* 브라운 텍스트 */
+  padding: 0.5rem 2.5rem;
+  border-radius: 6px;
+  border: 2px solid #8c7355;
+  font-family: serif;
+  box-shadow: 3px 3px 0 rgba(140, 115, 85, 0.2);
+}
+
+/* 프로필 & 별자리 나침반 프레임 효과 */
+.captureArea[data-theme="vintage"] .profileLabel,
+.captureArea[data-theme="vintage"] .profileInput,
+.captureArea[data-theme="vintage"] .profileIntro {
+  color: #e3dcd1 !important; /* 청록색 배경 위 흰색 텍스트 */
+  border-bottom-color: #8c7355;
+}
+
+.captureArea[data-theme="vintage"] .profileImageWrapper {
+  border: 4px solid #8c7355 !important;
+  box-shadow: 0 0 0 2px #183e42, 0 0 0 4px #8c7355, 0 5px 15px rgba(0,0,0,0.4) !important;
+  border-radius: 50%;
+}
+
+/* 밤하늘 별자리 라우트 섹션 */
+.captureArea[data-theme="vintage"] .routeSection {
+  background-color: #122b2e !important;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.2) 2px, transparent 2px),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.2) 2px, transparent 2px),
+    linear-gradient(to bottom, #122b2e, #183e42) !important;
+  background-size: 100px 100px, 150px 150px, 80px 80px, 200px 200px, 100% 100%;
+  border: 4px solid #8c7355 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+}
+
+.captureArea[data-theme="vintage"] .routeMap::before {
+  background: #8c7355 !important; /* 연결선을 골드브라운으로 */
+}
+
+.captureArea[data-theme="vintage"] .mainLocation {
+  background: #255a60 !important;
+  border-color: #8c7355 !important;
+  color: white !important;
+  border-radius: 12px;
+}
+
+.captureArea[data-theme="vintage"] .mainLocationSelected {
+  background: #8c7355 !important;
+  box-shadow: 0 0 15px rgba(140, 115, 85, 0.8) !important;
+}
+
+.captureArea[data-theme="vintage"] .subLocation {
+  background: #183e42 !important;
+  border-color: #4a7c82 !important;
+  color: #e3dcd1 !important;
+  border-radius: 16px;
+}
+
+.captureArea[data-theme="vintage"] .subLocationSelected {
+  background: #8c7355 !important;
+  border-color: #a48c6a !important;
+  color: white !important;
+}
+
+/* 두루마리 양피지 느낌의 시즌맵 */
+.captureArea[data-theme="vintage"] .seasonMapSection {
+  background: #e3dcd1 !important;
+  border: 2px solid #8c7355 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4) !important;
+}
+
+.captureArea[data-theme="vintage"] .seasonMapTitle {
+  color: #5a4634 !important;
+}
+
+.captureArea[data-theme="vintage"] .seasonMapItem {
+  background: #f2ede4 !important;
+  border-color: #8c7355 !important;
+  color: #5a4634 !important;
+}
+
+.captureArea[data-theme="vintage"] .seasonMapItemSelected {
+  background: #8c7355 !important;
+  color: white !important;
+}
+
+/* 책이 펼쳐진 형태의 옵션 영역 (가운데 책 링 모양) */
+.captureArea[data-theme="vintage"] .optionsWrapper {
+  background: #e3dcd1;
+  border: 4px solid #5a4634;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 40px rgba(139, 101, 69, 0.1);
+  padding: 1.5rem;
+  gap: 3rem; /* 가운데 스파인(Spine) 여백 확보 */
+}
+
+/* 책 가운데 링(바인딩) 디자인 */
+.captureArea[data-theme="vintage"] .optionsWrapper::after {
+  content: '';
+  position: absolute;
+  top: 5%; bottom: 5%; left: 50%;
+  width: 40px;
+  transform: translateX(-50%);
+  background-image: 
+    linear-gradient(to right, #4a3624, #a48c6a, #4a3624),
+    linear-gradient(to right, #4a3624, #a48c6a, #4a3624),
+    linear-gradient(to right, #4a3624, #a48c6a, #4a3624),
+    linear-gradient(to right, #4a3624, #a48c6a, #4a3624),
+    linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1));
+  background-size: 100% 8px, 100% 8px, 100% 8px, 100% 8px, 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 15%, 0 40%, 0 65%, 0 90%, 0 0;
+  z-index: 11;
+  border-left: 1px solid rgba(0,0,0,0.2);
+  border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+.captureArea[data-theme="vintage"] .categorySection {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.captureArea[data-theme="vintage"] .categoryTitle {
+  color: #3b2c1f !important;
+  border-bottom: 2px solid #8c7355 !important;
+}
+
+.captureArea[data-theme="vintage"] .optionGroup {
+  background: #f2ede4 !important;
+  border: 2px solid #c2b4a1 !important;
+}
+
+.captureArea[data-theme="vintage"] .optionHeader {
+  color: #5a4634 !important;
+}
+
+.captureArea[data-theme="vintage"] .optionButton {
+  background: #e3dcd1 !important;
+  border: 2px solid #8c7355 !important;
+  color: #5a4634 !important;
+  border-radius: 8px !important;
+}
+
+.captureArea[data-theme="vintage"] .optionButtonSelected {
+  background: #183e42 !important;
+  border-color: #183e42 !important;
+  color: white !important;
 }

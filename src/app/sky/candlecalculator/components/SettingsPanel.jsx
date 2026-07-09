@@ -71,19 +71,18 @@ function Guide({ isKo }) {
           background: '#F1F8E9', borderRadius: '6px', padding: '10px 12px',
           fontSize: '11px', lineHeight: '2.1', border: `1px solid ${theme.colors.border}`
         }}>
-          {[
-            { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '총 4점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계 개발' : '→ 4 total = Lv.2' },
-            { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '총 6점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계 개방' : '→ 10 total = Lv.3' },
-            { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '총 8점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계 개방' : '→ 18 total = Lv.4' },
-            { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '총 10점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계 개방' : '→ 28 total = Lv.5' },
-          ].map(r => (
-            <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text }}>
-              <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '126px', flexShrink: 0 }}>{r.lv}</span>
-              <span style={{ width: '50px', flexShrink: 0 }}>{r.pts}</span>
-              {/* <span style={{ color: theme.colors.textLight, width: '44px', flexShrink: 0 }}>{r.note}</span> */}
-              <span style={{ color: theme.colors.textLight }}>{r.threshold}</span>
-            </div>
-          ))}
+         {[
+  { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '총 4점' : '2 pts each', threshold: isKo ? '→ 누적 4점 = 2단계 개방' : '→ 4 total = Lv.2' },
+  { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '총 6점' : '3 pts each', threshold: isKo ? '→ 누적 10점 = 3단계 개방' : '→ 10 total = Lv.3' },
+  { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '총 8점' : '4 pts each', threshold: isKo ? '→ 누적 18점 = 4단계 개방' : '→ 18 total = Lv.4' },
+  { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '총 10점' : '5 pts each', threshold: isKo ? '→ 누적 28점 = 5단계 개방' : '→ 28 total = Lv.5' },
+].map(r => (
+  <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text, flexWrap: 'wrap', marginBottom: '4px' }}>
+    <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '115px', flexShrink: 0 }}>{r.lv}</span>
+    <span style={{ width: '45px', flexShrink: 0 }}>{r.pts}</span>
+    <span style={{ color: theme.colors.textLight, flex: 1, minWidth: '120px', wordBreak: 'keep-all' }}>{r.threshold}</span>
+  </div>
+))}
           <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: `1px solid ${theme.colors.border}`, color: '#555', fontSize: '11px' }}>
             {isKo
               ? '5단계 개방 조건: 누적 28점 이상 + 4단계 상호작용 완료 (본 계산기는 완료 가정)'

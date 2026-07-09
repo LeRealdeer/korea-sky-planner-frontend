@@ -2,11 +2,13 @@
 import React from 'react';
 
 export function BudgetBar({
-  candlePossible, candleDifference, totalAvailableCandles, totalPlannedCost,
+  candlePossible, candleDifference, totalAvailableCandles,
+  purchasablePlannedCost, lockedPlannedCost,
   companionPossible, remainingCompanionDays, remainingDays, totalFutureCompanionDays,
   language
 }) {
   const isKo = language === 'ko';
+  const hasLocked = lockedPlannedCost > 0;
 
   return (
     <div style={{
@@ -34,8 +36,13 @@ export function BudgetBar({
               {isKo ? '양초 예산' : 'Candle Budget'}
             </div>
             <div style={{ fontSize: '11px', color: '#666' }}>
-              {totalAvailableCandles}{isKo ? '개' : ''} − {totalPlannedCost}{isKo ? '개' : ''}
+              {totalAvailableCandles}{isKo ? '개' : ''} − {purchasablePlannedCost}{isKo ? '개' : ''}
             </div>
+            {hasLocked && (
+              <div style={{ fontSize: '10px', color: '#E65100', marginTop: '1px' }}>
+                {isKo ? `(잠김 ${lockedPlannedCost}개 제외)` : `(${lockedPlannedCost} locked excl.)`}
+              </div>
+            )}
           </div>
           <div style={{
             fontWeight: 'bold', fontSize: '18px', lineHeight: 1,

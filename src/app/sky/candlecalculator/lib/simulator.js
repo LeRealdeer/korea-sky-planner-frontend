@@ -103,7 +103,8 @@ export function simulateAll(spiritsData, spiritStates, settings) {
     (s, sp) => s + (spiritStates[sp.id]?.futureCompanionDays ?? 0), 0
   );
 
-  const candleDifference = totalAvailableCandles - totalPlannedCost;
+  // 잠긴 아이템은 실제로 구매 불가 → 구매 가능한 항목만 비용으로 차감
+  const candleDifference = totalAvailableCandles - purchasablePlannedCost;
   const remainingCompanionDays = remainingDays - totalFutureCompanionDays;
 
   const candlePossible    = candleDifference >= 0;

@@ -43,6 +43,15 @@ function Guide({ isKo }) {
       <div style={{ fontWeight: 'bold', fontSize: '12px', color: theme.colors.primary, marginBottom: '6px' }}>
         {isKo ? '🤝 호감도 시스템' : '🤝 Affinity System'}
       </div>
+      <div style={{
+        background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: '6px',
+        padding: '8px 10px', fontSize: '12px', color: '#5D4037',
+        marginBottom: '8px', lineHeight: 1.6
+      }}>
+        {isKo
+          ? '⚠️ 아랫단계부터 아이템을 눌러 호감도를 채워주세요! 윗단계 아이템은 아랫단계 호감도가 쌓여야 잠금이 해제됩니다. 5단계부터 체크하면 4단계 이하 호감도가 없어서 열리지 않습니다.'
+          : '⚠️ Fill affinity from the lowest level first! Higher-level items unlock only after lower-level affinity is accumulated. Checking Lv.5 first won\'t unlock without Lv.1–4 affinity.'}
+      </div>
       <div style={{ fontSize: '12px', lineHeight: '1.75', color: theme.colors.textLight, marginBottom: '6px' }}>
         {isKo
           ? '영혼과 동행하면 하루 1점, 왼쪽 일반 아이템 구매 시 추가 점수를 획득합니다. 오른쪽 시즌 아이템·이모트는 호감도에 미반영입니다.'

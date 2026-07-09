@@ -203,10 +203,19 @@ export function CalculationResult({ simResult, language }) {
                 />
                 <Row
                   label={isKo ? '└ 잠김 (호감도/시패 부족)' : '└ Locked'}
-                  value={`${lockedPlannedCost}${unit}`}
+                  value={`-${lockedPlannedCost}${unit}`}
                   color={theme.colors.locked}
                   indent
                 />
+                <div style={{
+                  marginTop: '6px', padding: '6px 10px', borderRadius: '6px',
+                  background: '#FFF8E1', border: '1px solid #FFE082',
+                  fontSize: '11px', color: '#795548', lineHeight: 1.5
+                }}>
+                  {isKo
+                    ? `⚠️ 잠긴 아이템(${lockedPlannedCost}개 양초)은 구매 불가이므로 실제 지출에서 제외됩니다. 아래 여유 양초는 잠긴 비용이 환원된 값입니다.`
+                    : `⚠️ Locked items (${lockedPlannedCost} candles) are excluded from actual spending. The surplus below reflects this.`}
+                </div>
               </>
             )}
           </Section>

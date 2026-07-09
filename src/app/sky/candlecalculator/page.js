@@ -8,7 +8,6 @@ import { SpiritCard } from './components/SpiritCard';
 import { SettingsPanel } from './components/SettingsPanel';
 import { BudgetBar } from './components/BudgetBar';
 import { CalculationResult } from './components/CalculationResult';
-import { SimpleCandleCalculator } from './components/SimpleCandleCalculator';
 import { simulateAll } from './lib/simulator';
 import { cycleNodeState } from './lib/nodeUtils';
 
@@ -138,7 +137,8 @@ export default function CandleCalculator() {
         candlePossible={simResult.candlePossible}
         candleDifference={simResult.candleDifference}
         totalAvailableCandles={simResult.totalAvailableCandles}
-        totalPlannedCost={simResult.totalPlannedCost}
+        purchasablePlannedCost={simResult.purchasablePlannedCost}
+        lockedPlannedCost={simResult.lockedPlannedCost}
         companionPossible={simResult.companionPossible}
         remainingCompanionDays={simResult.remainingCompanionDays}
         remainingDays={remainingDays}
@@ -176,9 +176,6 @@ export default function CandleCalculator() {
 
       {/* 계산 결과 */}
       <CalculationResult simResult={simResult} language={language} />
-
-      {/* 양초 구매 가격 계산기 (한국어만) */}
-      {isKo && <SimpleCandleCalculator />}
 
       {/* 메인화면 버튼 */}
       <div style={{ textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>

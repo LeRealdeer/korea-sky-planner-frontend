@@ -1,251 +1,326 @@
 "use client";
-import React from 'react';
-import { theme, translations } from '../styles/theme';
+import React, { useState } from 'react';
+import { theme } from '../styles/theme';
 
-function InfoRow({ label, value, color, bold }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
-      <span style={{ color: theme.colors.text }}>{label}</span>
-      <span style={{ fontWeight: bold ? 'bold' : 'normal', color: color || theme.colors.text }}>{value}</span>
-    </div>
-  );
-}
-
-function Divider() {
-  return <div style={{ borderTop: `1px solid ${theme.colors.border}`, margin: '10px 0' }} />;
-}
-
-/* ── 간단 계산기 결과 ──────────────────────────────── */
-function SimpleResult({ r, t, unit }) {
-  const neededCandles = r.totalRequired - r.currentCandles - r.bonus;
-  const finalDays = neededCandles > 0 ? Math.ceil(neededCandles / r.dailyCandles) : 0;
-  const canReachInSeason = finalDays <= r.remainingDays;
-
-  return (
-    <>
-      <InfoRow label={`🕐 ${t.remainingSeasonDays}`} value={`${r.remainingDays}${t.days}`} color={theme.colors.primary} bold />
-      <InfoRow label={`💰 ${t.dailyCandles}`} value={`${r.dailyCandles}${unit}`} />
-      <Divider />
-      <InfoRow label={t.currentCandlesLabel} value={`${r.currentCandles}${unit}`} />
-      <InfoRow
-        label={t.remainingPeriodCandles}
-        value={`${r.seasonCandlesFromDays}${unit}`}
-      />
-      {r.bonus > 0 && (
-        <InfoRow label={`✨ ${t.seasonPassBonus}`} value={`+${r.bonus}${unit}`} color={theme.colors.primary} />
-      )}
-      <Divider />
-      <InfoRow label={`💎 ${t.totalObtainableCandles}`} value={`${r.totalAvailableCandles}${unit}`} color={theme.colors.primary} bold />
-      <Divider />
-      <div style={{ background: '#E3F2FD', padding: '10px', borderRadius: '6px', marginBottom: '12px' }}>
-        <InfoRow label={`🎯 ${t.selected}`} value={`${r.totalRequired}${unit}`} bold />
-      </div>
-      <div style={{
-        background: r.canAfford ? '#E8F5E9' : '#FFEBEE',
-        padding: '12px', borderRadius: '8px', marginBottom: '12px'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 'bold',
-          color: r.canAfford ? '#2E7D32' : '#C62828' }}>
-          <span>{r.canAfford ? `✅ ${t.remainingCandles}` : `⚠️ ${t.shortageCandles}`}</span>
-          <span>{Math.abs(r.surplus)}{unit}</span>
-        </div>
-      </div>
-      {neededCandles > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px',
-          color: canReachInSeason ? theme.colors.primary : '#C62828', fontWeight: 'bold' }}>
-          <span>{t.daysNeeded}</span>
-          <span>{canReachInSeason ? `${finalDays}${t.days}` : `시즌 내 불가 (${finalDays}${t.days} 필요)`}</span>
-        </div>
-      )}
-      {neededCandles <= 0 && (
-        <div style={{ padding: '8px', background: '#E8F5E9', borderRadius: '6px', fontSize: '13px',
-          color: '#2E7D32', fontWeight: 'bold', textAlign: 'center' }}>
-          {t.alreadyEnough.replace('{amount}', Math.abs(neededCandles))}
-        </div>
-      )}
-    </>
-  );
-}
-
-/* ── 호감도 계산기 — 영혼별 루트 카드 ───────────────── */
-function SpiritRouteCard({ route, t, language, unit }) {
-  const name = typeof route.name === 'object' ? route.name[language] : route.name;
-  const isOk = route.achievable;
-
+function Row({ label, value, color, bold, indent }) {
   return (
     <div style={{
-      border: `1.5px solid ${isOk ? theme.colors.affinity : '#FFCC80'}`,
-      borderRadius: '8px', marginBottom: '10px', overflow: 'hidden'
+      display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+      padding: '2px 0', fontSize: '12px',
+      paddingLeft: indent ? '12px' : 0
     }}>
-      <div style={{
-        background: isOk ? '#E8F5E9' : '#FFF8E1', padding: '8px 12px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-      }}>
-        <span style={{ fontWeight: 'bold', fontSize: '13px', color: theme.colors.text }}>{name}</span>
-        <span style={{ fontSize: '12px', fontWeight: 'bold', color: isOk ? theme.colors.affinity : '#F57F17' }}>
-          {route.targetLevel}{language === 'ko' ? '단계 목표' : ' target'}
-        </span>
-      </div>
-
-      <div style={{ padding: '8px 12px', fontSize: '12px' }}>
-        {/* 호감도 현황 */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-          <span style={{ color: theme.colors.textLight }}>
-            {t.affinityStatus}: <b style={{ color: theme.colors.affinity }}>{route.currentAffinity.toFixed ? route.currentAffinity.toFixed(1) : route.currentAffinity}</b>
-            {' / '}{route.requiredAffinity}
-          </span>
-          {route.affinityShortfall > 0
-            ? <span style={{ color: '#E65100' }}>({t.affinityShortfall}: {route.affinityShortfall}{t.points})</span>
-            : <span style={{ color: theme.colors.affinity }}>✅ {language === 'ko' ? '충족' : 'Met'}</span>}
-        </div>
-
-        {/* 동행 사용 */}
-        {route.companionDaysUsed > 0 && (
-          <div style={{ color: theme.colors.affinity, marginBottom: '4px' }}>
-            🤝 {t.companionDaysUsed}: {route.companionDaysUsed}{t.days}
-            <span style={{ color: theme.colors.textLight }}> (+{route.companionDaysUsed}{t.points})</span>
-          </div>
-        )}
-
-        {/* 호감도 여전히 부족 */}
-        {route.affinityStillShort > 0 && (
-          <div style={{ padding: '4px 8px', background: '#FFEBEE', borderRadius: '4px',
-            color: '#C62828', fontSize: '11px', marginBottom: '4px' }}>
-            ⚠️ {language === 'ko'
-              ? `호감도 ${route.affinityStillShort.toFixed(1)}점 부족 — 더 많은 동행일수가 필요합니다`
-              : `Affinity short by ${route.affinityStillShort.toFixed(1)} pts — more companion days needed`}
-          </div>
-        )}
-
-        <div style={{ marginTop: '4px', textAlign: 'right', color: theme.colors.primary, fontWeight: 'bold' }}>
-          {language === 'ko' ? '목표 비용' : 'Target cost'}: {route.targetCost}{unit}
-        </div>
-      </div>
+      <span style={{ color: indent ? theme.colors.textLight : theme.colors.text }}>
+        {label}
+      </span>
+      <span style={{ fontWeight: bold ? 'bold' : 'normal', color: color || theme.colors.text }}>
+        {value}
+      </span>
     </div>
   );
 }
 
-/* ── 호감도 계산기 결과 ──────────────────────────────── */
-function FullResult({ r, t, unit, language, remainingDays }) {
-  if (!r.hasTargets) {
-    return (
-      <div style={{ textAlign: 'center', padding: '20px', color: theme.colors.textLight, fontSize: '14px' }}>
-        {t.noTargetSelected}
-      </div>
-    );
-  }
-
+function Section({ title, children, color }) {
   return (
-    <>
-      <InfoRow label={`🕐 ${t.remainingSeasonDays}`} value={`${remainingDays}${t.days}`} color={theme.colors.primary} bold />
-      <InfoRow label={`💎 ${t.totalObtainableCandles}`} value={`${r.totalAvailableCandles}${unit}`} color={theme.colors.primary} bold />
-      <Divider />
-      <InfoRow label={`🎯 ${t.targetItemCost}`} value={`${r.totalTargetCost}${unit}`} />
-      <InfoRow label={`📦 ${t.totalNeededCandles}`} value={`${r.totalNeeded}${unit}`} bold />
-      <Divider />
-      <div style={{ background: r.canAfford ? '#E8F5E9' : '#FFEBEE', padding: '12px', borderRadius: '8px', marginBottom: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 'bold',
-          color: r.canAfford ? '#2E7D32' : '#C62828' }}>
-          <span>{r.canAfford ? `✅ ${t.remainingCandles}` : `⚠️ ${t.shortageCandles}`}</span>
-          <span>{Math.abs(r.surplus)}{unit}</span>
-        </div>
+    <div style={{ marginBottom: '14px' }}>
+      <div style={{
+        fontSize: '11px', fontWeight: 'bold', letterSpacing: '0.5px',
+        color: color || theme.colors.textLight,
+        borderBottom: `1px solid ${theme.colors.border}`,
+        paddingBottom: '4px', marginBottom: '8px'
+      }}>
+        {title}
       </div>
-
-      {/* 동행 현황 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: theme.colors.affinity, marginBottom: '8px' }}>
-        <span>🤝 {t.companionDaysUsed}</span>
-        <span style={{ fontWeight: 'bold' }}>
-          {r.totalCompanionUsed}{t.days} / {r.availableCompanionDays}{t.days} {t.availableCompanionDays}
-        </span>
-      </div>
-
-      {/* 최단 획득 모드 */}
-      {r.mode === 'fastest' && (
-        <div style={{ padding: '10px 12px', borderRadius: '8px', marginBottom: '10px', fontWeight: 'bold',
-          fontSize: '14px', textAlign: 'center',
-          background: r.achievable ? '#E3F2FD' : '#FFEBEE',
-          color: r.achievable ? theme.colors.primary : '#C62828' }}>
-          {r.achievable
-            ? r.daysFromNow === 0 ? t.noDaysNeeded : `${r.daysFromNow}${t.daysFromNow}`
-            : t.notAchievable}
-        </div>
-      )}
-
-      {/* 전체 달성 여부 (절약 모드) */}
-      {r.mode === 'saving' && (
-        <div style={{ padding: '8px 12px', borderRadius: '6px', marginBottom: '10px',
-          fontWeight: 'bold', fontSize: '13px', textAlign: 'center',
-          background: r.achievable ? '#E8F5E9' : '#FFF3E0',
-          color: r.achievable ? '#2E7D32' : '#E65100' }}>
-          {r.achievable ? t.achievable : t.notAchievable}
-        </div>
-      )}
-
-      <Divider />
-      <div style={{ fontWeight: 'bold', fontSize: '13px', color: theme.colors.text, marginBottom: '10px' }}>
-        📋 {t.routeDetail}
-      </div>
-      {r.routeDetails.map(route => (
-        <SpiritRouteCard key={route.spiritId} route={route} t={t} language={language} unit={unit} />
-      ))}
-    </>
+      {children}
+    </div>
   );
 }
 
-/* ── 메인 컴포넌트 ──────────────────────────────────── */
-export function CalculationResult({ remainingDays, onCalculate, calcResult, calcMode, viewMode, language }) {
-  const t = translations[language];
-  const unit = t.bonusCandles;
-
-  const btnLabel = viewMode === 'simple'
-    ? t.calculate
-    : calcMode === 'saving' ? t.calculateSaving : t.calculateFastest;
-
-  const modeLabel = calcResult
-    ? calcResult.type === 'simple'
-      ? (language === 'ko' ? '간단 계산기' : 'Simple')
-      : calcResult.mode === 'saving' ? t.modeSaving : t.modeFastest
-    : null;
+/* ── 영혼별 접이식 카드 ───────────────────────── */
+function SpiritCard({ r, language }) {
+  const [open, setOpen] = useState(false);
+  const name = typeof r.name === 'object' ? r.name[language] : r.name;
+  const hasLocked = r.lockedPlannedNodes.length > 0;
+  const hasActivity = r.totalPlannedCost > 0 || r.ownedAffinity > 0 || r.pastCompanionAffinity > 0 || r.futureCompanionAffinity > 0;
+  if (!hasActivity) return null;
 
   return (
     <div style={{
-      background: theme.colors.white, padding: '16px', borderRadius: '12px',
-      marginTop: '24px', marginBottom: '30px', marginLeft: 'auto', marginRight: 'auto',
-      border: `2px solid ${theme.colors.border}`, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-      maxWidth: '640px', width: '100%', boxSizing: 'border-box'
+      border: `1.5px solid ${hasLocked ? '#FFCC80' : theme.colors.border}`,
+      borderRadius: '8px', marginBottom: '6px', overflow: 'hidden', fontSize: '12px'
     }}>
       <button
-        onClick={onCalculate}
+        onClick={() => setOpen(o => !o)}
         style={{
-          padding: '12px 24px', background: theme.colors.primary, color: theme.colors.white,
-          border: 'none', borderRadius: '8px', cursor: 'pointer',
-          fontSize: '15px', fontWeight: 'bold', width: '100%', maxWidth: '240px',
-          display: 'block', marginLeft: 'auto', marginRight: 'auto',
-          marginBottom: calcResult ? '20px' : '0'
+          width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '8px 12px',
+          background: hasLocked ? '#FFF8E1' : '#F8FBFF',
+          border: 'none', cursor: 'pointer', textAlign: 'left'
         }}
-        onMouseEnter={(e) => e.target.style.background = theme.colors.primaryDark}
-        onMouseLeave={(e) => e.target.style.background = theme.colors.primary}
       >
-        {btnLabel}
+        <span style={{ fontWeight: 'bold', color: theme.colors.text }}>{name}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}>
+          {hasLocked && <span style={{ color: '#E65100', fontWeight: 'bold' }}>⚠️ {r.lockedPlannedNodes.length}개 잠김</span>}
+          {r.totalPlannedCost > 0 && <span style={{ color: theme.colors.planned }}>{r.totalPlannedCost}개</span>}
+          <span style={{ color: theme.colors.textLight }}>{open ? '▾' : '▸'}</span>
+        </span>
       </button>
 
-      {calcResult && (
-        <div style={{ background: theme.colors.background, borderRadius: '8px',
-          border: `2px solid ${theme.colors.primary}`, overflow: 'hidden' }}>
-          <div style={{ background: theme.colors.primary, color: theme.colors.white,
-            padding: '12px', fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-            {t.calculationResult}
-            {modeLabel && (
-              <span style={{ fontSize: '12px', fontWeight: 'normal', opacity: 0.85 }}> ({modeLabel})</span>
-            )}
+      {open && (
+        <div style={{ padding: '10px 12px', background: theme.colors.white, borderTop: `1px solid ${theme.colors.border}` }}>
+          <div style={{ fontSize: '11px', lineHeight: 2, color: theme.colors.textLight, marginBottom: '6px' }}>
+            {r.ownedAffinity > 0      && <div>보유 아이템: <b style={{ color: theme.colors.affinity }}>+{r.ownedAffinity.toFixed(1)}점</b></div>}
+            {r.pastCompanionAffinity > 0  && <div>이미 동행: <b style={{ color: theme.colors.affinity }}>+{r.pastCompanionAffinity}점</b></div>}
+            {r.futureCompanionAffinity > 0 && <div style={{ color: theme.colors.companion }}>앞으로 동행: <b>+{r.futureCompanionAffinity}점</b></div>}
+            {r.plannedItemAffinity > 0    && <div style={{ color: theme.colors.planned }}>구매 예정: <b>+{r.plannedItemAffinity.toFixed(1)}점</b></div>}
+            <div style={{ borderTop: `1px solid ${theme.colors.border}`, marginTop: '3px', paddingTop: '3px' }}>
+              예상 호감도: <b style={{ color: theme.colors.affinity }}>{r.projectedAffinity.toFixed(1)}점</b> ({r.projectedLevel}단계)
+            </div>
           </div>
-          <div style={{ padding: '16px' }}>
-            {calcResult.type === 'simple'
-              ? <SimpleResult r={calcResult} t={t} unit={unit} />
-              : <FullResult r={calcResult} t={t} unit={unit} language={language} remainingDays={remainingDays} />}
-          </div>
+
+          {r.lockedPlannedNodes.length > 0 && (
+            <div>
+              <div style={{ color: '#E65100', fontWeight: 'bold', fontSize: '11px', marginBottom: '4px' }}>
+                잠긴 아이템 ({r.lockedPlannedNodes.length}개)
+              </div>
+              {r.lockedPlannedNodes.map(({ node, level, reason, requiredAffinity }, i) => (
+                <div key={i} style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  padding: '3px 6px', background: '#FFF3E0', borderRadius: '4px',
+                  marginBottom: '3px', fontSize: '11px'
+                }}>
+                  <span>{level}단계 {node.type === 'season' ? '시즌 아이템' : '아이템'}</span>
+                  <span style={{ color: '#E65100' }}>
+                    {reason === 'season' ? '시즌패스 필요' : `호감도 ${requiredAffinity}점 필요`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── 메인 ──────────────────────────────────── */
+export function CalculationResult({ simResult, language }) {
+  if (!simResult) return null;
+  const isKo = language === 'ko';
+  const unit = isKo ? '개' : ' candles';
+
+  const {
+    currentCandles, remainingDays, dailyCandles, seasonPassBonus,
+    candlesFromDays, cashPackCount, cashCandles, cashCost,
+    totalAvailableCandles,
+    totalPlannedCost, purchasablePlannedCost, lockedPlannedCost,
+    candleDifference, candlePossible,
+    remainingCompanionDays, companionPossible,
+    affinityPossible,
+    spiritResults
+  } = simResult;
+
+  const totalLockedCount = spiritResults.reduce((s, r) => s + r.lockedPlannedNodes.length, 0);
+
+  return (
+    <div style={{
+      maxWidth: '660px', marginLeft: 'auto', marginRight: 'auto',
+      marginBottom: '30px',
+      background: theme.colors.white, borderRadius: '12px',
+      border: `2px solid ${theme.colors.border}`,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)', overflow: 'hidden'
+    }}>
+      {/* 헤더 */}
+      <div style={{
+        padding: '11px 16px', fontWeight: 'bold', fontSize: '14px',
+        background: '#E3F2FD', color: theme.colors.primary,
+        textAlign: 'center'
+      }}>
+        {isKo ? '계산 결과' : 'Calculation Result'}
+      </div>
+
+      <div style={{ padding: '14px 16px' }}>
+
+        {/* ── 양초 수급 ── */}
+        <Section title={isKo ? '양초 수급' : 'Candle Supply'}>
+          <Row
+            label={isKo ? '현재 보유' : 'Current'}
+            value={`${currentCandles}${unit}`}
+          />
+          <Row
+            label={isKo ? `+ 남은 ${remainingDays}일 × ${dailyCandles}개/일` : `+ ${remainingDays}d × ${dailyCandles}/day`}
+            value={`${candlesFromDays}${unit}`}
+            indent
+          />
+          {seasonPassBonus > 0 && (
+            <Row
+              label={isKo ? '+ 시즌패스 보너스' : '+ Season pass bonus'}
+              value={`+${seasonPassBonus}${unit}`}
+              color={theme.colors.primary}
+              indent
+            />
+          )}
+          {cashCandles > 0 && (
+            <Row
+              label={isKo ? `+ 현질 ${cashPackCount}팩 × 15개` : `+ Cash ${cashPackCount}×15`}
+              value={`+${cashCandles}${unit}`}
+              color="#E65100"
+              indent
+            />
+          )}
+          <Row
+            label={isKo ? '= 시즌 종료까지 총 획득 가능' : '= Total collectable by season end'}
+            value={`${totalAvailableCandles}${unit}`}
+            bold
+            color={theme.colors.primary}
+          />
+          {cashPackCount > 0 && (
+            <div style={{
+              marginTop: '4px', padding: '5px 8px', borderRadius: '6px',
+              background: '#FFF8E1', fontSize: '11px', color: '#E65100'
+            }}>
+              {isKo
+                ? `현질 ${cashPackCount}팩: ${cashCost.toLocaleString()}원 지출 · ${cashCandles}개 획득`
+                : `Cash ${cashPackCount} packs: ₩${cashCost.toLocaleString()} · ${cashCandles} candles`}
+            </div>
+          )}
+        </Section>
+
+        {/* ── 구매 계획 ── */}
+        {totalPlannedCost > 0 && (
+          <Section title={isKo ? '구매 계획' : 'Purchase Plan'}>
+            <Row
+              label={isKo ? '구매 예정 총' : 'Total planned'}
+              value={`${totalPlannedCost}${unit}`}
+              bold
+            />
+            {lockedPlannedCost > 0 && (
+              <>
+                <Row
+                  label={isKo ? '└ 구매 가능' : '└ Purchasable'}
+                  value={`${purchasablePlannedCost}${unit}`}
+                  color={theme.colors.affinity}
+                  indent
+                />
+                <Row
+                  label={isKo ? '└ 잠김 (호감도/시패 부족)' : '└ Locked'}
+                  value={`${lockedPlannedCost}${unit}`}
+                  color={theme.colors.locked}
+                  indent
+                />
+              </>
+            )}
+          </Section>
+        )}
+
+        {/* ── 종합 결과 ── */}
+        <Section title={isKo ? '종합 결과' : 'Summary'}>
+          {/* 양초 */}
+          {candlePossible ? (() => {
+            const surplusDays = Math.floor(candleDifference / dailyCandles);
+            // 호감도·동행 조건까지 모두 충족해야 "목표 달성 가능" 문구 표시
+            const fullyFeasible = affinityPossible && companionPossible;
+            return (
+              <div style={{
+                padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+                background: '#E8F5E9', border: '1px solid #A5D6A7',
+                fontSize: '13px', color: '#2E7D32', fontWeight: 'bold'
+              }}>
+                ✅ {isKo
+                  ? `양초 ${candleDifference}개 여유`
+                  : `${candleDifference} candles to spare`}
+                {surplusDays > 0 && fullyFeasible && (
+                  <span style={{ fontWeight: 'normal', fontSize: '12px', marginLeft: '6px', color: '#388E3C' }}>
+                    {isKo
+                      ? `(시즌 종료 약 ${surplusDays}일 전에 목표 달성 가능)`
+                      : `(goal reached ~${surplusDays}d before season end)`}
+                  </span>
+                )}
+                {!fullyFeasible && (
+                  <span style={{ fontWeight: 'normal', fontSize: '12px', marginLeft: '6px', color: '#E65100' }}>
+                    {isKo ? '(아래 조건 해결 필요)' : '(resolve issues below first)'}
+                  </span>
+                )}
+              </div>
+            );
+          })() : (
+            <div style={{
+              padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+              background: '#FFEBEE', border: '1px solid #EF9A9A',
+              fontSize: '13px', color: '#C62828', fontWeight: 'bold'
+            }}>
+              ❌ {isKo
+                ? `양초 ${Math.abs(candleDifference)}개 부족합니다.`
+                : `${Math.abs(candleDifference)} candles short.`}
+              <div style={{ fontSize: '11px', fontWeight: 'normal', marginTop: '3px', color: '#E65100' }}>
+                💡 {isKo ? '현질하거나 2배 이벤트를 노리세요!' : 'Try cash packs or wait for a 2× candle event!'}
+              </div>
+            </div>
+          )}
+
+          {/* 동행 */}
+          {companionPossible ? (
+            <div style={{
+              padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+              background: '#E8F5E9', border: '1px solid #A5D6A7',
+              fontSize: '13px', color: '#2E7D32'
+            }}>
+              ✅ {isKo
+                ? `동행 일수 여유 ${remainingCompanionDays}일 있습니다.`
+                : `${remainingCompanionDays} companion days remaining.`}
+            </div>
+          ) : (
+            <div style={{
+              padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+              background: '#FFEBEE', border: '1px solid #EF9A9A',
+              fontSize: '13px', color: '#C62828'
+            }}>
+              ❌ {isKo
+                ? `동행 일수 ${Math.abs(remainingCompanionDays)}일 초과합니다.`
+                : `${Math.abs(remainingCompanionDays)} companion days over budget.`}
+            </div>
+          )}
+
+          {/* 호감도/잠김 */}
+          {affinityPossible ? (
+            <div style={{
+              padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+              background: '#E8F5E9', border: '1px solid #A5D6A7',
+              fontSize: '13px', color: '#2E7D32'
+            }}>
+              ✅ {isKo ? '모든 예정 아이템 달성 가능합니다.' : 'All planned items are reachable.'}
+            </div>
+          ) : (
+            <div style={{
+              padding: '8px 12px', borderRadius: '8px', marginBottom: '6px',
+              background: '#FFF8E1', border: '1px solid #FFD54F',
+              fontSize: '13px', color: '#E65100'
+            }}>
+              ⚠️ {isKo
+                ? `${totalLockedCount}개 아이템이 잠겨 있습니다. 아래 영혼별 상세를 확인하세요.`
+                : `${totalLockedCount} item(s) locked. See spirit details below.`}
+            </div>
+          )}
+        </Section>
+
+        {/* ── 영혼별 상세 ── */}
+        {spiritResults?.some(r =>
+          r.totalPlannedCost > 0 || r.ownedAffinity > 0 ||
+          r.pastCompanionAffinity > 0 || r.futureCompanionAffinity > 0
+        ) && (
+          <>
+            <div style={{
+              fontWeight: 'bold', fontSize: '11px', color: theme.colors.textLight,
+              letterSpacing: '0.5px', borderBottom: `1px solid ${theme.colors.border}`,
+              paddingBottom: '4px', marginBottom: '8px'
+            }}>
+              {isKo ? '영혼별 상세 (클릭해서 펼치기)' : 'Per-spirit details (click to expand)'}
+            </div>
+            {spiritResults.map(r => (
+              <SpiritCard key={r.spiritId} r={r} language={language} />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 }

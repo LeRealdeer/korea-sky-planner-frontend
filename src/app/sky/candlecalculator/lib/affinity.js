@@ -4,7 +4,7 @@ export const MAX_AFFINITY = 28;
 export const MAX_LEVEL = 5;
 
 // 레벨 전환에 필요한 포인트 (L → L+1)
-const TRANSITION_POINTS = { 1: 4, 2: 6, 3: 8, 4: 10 };
+export const TRANSITION_POINTS = { 1: 4, 2: 6, 3: 8, 4: 10 };
 
 export function getAffinityLevel(points) {
   let level = 1;

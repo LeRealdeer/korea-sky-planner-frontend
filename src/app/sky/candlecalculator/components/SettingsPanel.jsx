@@ -2,277 +2,280 @@
 import React, { useState } from 'react';
 import { theme, translations } from '../styles/theme';
 
-const BONUS_CANDLES = 31;
+const BONUS_CANDLES     = 31;
+const CASH_PACK_CANDLES = 15;
+const CASH_PACK_PRICE   = 7700;
 
-function GuideBox({ title, children }) {
+/* ── 상태 설명 칩 ───────────────────────────── */
+function StateChip({ bg, border, dashed, label, desc }) {
   return (
-    <div style={{
-      background: '#F8FBFF', border: `1px solid ${theme.colors.border}`,
-      borderRadius: '8px', padding: '12px 14px', marginBottom: '10px'
-    }}>
-      <div style={{ fontWeight: 'bold', fontSize: '13px', color: theme.colors.primary, marginBottom: '8px' }}>
-        {title}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
+      <div style={{
+        width: '28px', height: '28px', borderRadius: '5px', flexShrink: 0,
+        border: dashed ? `2px dashed ${border}` : `2px solid ${border}`,
+        background: bg
+      }} />
+      <div style={{ fontSize: '12px', lineHeight: 1.4 }}>
+        <b style={{ color: border }}>{label}</b>
+        <span style={{ color: theme.colors.textLight }}> — {desc}</span>
       </div>
-      {children}
     </div>
   );
 }
 
-function GuideLine({ children, indent = false, color }) {
+/* ── 가이드 ────────────────────────────────── */
+function Guide({ isKo }) {
   return (
-    <div style={{
-      fontSize: '12px', lineHeight: '1.7',
-      color: color || theme.colors.textLight,
-      paddingLeft: indent ? '16px' : '0'
-    }}>
-      {children}
-    </div>
-  );
-}
+    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: `1px solid ${theme.colors.border}` }}>
 
-function GuideSection({ label, children }) {
-  return (
-    <div style={{ marginBottom: '8px' }}>
-      <div style={{ fontSize: '12px', fontWeight: 'bold', color: theme.colors.text, marginBottom: '3px' }}>
-        {label}
+      <div style={{ fontWeight: 'bold', fontSize: '12px', color: theme.colors.primary, marginBottom: '8px' }}>
+        {isKo ? '🟦 아이템 상태' : '🟦 Item States'}
       </div>
-      {children}
-    </div>
-  );
-}
+      <StateChip bg={theme.colors.white}  border="#BDBDBD" label={isKo ? '없음' : 'None'}    desc={isKo ? '기본 상태. 클릭하면 구매 예정으로 변경.' : 'Default. Click to mark as planned.'} />
+      <StateChip bg="#E3F2FD" border={theme.colors.planned}  label={isKo ? '구매 예정 (파란색)' : 'Planned (blue)'}  desc={isKo ? '구매할 예정인 아이템. 양초 비용에 포함됩니다.' : 'Item you plan to buy. Included in candle cost.'} />
+      <StateChip bg="#E8F5E9" border={theme.colors.affinity} label={isKo ? '보유 (초록색)' : 'Owned (green)'}  desc={isKo ? '이미 보유한 아이템. 비용 제외, 호감도에 반영.' : 'Already owned. Excluded from cost, counted in affinity.'} />
+      <StateChip bg="#EEF5FF" border={theme.colors.planned} dashed label={isKo ? '잠김 (파란 점선)' : 'Locked (blue dashed)'} desc={isKo ? '구매 예정이지만 호감도 부족 또는 시즌패스 미보유로 현재 구매 불가.' : 'Planned but currently unpurchasable: insufficient affinity or no season pass.'} />
 
-function SimpleGuide({ language }) {
-  const isKo = language === 'ko';
-  return (
-    <>
-      <GuideBox title={isKo ? '🕯️ 간단 계산기 사용법' : '🕯️ Simple Calculator Guide'}>
-        <GuideSection label={isKo ? '사용 순서' : 'How to use'}>
-          <GuideLine>① {isKo ? '구매하고 싶은 아이템을 클릭하세요 → 파란색으로 표시됩니다' : 'Click items you want to buy → they turn blue'}</GuideLine>
-          <GuideLine>② {isKo ? '현재 보유 양초, 시즌패스 여부를 입력하세요' : 'Enter your current candles and season pass status'}</GuideLine>
-          <GuideLine>③ {isKo ? '\'계산하기\'를 눌러 달성 가능 여부를 확인하세요' : 'Press \'Calculate\' to check if you can afford it'}</GuideLine>
-        </GuideSection>
-        <GuideSection label={isKo ? '참고사항' : 'Notes'}>
-          <GuideLine>• {isKo ? '오전 5시 리셋 이후 양초를 이미 획득했다는 가정으로 계산합니다. 아직 오늘 일일 퀘스트를 하지 않으셨다면 해당 양초도 현재 보유량에 포함해주세요.' : 'Assumes you\'ve already collected today\'s candles after 5AM reset. Include today\'s candles if not yet collected.'}</GuideLine>
-          <GuideLine>• {isKo ? `시패 구입 예정이라면 시즌패스 소유 '아니오' 선택 후 구매예정 체크를 눌러주세요. (+${BONUS_CANDLES}개 보너스)` : `If planning to buy season pass, select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} bonus candles)`}</GuideLine>
-          <GuideLine>• {isKo ? '시즌패스 소유 시 일일 양초 6개, 미소유 시 5개로 계산합니다.' : 'Daily candles: 6 with season pass, 5 without.'}</GuideLine>
-        </GuideSection>
-      </GuideBox>
-    </>
-  );
-}
+      <div style={{ fontSize: '11px', color: '#E65100', marginTop: '6px', marginBottom: '14px' }}>
+        {isKo ? '※ 클릭: 없음 → 구매 예정 → 보유 → 없음 (순환)' : '※ Click cycles: None → Planned → Owned → None'}
+      </div>
 
-function FullGuide({ language }) {
-  const isKo = language === 'ko';
-  return (
-    <>
-      <GuideBox title={isKo ? '🤝 호감도 계산기 사용법' : '🤝 Affinity Calculator Guide'}>
-        <GuideSection label={isKo ? '📌 사용 순서' : '📌 How to use'}>
-          <GuideLine color={theme.colors.owned}>
-            ① {isKo ? '보유 표시 모드' : 'Owned mode'} —
-          </GuideLine>
-          <GuideLine indent>
-            {isKo
-              ? '이미 가진 아이템을 클릭하세요 (회색으로 표시). 왼쪽 2개 아이템만 호감도에 반영됩니다. 오른쪽 아이템(시즌 아이템, 무료 이모트)은 호감도에 포함되지 않습니다.'
-              : 'Click items you already own (turns grey). Only the 2 left-column items count for affinity. Right-column items (season items / free emotes) do NOT affect affinity.'}
-          </GuideLine>
-          <GuideLine color={theme.colors.affinity} indent={false}>
-            ② {isKo ? '동행 일수 입력 (영혼 카드 내)' : 'Enter companion days (in each spirit card)'}
-          </GuideLine>
-          <GuideLine indent>
-            {isKo
-              ? '해당 영혼과 이미 동행한 날 수를 입력하세요. 동행 1일 = 호감도 1점 추가. 시즌 시작부터 매일 동행했다면 오늘까지의 날 수를 입력하세요.'
-              : 'Enter how many days you\'ve already accompanied this spirit. 1 companion day = +1 affinity point.'}
-          </GuideLine>
-          <GuideLine color={theme.colors.target}>
-            ③ {isKo ? '목표 지정 모드' : 'Target mode'} —
-          </GuideLine>
-          <GuideLine indent>
-            {isKo
-              ? '구매하고 싶은 아이템을 클릭하세요 (파란색으로 표시). 해당 아이템의 단계에 맞는 호감도가 필요합니다.'
-              : 'Click items you want to buy (turns blue). You need sufficient affinity for that tier.'}
-          </GuideLine>
-          <GuideLine>④ {isKo ? '계산 방식 선택 후 \'계산하기\' 버튼' : 'Select calculation mode and press the button'}</GuideLine>
-        </GuideSection>
-      </GuideBox>
-
-      <GuideBox title={isKo ? '💡 호감도 단계 상세' : '💡 Affinity Level Details'}>
-        <GuideLine>
+      <div style={{ fontWeight: 'bold', fontSize: '12px', color: theme.colors.primary, marginBottom: '6px' }}>
+        {isKo ? '🤝 호감도 시스템' : '🤝 Affinity System'}
+      </div>
+      <div style={{ fontSize: '12px', lineHeight: '1.75', color: theme.colors.textLight, marginBottom: '6px' }}>
+        {isKo
+          ? '영혼과 동행하면 하루 1점, 왼쪽 일반 아이템 구매 시 추가 점수를 획득합니다. 오른쪽 시즌 아이템·이모트는 호감도에 미반영입니다.'
+          : 'Companion days give +1pt/day. Buying left-column normal items gives extra points. Right-column season items & emotes do NOT count.'}
+      </div>
+      <div style={{
+        background: '#F1F8E9', borderRadius: '6px', padding: '8px 10px',
+        fontSize: '11px', lineHeight: '2.1', marginBottom: '8px'
+      }}>
+        {[
+          { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '각 2점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계' : '→ 4 total = Lv.2' },
+          { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '각 3점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계' : '→ 10 total = Lv.3' },
+          { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '각 4점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계' : '→ 18 total = Lv.4' },
+          { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '각 5점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계' : '→ 28 total = Lv.5' },
+        ].map(r => (
+          <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text }}>
+            <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '126px', flexShrink: 0 }}>{r.lv}</span>
+            <span style={{ width: '50px', flexShrink: 0 }}>{r.pts}</span>
+            <span style={{ color: theme.colors.textLight, width: '44px', flexShrink: 0 }}>{r.note}</span>
+            <span style={{ color: theme.colors.textLight }}>{r.threshold}</span>
+          </div>
+        ))}
+        <div style={{ marginTop: '4px', paddingTop: '4px', borderTop: `1px solid ${theme.colors.border}`, color: '#555', fontSize: '11px' }}>
           {isKo
-            ? '호감도는 아이템 구매와 동행으로 누적됩니다. 단계마다 필요 누적 포인트:'
-            : 'Affinity accumulates from item purchases and companion days. Required cumulative points per level:'}
-        </GuideLine>
-        <div style={{
-          margin: '6px 0', padding: '8px 10px',
-          background: '#F1F8E9', borderRadius: '6px',
-          fontSize: '11px', lineHeight: '2', color: theme.colors.text
-        }}>
-          <div>1단계 → 2단계: <b style={{ color: theme.colors.affinity }}>누적 4점</b> {isKo ? '(1단계 왼쪽 아이템 각 2점)' : '(Lv1 left items: 2pts each)'}</div>
-          <div>2단계 → 3단계: <b style={{ color: theme.colors.affinity }}>누적 10점</b> {isKo ? '(2단계 왼쪽 아이템 각 3점)' : '(Lv2 left items: 3pts each)'}</div>
-          <div>3단계 → 4단계: <b style={{ color: theme.colors.affinity }}>누적 18점 + 4단계 상호작용</b> {isKo ? '(3단계 각 4점)' : '(Lv3: 4pts each, + interaction)'}</div>
-          <div>4단계 → 5단계: <b style={{ color: theme.colors.affinity }}>누적 28점</b> {isKo ? '(4단계 왼쪽 아이템 각 5점)' : '(Lv4 left items: 5pts each)'}</div>
+            ? '4단계 개방 조건: 누적 18점 이상 + 4단계 상호작용 완료 (본 계산기는 완료 가정)'
+            : 'Lv.4 requires 18+ pts + Lv.4 interaction (assumed done in this calculator)'}
         </div>
-        <GuideLine>
-          {isKo
-            ? '※ 각 레벨의 전환 포인트(4/6/8/10)가 해당 레벨의 일반(왼쪽) 아이템 수로 균등 분배됩니다. 보유 표시 시 자동 계산됩니다.'
-            : '※ Transition points (4/6/8/10) are divided equally among normal (left-column) items per level. Auto-calculated when items are marked owned.'}
-        </GuideLine>
-      </GuideBox>
+      </div>
 
-      <GuideBox title={isKo ? '🔄 계산 방식 안내' : '🔄 Calculation Modes'}>
-        <GuideSection label={isKo ? '양초 절약 모드' : 'Candle Saving Mode'}>
-          <GuideLine>
-            {isKo
-              ? '현재 보유 양초 + 남은 시즌 기간 획득 양초로, 목표 아이템을 달성할 수 있는지 계산합니다. 부족한 호감도는 남은 동행일수를 영혼별로 배분하여 채웁니다. 동행일수가 부족해도 일부 목표만 달성 가능한 상황을 확인할 수 있습니다.'
-              : 'Calculates whether your current candles + remaining season candles can cover all target items. Allocates remaining companion days to spirits with affinity shortfalls.'}
-          </GuideLine>
-        </GuideSection>
-        <GuideSection label={isKo ? '최단 획득 모드' : 'Fastest Route Mode'}>
-          <GuideLine>
-            {isKo
-              ? '오늘부터 매일 시뮬레이션해서, 며칠 후에 모든 목표 아이템을 달성할 수 있는지 알려줍니다. 기다릴수록 양초와 동행일수가 쌓이므로, 지금 당장은 불가능해도 며칠 후면 가능한 경우를 찾아줍니다.'
-              : 'Simulates day by day from today to find the earliest date when all target items become achievable. Useful when current state is not enough but a few more days would do it.'}
-          </GuideLine>
-        </GuideSection>
-      </GuideBox>
+      <div style={{ fontWeight: 'bold', fontSize: '12px', color: theme.colors.primary, marginBottom: '6px' }}>
+        {isKo ? '양초 획득' : 'Candle Income'}
+      </div>
+      <div style={{ fontSize: '12px', lineHeight: '1.75', color: theme.colors.textLight }}>
+        <div>• {isKo ? '시즌패스 보유 시 일일 6개, 미보유 시 5개 획득.' : 'Daily: 6 with season pass, 5 without.'}</div>
+        <div>• {isKo ? '현재 보유 양초에 오늘치까지 포함하여 입력하세요 (오늘 이미 획득 가정).' : "Include today's candles in the current amount (assumed already collected)."}</div>
+        <div>• {isKo ? `시패 구입 예정이라면 '아니오' 선택 후 구매예정 체크. (+${BONUS_CANDLES}개 보너스)` : `Plan to buy pass? Select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} candles)`}</div>
+      </div>
 
-      <GuideBox title={isKo ? '⚠️ 참고사항' : '⚠️ Notes'}>
-        <GuideLine>• {isKo ? '오전 5시 리셋 이후 양초를 이미 획득했다는 가정으로 계산합니다.' : 'Assumes daily candles already collected after 5AM reset.'}</GuideLine>
-        <GuideLine>• {isKo ? `시패 구입 예정이라면 시즌패스 소유 '아니오' 선택 후 구매예정 체크. (+${BONUS_CANDLES}개 보너스)` : `Plan to buy season pass? Select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} bonus candles)`}</GuideLine>
-        <GuideLine>• {isKo ? '\'오늘 동행 완료\' 체크 시, 오늘의 동행 1점을 남은 동행일수에서 제외합니다.' : '\'Today\'s companion done\' excludes today from remaining companion day count.'}</GuideLine>
-        <GuideLine>• {isKo ? '시즌패스 소유 시 일일 양초 6개, 미소유 시 5개로 계산합니다.' : 'Daily candles: 6 with season pass, 5 without.'}</GuideLine>
-        <GuideLine>• {isKo ? '아이콘은 Sky Wiki 참고, 양초·하트 아이콘은 햇비님 제작 자료입니다.' : 'Icons from Sky Wiki; candle & heart icons by 햇비 Sky Solar.'}</GuideLine>
-      </GuideBox>
-    </>
+      <div style={{ fontSize: '11px', color: '#BDBDBD', marginTop: '12px' }}>
+        {isKo ? '• 아이콘은 Sky Wiki 참고, 양초·하트 아이콘은 햇비님 제작 자료입니다.' : '• Icons from Sky Wiki; candle & heart icons by 햇비 Sky Solar.'}
+      </div>
+    </div>
   );
 }
 
+/* ── 메인 ──────────────────────────────────── */
 export function SettingsPanel({
   currentCandles, setCurrentCandles,
   ownsSeasonPass, setOwnsSeasonPass,
   buySeasonPass, setBuySeasonPass,
-  remainingDays, totalRequired,
-  calcMode, setCalcMode,
-  todayCompanionDone, setTodayCompanionDone,
-  language, isSimpleMode
+  cashPackCount, setCashPackCount,
+  remainingDays,
+  cashCandles = 0,
+  showCashPack = true,
+  language
 }) {
   const t = translations[language];
-  const [guideOpen, setGuideOpen] = useState(true);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const isKo = language === 'ko';
+
+  const hasPass = ownsSeasonPass === 'yes' || buySeasonPass;
+  const dailyCandles = hasPass ? 6 : 5;
+  const seasonPassBonus = ownsSeasonPass !== 'yes' && buySeasonPass ? BONUS_CANDLES : 0;
+  const candlesFromDays = remainingDays * dailyCandles;
+  const totalAvailableCandles = currentCandles + candlesFromDays + seasonPassBonus + cashCandles;
+  const cashCost = cashPackCount * CASH_PACK_PRICE;
 
   return (
     <div style={{
-      background: theme.colors.white, padding: '20px', borderRadius: '12px',
-      marginBottom: '20px', marginLeft: 'auto', marginRight: 'auto',
+      background: theme.colors.white, padding: '16px 20px',
+      borderRadius: '12px', marginBottom: '16px',
+      marginLeft: 'auto', marginRight: 'auto',
       border: `2px solid ${theme.colors.border}`,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)', maxWidth: '800px'
+      boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+      maxWidth: '660px'
     }}>
-      {/* 접을 수 있는 가이드 섹션 */}
-      <div style={{ marginBottom: '16px' }}>
-        <button
-          onClick={() => setGuideOpen(o => !o)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: theme.colors.primary, fontWeight: 'bold', fontSize: '13px',
-            padding: '0 0 8px 0'
-          }}
-        >
-          <span>{guideOpen ? '▾' : '▸'}</span>
-          <span>{language === 'ko' ? '사용 방법 및 안내' : 'How to Use'}</span>
-        </button>
-        {guideOpen && (
-          isSimpleMode
-            ? <SimpleGuide language={language} />
-            : <FullGuide language={language} />
-        )}
-      </div>
-
-      <div style={{ marginBottom: '14px', fontWeight: 'bold', fontSize: '15px', color: theme.colors.primary }}>
-        🕐 {t.remainingDays}: {remainingDays}{t.days}
-      </div>
-
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '14px', alignItems: 'flex-end' }}>
-        {/* 현재 보유 양초 */}
+      {/* 입력 행 */}
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: '14px' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '13px', color: theme.colors.text, fontWeight: '500' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', color: theme.colors.textLight }}>
             {t.currentCandles}
           </label>
-          <input type="number" value={currentCandles}
-            onChange={(e) => setCurrentCandles(Number(e.target.value))}
-            style={{ padding: '6px 10px', borderRadius: '6px', border: `2px solid ${theme.colors.border}`,
-              background: theme.colors.white, color: theme.colors.text, width: '100px', fontSize: '13px' }}
+          <input
+            type="number" value={currentCandles} min={0}
+            onChange={(e) => setCurrentCandles(Math.max(0, Number(e.target.value) || 0))}
+            style={{
+              width: '90px', padding: '6px 8px',
+              borderRadius: '6px', border: `2px solid ${theme.colors.border}`,
+              fontSize: '14px', textAlign: 'center'
+            }}
           />
         </div>
 
-        {/* 시즌패스 */}
         <div>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '13px', color: theme.colors.text, fontWeight: '500' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', color: theme.colors.textLight }}>
             {t.ownsSeasonPass}
           </label>
-          <select value={ownsSeasonPass} onChange={(e) => setOwnsSeasonPass(e.target.value)}
-            style={{ padding: '6px 10px', borderRadius: '6px', border: `2px solid ${theme.colors.border}`,
-              background: theme.colors.white, color: theme.colors.text, fontSize: '13px', cursor: 'pointer' }}>
-            <option value="yes">{t.yes}</option>
-            <option value="no">{t.no}</option>
-          </select>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {['yes', 'no'].map(v => (
+              <button key={v} onClick={() => setOwnsSeasonPass(v)} style={{
+                padding: '6px 12px', fontSize: '13px', cursor: 'pointer',
+                background: ownsSeasonPass === v ? theme.colors.primary : theme.colors.white,
+                color: ownsSeasonPass === v ? theme.colors.white : theme.colors.primary,
+                border: `2px solid ${theme.colors.primary}`, borderRadius: '6px',
+                fontWeight: ownsSeasonPass === v ? 'bold' : 'normal'
+              }}>
+                {v === 'yes' ? t.yes : t.no}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* 시패 구매 예정 */}
-        <div style={{ opacity: ownsSeasonPass === 'yes' ? 0.5 : 1 }}>
-          <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: theme.colors.text,
-            cursor: ownsSeasonPass === 'yes' ? 'not-allowed' : 'pointer', paddingBottom: '6px' }}>
-            <input type="checkbox"
+        <div style={{ opacity: ownsSeasonPass === 'yes' ? 0.4 : 1 }}>
+          <label style={{
+            display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px',
+            cursor: ownsSeasonPass === 'yes' ? 'not-allowed' : 'pointer',
+            color: buySeasonPass && ownsSeasonPass !== 'yes' ? theme.colors.primary : theme.colors.textLight
+          }}>
+            <input
+              type="checkbox"
               checked={ownsSeasonPass === 'yes' ? false : buySeasonPass}
               onChange={() => setBuySeasonPass(!buySeasonPass)}
               disabled={ownsSeasonPass === 'yes'}
-              style={{ marginRight: '6px', width: '16px', height: '16px', cursor: ownsSeasonPass === 'yes' ? 'not-allowed' : 'pointer' }}
+              style={{ width: '15px', height: '15px', accentColor: theme.colors.primary }}
             />
             {t.buySeasonPass} (+{BONUS_CANDLES}{t.bonusCandles})
           </label>
         </div>
+      </div>
 
-        {/* 오늘 동행 완료 — 호감도 모드에서만 */}
-        {!isSimpleMode && (
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px',
-              color: todayCompanionDone ? theme.colors.affinity : theme.colors.text,
-              cursor: 'pointer', paddingBottom: '6px', fontWeight: todayCompanionDone ? 'bold' : 'normal' }}>
-              <input type="checkbox" checked={todayCompanionDone} onChange={() => setTodayCompanionDone(!todayCompanionDone)}
-                style={{ marginRight: '6px', width: '16px', height: '16px', cursor: 'pointer', accentColor: theme.colors.affinity }} />
-              🤝 {t.todayCompanionDone}
-            </label>
+      {/* 현질 팩 (+/- 버튼) */}
+      {showCashPack && <div style={{
+        display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap',
+        marginBottom: '14px', padding: '10px 14px',
+        background: '#FFFDE7', borderRadius: '8px', border: '1px solid #FFE082'
+      }}>
+        <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#E65100' }}>
+          {isKo ? '💳 현질 팩' : '💳 Cash Pack'}
+        </div>
+        <div style={{ fontSize: '11px', color: '#888' }}>
+          {isKo ? `15개 / ${CASH_PACK_PRICE.toLocaleString()}원` : `15 candles / ₩${CASH_PACK_PRICE.toLocaleString()}`}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
+          <button
+            onClick={() => setCashPackCount(Math.max(0, cashPackCount - 1))}
+            style={{
+              width: '30px', height: '30px', borderRadius: '6px', fontSize: '18px',
+              border: '2px solid #FFB300', background: '#FFF8E1',
+              cursor: cashPackCount > 0 ? 'pointer' : 'not-allowed',
+              opacity: cashPackCount > 0 ? 1 : 0.4,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1
+            }}
+          >−</button>
+          <div style={{
+            minWidth: '40px', textAlign: 'center',
+            fontWeight: 'bold', fontSize: '16px', color: cashPackCount > 0 ? '#E65100' : '#888'
+          }}>
+            {cashPackCount}
+          </div>
+          <button
+            onClick={() => setCashPackCount(cashPackCount + 1)}
+            style={{
+              width: '30px', height: '30px', borderRadius: '6px', fontSize: '18px',
+              border: '2px solid #FFB300', background: '#FFF8E1',
+              cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1
+            }}
+          >+</button>
+          {cashPackCount > 0 && (
+            <div style={{ fontSize: '12px', color: '#E65100', marginLeft: '4px' }}>
+              → {cashPackCount * CASH_PACK_CANDLES}{isKo ? '개' : ''} / {cashCost.toLocaleString()}원
+            </div>
+          )}
+        </div>
+      </div>}
+
+      {/* 양초 계산 과정 */}
+      <div style={{
+        background: '#F0F7FF', borderRadius: '8px', padding: '10px 14px',
+        border: `1px solid ${theme.colors.border}`, fontSize: '13px', marginBottom: '12px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+          <span style={{ color: theme.colors.textLight }}>{isKo ? '현재 보유' : 'Current candles'}</span>
+          <span>{currentCandles}{t.bonusCandles}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+          <span style={{ color: theme.colors.textLight }}>
+            + {isKo ? `남은 ${remainingDays}일 × 일일 ${dailyCandles}개` : `${remainingDays}d × ${dailyCandles}/day`}
+          </span>
+          <span>= {candlesFromDays}{t.bonusCandles}</span>
+        </div>
+        {seasonPassBonus > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+            <span style={{ color: theme.colors.textLight }}>+ {isKo ? '시패 보너스' : 'Pass bonus'}</span>
+            <span style={{ color: theme.colors.primary }}>+{seasonPassBonus}{t.bonusCandles}</span>
           </div>
         )}
-      </div>
-
-      {/* 계산 방식 — 호감도 모드에서만 */}
-      {!isSimpleMode && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '13px', color: theme.colors.text, fontWeight: '500' }}>{t.calcMode}:</span>
-          {['saving', 'fastest'].map(mode => (
-            <button key={mode} onClick={() => setCalcMode(mode)}
-              style={{
-                padding: '5px 14px',
-                background: calcMode === mode ? theme.colors.primary : theme.colors.white,
-                color: calcMode === mode ? theme.colors.white : theme.colors.primary,
-                border: `2px solid ${theme.colors.primary}`, borderRadius: '16px',
-                cursor: 'pointer', fontWeight: calcMode === mode ? 'bold' : 'normal', fontSize: '12px'
-              }}>
-              {mode === 'saving' ? t.modeSaving : t.modeFastest}
-            </button>
-          ))}
+        {showCashPack && cashCandles > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+            <span style={{ color: theme.colors.textLight }}>
+              + {isKo ? `현질 ${cashPackCount}팩 × 15개` : `Cash ${cashPackCount} packs × 15`}
+            </span>
+            <span style={{ color: '#E65100' }}>+{cashCandles}{t.bonusCandles}</span>
+          </div>
+        )}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between',
+          marginTop: '6px', paddingTop: '6px',
+          borderTop: `1px solid ${theme.colors.border}`,
+          fontWeight: 'bold', color: theme.colors.primary
+        }}>
+          <span>{isKo ? '총 사용 가능 양초' : 'Total available'}</span>
+          <span style={{ fontSize: '15px' }}>{totalAvailableCandles}{t.bonusCandles}</span>
         </div>
-      )}
-
-      {/* 선택 비용 표시 */}
-      <div style={{
-        padding: '10px 12px', background: theme.colors.background, borderRadius: '8px',
-        fontSize: '14px', fontWeight: 'bold', color: theme.colors.primary,
-        border: `2px solid ${theme.colors.border}`,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-      }}>
-        <span>🎯 {t.requiredCandles}</span>
-        <span>{totalRequired}{t.bonusCandles}</span>
       </div>
+
+      {/* 가이드 토글 */}
+      <button
+        onClick={() => setGuideOpen(o => !o)}
+        style={{
+          width: '100%', cursor: 'pointer',
+          background: guideOpen ? '#E3F2FD' : '#F0F7FF',
+          border: `1.5px solid ${theme.colors.border}`,
+          borderRadius: '8px',
+          padding: '9px 14px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          fontSize: '13px', color: theme.colors.primary, fontWeight: 'bold'
+        }}
+      >
+        <span>{isKo ? '📖 사용 방법 · 상태 설명 · 호감도 시스템' : '📖 How to Use · States · Affinity Guide'}</span>
+        <span style={{ fontSize: '14px' }}>{guideOpen ? '▾' : '▸'}</span>
+      </button>
+      {guideOpen && <Guide isKo={isKo} />}
     </div>
   );
 }

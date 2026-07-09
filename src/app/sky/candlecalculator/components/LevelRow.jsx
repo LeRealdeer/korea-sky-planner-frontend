@@ -2,75 +2,99 @@
 import React from 'react';
 import { theme, translations } from '../styles/theme';
 import { NodeItem } from './NodeItem';
-import { isLevelAccessible } from '../lib/affinity';
+const NODE_SIZE = 66;
 
-export function LevelRow({ level, nodeStates, onToggleNode, spiritId, currentAffinity, hasSeasonPass, language, isSimpleMode }) {
-  const hasNodes = level.leftNodes.length > 0 || level.rightNodes.length > 0;
-  if (!hasNodes) return null;
-
+export function LevelRow({
+  levelData,
+  spiritNodeStates = {},
+  lockedNodeIds = new Set(),
+  currentAffinity = 0,
+  projectedAffinity = 0,
+  onCycleNode,
+  language
+}) {
   const t = translations[language];
-  const accessible = isSimpleMode ? true : isLevelAccessible(level.level, currentAffinity, true);
-  const hasMultipleRight = level.rightNodes.length > 1;
+  const { level, leftNodes, rightNodes } = levelData;
 
-  const labelColor = isSimpleMode || level.level === 1
-    ? theme.colors.primary
-    : accessible ? theme.colors.affinity : '#BDBDBD';
+  const threshold = levelData.unlockAffinity ?? 0;
+  const nowAccessible  = currentAffinity   >= threshold;
+  const projAccessible = projectedAffinity >= threshold;
 
-  const conditionFull = t.levelConditionFull?.[level.level] ?? '';
-  const isNodeSeasonLocked = (node) => node.type === 'season' && !hasSeasonPass;
+  const labelColor = nowAccessible
+    ? theme.colors.affinity
+    : projAccessible ? theme.colors.companion
+    : '#BDBDBD';
 
-  const getNodeState = (nodeId) => {
-    if (nodeStates.owned.has(nodeId))  return 'owned';
-    if (nodeStates.target.has(nodeId)) return 'target';
-    return null;
-  };
+  const labelText = t.levelLabel?.[level] ?? `${level}단계`;
+  const hasMultiRight = rightNodes.length > 1;
+
+  const getState = (nodeId) => spiritNodeStates[nodeId] ?? 'none';
 
   return (
     <div style={{
       display: 'flex',
-      alignItems: hasMultipleRight ? 'center' : 'flex-start',
-      marginBottom: '8px', gap: '8px'
+      alignItems: hasMultiRight ? 'center' : 'flex-start',
+      marginBottom: '8px', gap: '6px'
     }}>
-      {/* 레벨 라벨 — 색상으로 접근성 표시, 호버 시 툴팁 */}
+      {/* 레벨 라벨 */}
       <div
-        title={conditionFull}
+        title={labelText}
         style={{
-          fontSize: '11px', color: labelColor, fontWeight: 'bold',
-          width: '40px', textAlign: 'right',
-          paddingTop: hasMultipleRight ? '0' : '22px',
-          lineHeight: '1.3', flexShrink: 0,
-          cursor: conditionFull ? 'help' : 'default'
+          width: '38px', flexShrink: 0, textAlign: 'right',
+          fontSize: '10px', fontWeight: 'bold', color: labelColor,
+          lineHeight: 1.3,
+          paddingTop: hasMultiRight ? '0' : `${Math.floor(NODE_SIZE / 2) - 6}px`
         }}
       >
-        {level.level}단계
+        {level}단계
       </div>
 
+      {/* 3열 고정 그리드: leftNode1 | leftNode2 | rightNodes */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '70px 70px 70px',
-        gap: '6px',
+        gridTemplateColumns: `${NODE_SIZE}px ${NODE_SIZE}px ${NODE_SIZE}px`,
+        gap: '5px',
         alignItems: 'end'
       }}>
-        {level.leftNodes[0] ? (
-          <NodeItem node={level.leftNodes[0]}
-            nodeState={getNodeState(level.leftNodes[0].id)}
-            onToggle={() => onToggleNode(level.leftNodes[0].id)}
-            isSeasonLocked={isNodeSeasonLocked(level.leftNodes[0])} />
-        ) : <div style={{ width: '70px', height: '70px' }} />}
+        {/* 왼쪽 아이템 1 */}
+        {leftNodes[0]
+          ? <NodeItem
+              node={leftNodes[0]}
+              state={getState(leftNodes[0].id)}
+              isLocked={lockedNodeIds.has(leftNodes[0].id)}
+              onCycle={() => onCycleNode?.(leftNodes[0].id)}
+              size={NODE_SIZE}
+            />
+          : <div style={{ width: NODE_SIZE, height: NODE_SIZE }} />
+        }
 
-        {level.leftNodes[1] ? (
-          <NodeItem node={level.leftNodes[1]}
-            nodeState={getNodeState(level.leftNodes[1].id)}
-            onToggle={() => onToggleNode(level.leftNodes[1].id)}
-            isSeasonLocked={isNodeSeasonLocked(level.leftNodes[1])} />
-        ) : <div style={{ width: '70px', height: '70px' }} />}
+        {/* 왼쪽 아이템 2 */}
+        {leftNodes[1]
+          ? <NodeItem
+              node={leftNodes[1]}
+              state={getState(leftNodes[1].id)}
+              isLocked={lockedNodeIds.has(leftNodes[1].id)}
+              onCycle={() => onCycleNode?.(leftNodes[1].id)}
+              size={NODE_SIZE}
+            />
+          : <div style={{ width: NODE_SIZE, height: NODE_SIZE }} />
+        }
 
-        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '4px', alignItems: 'center' }}>
-          {level.rightNodes.map(node => (
-            <NodeItem key={node.id} node={node}
-              nodeState={getNodeState(node.id)}
-              onToggle={() => onToggleNode(node.id)}
-              isSeasonLocked={isNodeSeasonLocked(node)} />
+        {/* 오른쪽 아이템들 (시즌/이모트) — column-reverse로 쌓기 */}
+        <div style={{
+          display: 'flex',
+          flexDirection: hasMultiRight ? 'column-reverse' : 'column',
+          gap: '4px', alignItems: 'center'
+        }}>
+          {rightNodes.map(node => (
+            <NodeItem
+              key={node.id}
+              node={node}
+              state={getState(node.id)}
+              isLocked={lockedNodeIds.has(node.id)}
+              onCycle={() => onCycleNode?.(node.id)}
+              size={NODE_SIZE}
+            />
           ))}
         </div>
       </div>

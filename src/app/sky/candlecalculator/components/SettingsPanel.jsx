@@ -64,7 +64,7 @@ function Guide({ isKo }) {
         </div>
         <div style={{ fontSize: '12px', lineHeight: '1.75', color: theme.colors.textLight, marginBottom: '10px' }}>
           {isKo
-            ? '동행 하루 = +1점 · 왼쪽 일반 아이템 구매 시 추가 점수. 오른쪽 시즌 아이템·이모트는 호감도 미반영.'
+            ? '동행 하루 = +1점 · 왼쪽 일반 아이템 구매 시 추가 점수. 오른쪽 시즌 아이템은 호감도 미반영.'
             : 'Companion: +1pt/day · Left-column normal items give bonus pts. Right-column items do NOT count.'}
         </div>
         <div style={{
@@ -72,15 +72,15 @@ function Guide({ isKo }) {
           fontSize: '11px', lineHeight: '2.1', border: `1px solid ${theme.colors.border}`
         }}>
           {[
-            { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '각 2점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계' : '→ 4 total = Lv.2' },
-            { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '각 3점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계' : '→ 10 total = Lv.3' },
-            { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '각 4점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계' : '→ 18 total = Lv.4' },
-            { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '각 5점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계' : '→ 28 total = Lv.5' },
+            { lv: isKo ? '1단계 일반 아이템' : 'Lv.1 normal items', pts: isKo ? '총 4점' : '2 pts each', note: '(4÷2)', threshold: isKo ? '→ 누적 4점 = 2단계' : '→ 4 total = Lv.2' },
+            { lv: isKo ? '2단계 일반 아이템' : 'Lv.2 normal items', pts: isKo ? '총 6점' : '3 pts each', note: '(6÷2)', threshold: isKo ? '→ 누적 10점 = 3단계' : '→ 10 total = Lv.3' },
+            { lv: isKo ? '3단계 일반 아이템' : 'Lv.3 normal items', pts: isKo ? '총 8점' : '4 pts each', note: '(8÷2)', threshold: isKo ? '→ 누적 18점 = 4단계' : '→ 18 total = Lv.4' },
+            { lv: isKo ? '4단계 일반 아이템' : 'Lv.4 normal items', pts: isKo ? '총 10점' : '5 pts each', note: '(10÷2)', threshold: isKo ? '→ 누적 28점 = 5단계' : '→ 28 total = Lv.5' },
           ].map(r => (
             <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text }}>
               <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '126px', flexShrink: 0 }}>{r.lv}</span>
               <span style={{ width: '50px', flexShrink: 0 }}>{r.pts}</span>
-              <span style={{ color: theme.colors.textLight, width: '44px', flexShrink: 0 }}>{r.note}</span>
+              {/* <span style={{ color: theme.colors.textLight, width: '44px', flexShrink: 0 }}>{r.note}</span> */}
               <span style={{ color: theme.colors.textLight }}>{r.threshold}</span>
             </div>
           ))}

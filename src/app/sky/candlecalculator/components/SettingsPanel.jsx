@@ -46,7 +46,7 @@ function Guide({ isKo }) {
         <StateChip bg={theme.colors.white}  border="#BDBDBD" label={isKo ? '없음' : 'None'}    desc={isKo ? '기본 상태. 클릭하면 구매 예정으로 변경.' : 'Default. Click to mark as planned.'} />
         <StateChip bg="#E3F2FD" border={theme.colors.planned}  label={isKo ? '구매 예정 (파란색)' : 'Planned (blue)'}  desc={isKo ? '구매할 예정인 아이템. 양초 비용에 포함됩니다.' : 'Item you plan to buy. Included in candle cost.'} />
         <StateChip bg="#E8F5E9" border={theme.colors.affinity} label={isKo ? '보유 (초록색)' : 'Owned (green)'}  desc={isKo ? '이미 보유한 아이템. 비용 제외, 호감도에 반영.' : 'Already owned. Excluded from cost, counted in affinity.'} />
-        <StateChip bg="#EEF5FF" border={theme.colors.planned} dashed label={isKo ? '잠김 (파란 점선)' : 'Locked (blue dashed)'} desc={isKo ? '구매 예정이지만 호감도 부족 또는 시즌패스 미보유로 현재 구매 불가.' : 'Planned but currently unpurchasable: insufficient affinity or no season pass.'} />
+        <StateChip bg="#FFEBEE" border="#EF5350" dashed label={isKo ? '잠김 (빨간 점선)' : 'Locked (red dashed)'} desc={isKo ? '구매 예정이지만 호감도 부족 또는 시즌패스 미보유로 현재 구매 불가.' : 'Planned but currently unpurchasable: insufficient affinity or no season pass.'} />
         <div style={{ fontSize: '11px', color: '#E65100', marginTop: '8px' }}>
           {isKo ? '※ 클릭: 없음 → 구매 예정 → 보유 → 없음 (순환)' : '※ Click cycles: None → Planned → Owned → None'}
         </div>

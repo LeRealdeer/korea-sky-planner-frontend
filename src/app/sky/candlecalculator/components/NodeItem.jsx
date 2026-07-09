@@ -6,14 +6,14 @@ export function NodeItem({ node, state = 'none', isLocked = false, onCycle, size
   const isSeason = node.type === 'season';
 
   const getBorder = () => {
-    if (isLocked)            return `2px dashed ${theme.colors.planned}`;
+    if (isLocked)            return `2px dashed #EF5350`;
     if (state === 'planned') return `2px solid ${theme.colors.planned}`;
     if (state === 'owned')   return `2px solid ${theme.colors.affinity}`;
     return `1.5px solid #BDBDBD`;
   };
 
   const getBg = () => {
-    if (isLocked)            return '#EEF5FF';
+    if (isLocked)            return '#FFEBEE';
     if (state === 'planned') return '#E3F2FD';
     if (state === 'owned')   return '#E8F5E9';
     return theme.colors.white;

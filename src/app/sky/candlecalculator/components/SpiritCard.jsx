@@ -11,6 +11,7 @@ export function SpiritCard({
   spiritResult = {},
   onCycleNode,
   onClearSpirit,
+  onSelectAll,
   onChangePastDays,
   onChangeFutureDays,
   language,
@@ -118,14 +119,26 @@ export function SpiritCard({
         </>
       )}
 
-      {/* 초기화 */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '8px 0 6px' }}>
+      {/* 전체 선택 / 초기화 */}
+      <div style={{ display: 'flex', gap: '5px', margin: '8px 0 6px' }}>
+        <button
+          onClick={() => onSelectAll?.()}
+          style={{
+            flex: 1, padding: '5px 0', fontSize: '11px', fontWeight: 'bold',
+            background: theme.colors.primary, color: '#fff',
+            border: 'none', borderRadius: '8px', cursor: 'pointer',
+            letterSpacing: '0.3px'
+          }}
+        >
+          {language === 'ko' ? '전체 선택' : 'Select All'}
+        </button>
         <button
           onClick={() => onClearSpirit?.()}
           style={{
-            padding: '3px 10px', fontSize: '11px',
-            background: theme.colors.white, color: theme.colors.textLight,
-            border: '1px solid #BDBDBD', borderRadius: '12px', cursor: 'pointer'
+            flex: 1, padding: '5px 0', fontSize: '11px', fontWeight: 'bold',
+            background: '#F5F5F5', color: '#757575',
+            border: '1px solid #E0E0E0', borderRadius: '8px', cursor: 'pointer',
+            letterSpacing: '0.3px'
           }}
         >
           {t.clear}
@@ -133,7 +146,7 @@ export function SpiritCard({
       </div>
 
       {/* 레벨 행: 5단계→1단계 순으로 렌더 (1단계가 맨 아래) */}
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {sortedLevels.map(levelData => (
           <LevelRow
             key={levelData.level}

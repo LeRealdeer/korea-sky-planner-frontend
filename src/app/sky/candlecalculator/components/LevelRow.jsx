@@ -2,7 +2,7 @@
 import React from 'react';
 import { theme, translations } from '../styles/theme';
 import { NodeItem } from './NodeItem';
-const NODE_SIZE = 66;
+const NODE_SIZE = 72;
 
 export function LevelRow({
   levelData,
@@ -34,7 +34,8 @@ export function LevelRow({
     <div style={{
       display: 'flex',
       alignItems: hasMultiRight ? 'center' : 'flex-start',
-      marginBottom: '8px', gap: '6px'
+      marginBottom: '8px', gap: '6px',
+      width: 'fit-content'
     }}>
       {/* 레벨 라벨 */}
       <div

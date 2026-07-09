@@ -77,6 +77,21 @@ export default function CandleCalculator() {
     }));
   };
 
+  const selectAllSpirit = (spiritId) => {
+    const spirit = spiritsData.find(s => s.id === spiritId);
+    if (!spirit) return;
+    const allNodes = {};
+    for (const levelData of spirit.levels) {
+      for (const node of [...levelData.leftNodes, ...levelData.rightNodes]) {
+        allNodes[node.id] = 'planned';
+      }
+    }
+    setSpiritStates(prev => ({
+      ...prev,
+      [spiritId]: { ...prev[spiritId], nodeStates: allNodes }
+    }));
+  };
+
   const updateSpiritDays = (spiritId, field, value) => {
     setSpiritStates(prev => ({
       ...prev,
@@ -145,16 +160,17 @@ export default function CandleCalculator() {
         totalFutureCompanionDays={simResult.totalFutureCompanionDays}
         language={language}
       />
-
-      {/* 영혼 카드 그리드 */}
+{/* 영혼 카드 그리드 */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        justifyItems: 'center',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', /* 💡 모바일에 맞춰 280px로 수정 */
+        justifyContent: 'center', 
         gap: '20px',
+        width: '100%',
         maxWidth: '660px',
-        marginLeft: 'auto', marginRight: 'auto',
-        marginTop: '16px', marginBottom: '30px'
+        margin: '16px auto 30px auto',
+        padding: '0 10px', /* 좌우 여백 살짝 추가 */
+        boxSizing: 'border-box'
       }}>
         {spiritsData.map(spirit => {
           const spiritResult = simResult.spiritResults?.find(r => r.spiritId === spirit.id) ?? {};
@@ -166,6 +182,7 @@ export default function CandleCalculator() {
               spiritResult={spiritResult}
               onCycleNode={(nodeId) => cycleNode(spirit.id, nodeId)}
               onClearSpirit={() => clearSpirit(spirit.id)}
+              onSelectAll={() => selectAllSpirit(spirit.id)}
               onChangePastDays={(days) => updateSpiritDays(spirit.id, 'pastCompanionDays', days)}
               onChangeFutureDays={(days) => updateSpiritDays(spirit.id, 'futureCompanionDays', days)}
               language={language}

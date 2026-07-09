@@ -6,17 +6,18 @@
 ------------------------------------------------- */
 
 /* 기본 컨테이너 */
+/* 기본 컨테이너 */
+/* 기본 컨테이너 */
 .calc-container {
   padding: 13px;
   font-family: sans-serif;
-  /* 고정 너비 1000px */
-  width: 1000px;
-  max-width: none;
+  width: 100%;             /* 💡 무조건 100% (픽셀 고정 금지) */
+  max-width: 1000px;       /* 💡 PC를 위한 최대 크기 제한 */
   margin: 0 auto;
   text-align: center;
-  overflow-x: hidden; /* 가로 스크롤 제거 */
+  box-sizing: border-box;  /* 💡 패딩 때문에 화면 밖으로 밀리는 것 방지 */
+  overflow-x: hidden;
 }
-
 /* 헤더 */
 .header,
 .header-title-big {

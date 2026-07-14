@@ -1,15 +1,20 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { theme, translations } from '../styles/theme';
 import { LevelRow } from './LevelRow';
 import { AffinityBar } from './AffinityBar';
 
+const BRUSH_OPTIONS = [
+  { value: 'none',    label: { ko: '없음', en: 'None' },    color: '#9E9E9E' },
+  { value: 'planned', label: { ko: '예정', en: 'Planned' }, color: theme.colors.planned },
+  { value: 'owned',   label: { ko: '보유', en: 'Owned' },   color: theme.colors.affinity }
+];
 
 export function SpiritCard({
   spirit,
   spiritState = {},
   spiritResult = {},
-  onCycleNode,
+  onSetNodeState,
   onClearSpirit,
   onSelectAll,
   onChangePastDays,
@@ -18,6 +23,8 @@ export function SpiritCard({
   simple = false
 }) {
   const t = translations[language];
+  const isKo = language === 'ko';
+  const [brushState, setBrushState] = useState('planned');
   const { pastCompanionDays = 0, futureCompanionDays = 0, nodeStates = {} } = spiritState;
 
   const {
@@ -119,6 +126,39 @@ export function SpiritCard({
         </>
       )}
 
+      {/* 상태 버튼 — 여기서 고른 값이 아이템 클릭 시 적용됨 */}
+      {!simple && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap',
+          margin: '4px 0 8px', padding: '6px 8px',
+          background: '#F8FBFF', borderRadius: '8px', border: `1px solid ${theme.colors.border}`
+        }}>
+          <span style={{ fontSize: '11px', color: theme.colors.textLight, fontWeight: 'bold' }}>
+            {isKo ? '클릭 시 적용' : 'Click sets to'}
+          </span>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {BRUSH_OPTIONS.map(opt => {
+              const selected = brushState === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setBrushState(opt.value)}
+                  style={{
+                    padding: '4px 10px', fontSize: '11px', fontWeight: selected ? 'bold' : 'normal',
+                    borderRadius: '6px', cursor: 'pointer',
+                    border: `1.5px solid ${opt.color}`,
+                    background: selected ? opt.color : '#fff',
+                    color: selected ? '#fff' : opt.color
+                  }}
+                >
+                  {opt.label[isKo ? 'ko' : 'en']}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* 전체 선택 / 초기화 */}
       <div style={{ display: 'flex', gap: '5px', margin: '8px 0 6px' }}>
         <button
@@ -155,7 +195,8 @@ export function SpiritCard({
             lockedNodeIds={lockedNodeIds}
             currentAffinity={simple ? 28 : currentAffinity}
             projectedAffinity={simple ? 28 : projectedAffinity}
-            onCycleNode={onCycleNode}
+            brushState={brushState}
+            onSetNodeState={onSetNodeState}
             language={language}
           />
         ))}

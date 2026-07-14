@@ -2,11 +2,14 @@
 import React from 'react';
 import { theme } from '../styles/theme';
 
-export function NodeItem({ node, state = 'none', isLocked = false, onCycle, size = 66 }) {
+export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true, brushState = 'planned', onSetState, size = 66, language = 'ko' }) {
   const isSeason = node.type === 'season';
+  const isKo = language === 'ko';
+  // 지금 선택된 상태 버튼 값이 "보유"인데 이 아이템은 아직 그 단계에 도달하지 못한 경우 — 클릭해도 적용되지 않음
+  const clickBlocked = brushState === 'owned' && !canOwn;
 
   const getBorder = () => {
-    if (isLocked)            return `2px dashed #EF5350`;
+    if (isLocked)            return `2px dashed ${theme.colors.locked}`;
     if (state === 'planned') return `2px solid ${theme.colors.planned}`;
     if (state === 'owned')   return `2px solid ${theme.colors.affinity}`;
     return `1.5px solid #BDBDBD`;
@@ -23,15 +26,20 @@ export function NodeItem({ node, state = 'none', isLocked = false, onCycle, size
                   : state === 'planned' ? 'rgba(33,150,243,0.85)'
                   : 'rgba(0,0,0,0.55)';
 
+  const baseName = typeof node.name === 'object' ? Object.values(node.name)[0] : (node.name ?? node.id);
+  const tooltip = clickBlocked
+    ? `${baseName} — ${isKo ? '아직 이 단계에 도달하지 못해 "보유"를 적용할 수 없어요. 아랫단계 아이템부터 보유로 설정해주세요.' : 'Not reached yet — set lower-level items to "Owned" first.'}`
+    : baseName;
+
   return (
     <div
-      onClick={() => onCycle?.()}
-      title={typeof node.name === 'object' ? Object.values(node.name)[0] : (node.name ?? node.id)}
+      onClick={() => { if (!clickBlocked) onSetState?.(); }}
+      title={tooltip}
       style={{
         position: 'relative',
         width: `${size}px`,
         height: `${size}px`,
-        cursor: 'pointer',
+        cursor: clickBlocked ? 'not-allowed' : 'pointer',
         borderRadius: '8px',
         border: getBorder(),
         background: getBg(),
@@ -39,6 +47,7 @@ export function NodeItem({ node, state = 'none', isLocked = false, onCycle, size
         transition: 'all 0.15s',
         userSelect: 'none',
         flexShrink: 0,
+        opacity: clickBlocked ? 0.6 : 1,
         boxShadow: state !== 'none' ? '0 2px 6px rgba(0,0,0,0.18)' : 'none'
       }}
     >
@@ -99,7 +108,19 @@ export function NodeItem({ node, state = 'none', isLocked = false, onCycle, size
       {/* 상태 배지 — 좌상단 */}
       {state === 'owned'             && <Badge color={theme.colors.affinity} label="보유" />}
       {state === 'planned' && !isLocked && <Badge color={theme.colors.planned} label="예정" />}
-      {isLocked                      && <Badge color="#EF5350" label="잠김" />}
+      {isLocked                      && <Badge color={theme.colors.locked} label="잠김" />}
+
+      {/* 지금 상태 버튼이 "보유"인데 적용 불가한 경우 안내 */}
+      {clickBlocked && !isSeason && (
+        <div style={{
+          position: 'absolute', top: '2px', right: '2px',
+          fontSize: '10px', lineHeight: 1,
+          filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.4))',
+          zIndex: 10
+        }}>
+          🔒
+        </div>
+      )}
     </div>
   );
 }

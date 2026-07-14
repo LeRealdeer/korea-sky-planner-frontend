@@ -10,7 +10,8 @@ export function LevelRow({
   lockedNodeIds = new Set(),
   currentAffinity = 0,
   projectedAffinity = 0,
-  onCycleNode,
+  brushState = 'planned',
+  onSetNodeState,
   language
 }) {
   const t = translations[language];
@@ -63,8 +64,11 @@ export function LevelRow({
               node={leftNodes[0]}
               state={getState(leftNodes[0].id)}
               isLocked={lockedNodeIds.has(leftNodes[0].id)}
-              onCycle={() => onCycleNode?.(leftNodes[0].id)}
+              canOwn={nowAccessible}
+              brushState={brushState}
+              onSetState={() => onSetNodeState?.(leftNodes[0].id, brushState, nowAccessible)}
               size={NODE_SIZE}
+              language={language}
             />
           : <div style={{ width: NODE_SIZE, height: NODE_SIZE }} />
         }
@@ -75,8 +79,11 @@ export function LevelRow({
               node={leftNodes[1]}
               state={getState(leftNodes[1].id)}
               isLocked={lockedNodeIds.has(leftNodes[1].id)}
-              onCycle={() => onCycleNode?.(leftNodes[1].id)}
+              canOwn={nowAccessible}
+              brushState={brushState}
+              onSetState={() => onSetNodeState?.(leftNodes[1].id, brushState, nowAccessible)}
               size={NODE_SIZE}
+              language={language}
             />
           : <div style={{ width: NODE_SIZE, height: NODE_SIZE }} />
         }
@@ -93,8 +100,11 @@ export function LevelRow({
               node={node}
               state={getState(node.id)}
               isLocked={lockedNodeIds.has(node.id)}
-              onCycle={() => onCycleNode?.(node.id)}
+              canOwn={nowAccessible}
+              brushState={brushState}
+              onSetState={() => onSetNodeState?.(node.id, brushState, nowAccessible)}
               size={NODE_SIZE}
+              language={language}
             />
           ))}
         </div>

@@ -9,7 +9,6 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { BudgetBar } from './components/BudgetBar';
 import { CalculationResult } from './components/CalculationResult';
 import { simulateAll } from './lib/simulator';
-import { cycleNodeState } from './lib/nodeUtils';
 
 const spiritsData = enrichSpiritsData(rawSpiritsData);
 
@@ -58,14 +57,14 @@ export default function CandleCalculator() {
     [spiritStates, settings]
   );
 
-  const cycleNode = (spiritId, nodeId) => {
+  // 상태 버튼(없음/예정/보유)에서 직접 선택한 값을 반영. canOwn=false면 '보유' 지정을 무시(방어용, 버튼 자체가 비활성화됨)
+  const setNodeState = (spiritId, nodeId, newState, canOwn = true) => {
+    if (newState === 'owned' && !canOwn) return;
     setSpiritStates(prev => {
       const ss = prev[spiritId] ?? { pastCompanionDays: 0, futureCompanionDays: 0, nodeStates: {} };
-      const current = ss.nodeStates[nodeId] ?? 'none';
-      const next = cycleNodeState(current);
-      const newNodeStates = next === 'none'
+      const newNodeStates = newState === 'none'
         ? Object.fromEntries(Object.entries(ss.nodeStates).filter(([k]) => k !== nodeId))
-        : { ...ss.nodeStates, [nodeId]: next };
+        : { ...ss.nodeStates, [nodeId]: newState };
       return { ...prev, [spiritId]: { ...ss, nodeStates: newNodeStates } };
     });
   };
@@ -180,7 +179,7 @@ export default function CandleCalculator() {
               spirit={spirit}
               spiritState={spiritStates[spirit.id]}
               spiritResult={spiritResult}
-              onCycleNode={(nodeId) => cycleNode(spirit.id, nodeId)}
+              onSetNodeState={(nodeId, newState, canOwn) => setNodeState(spirit.id, nodeId, newState, canOwn)}
               onClearSpirit={() => clearSpirit(spirit.id)}
               onSelectAll={() => selectAllSpirit(spirit.id)}
               onChangePastDays={(days) => updateSpiritDays(spirit.id, 'pastCompanionDays', days)}

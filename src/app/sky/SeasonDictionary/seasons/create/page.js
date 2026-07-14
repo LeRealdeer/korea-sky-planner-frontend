@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { seasonColors } from "../../../../constants/seasonColors";
 import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;

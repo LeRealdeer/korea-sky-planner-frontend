@@ -3,7 +3,7 @@
 
 import React from "react";
 import styles from "./NoticePanel.module.css";
-import { SEASON_LIST } from "../constants/seasons";
+import { SEASON_LIST } from "../constants/seasonColors";
 
 export default function NoticePanel({ 
   onSeasonClick, 

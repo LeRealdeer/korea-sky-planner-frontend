@@ -13,6 +13,7 @@ import SearchBar from "../../../components/SearchBar";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { seasonColors } from "../../../constants/seasonColors";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -260,37 +261,7 @@ function TravelingEncyclopediaContent() {
       ? `${parts[0].slice(-2)}.${parts[1]}.${parts[2]}`
       : dateStr;
   };
-const seasonColors = {
-  "감사": "#ff7801",
-  "빛 추적자": "#f7e146",
-  "친밀": "#7fcd61",
-  "리듬": "#4544c9",
-  "마법": "#8a00e3",
-  "낙원": "#45a300",
-  "예언": "#d6d6d6",
-  "꿈": "#ff186d",
-  "협력": "#539000",
-  "어린왕자": "#ffe846",
-  "비행": "#40c9ff",
-  "심해": "#0042a9",
-  "공연": "#a900e5",
-  "파편": "#adadad",
-  "오로라": "#ff96a9",
-  "기억": "#009375",
-  "성장": "#a53100",
-  "순간": "#ff8800",
-  "재생": "#52a7ff",
-  "구색록": "#d10001",
-  "보금자리": "#a15e34",
-  "듀엣": "#ff50a9",
-  "무민": "#6ce641",
-  "광채": "#ff3749",
-  "파랑새": "#2d4cff",
-  "불씨": "#ff3b30",
-  "이주" : "#60c3d7",
-  "빛수선" : "#5839ab"
-};
-  const filteredVisits = showWarbandOnly 
+  const filteredVisits = showWarbandOnly
     ? visits.filter(item => item.globalOrder < 0)
     : visits;
 

@@ -4,7 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import styles from "./SoulCard.module.css";
-import { SEASON_LIST } from "../constants/seasons";
+import { SEASON_LIST } from "../constants/seasonColors";
 
 export default function SoulCard({ 
   soul, 

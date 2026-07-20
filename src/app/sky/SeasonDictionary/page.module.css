@@ -81,6 +81,76 @@
   z-index: 10;
 }
 
+/* ── 모드 전환 (검색 ↔ 체크표) ── */
+.modeToggleRow { display: flex; justify-content: center; margin-bottom: 0.875rem; }
+.modeToggleBtn {
+  padding: 0.5rem 1.25rem; border-radius: 8px; border: 2px solid #667eea;
+  background: white; color: #667eea; font-weight: 700; font-size: 0.8rem;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.modeToggleBtn:hover { background: #f0f2ff; }
+.modeToggleBtnActive { background: #667eea; color: white; }
+.modeToggleBtnActive:hover { background: #5568d3; }
+
+/* ── 보유 영혼 체크표 ── */
+.checklistWrap { max-width: 1400px; margin: 0 auto; padding: 0 0.875rem 3rem; }
+.checklistProgressRow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.875rem; }
+.checklistProgress { flex: 1; display: flex; align-items: center; gap: 0.6rem; }
+.checklistProgressBar { flex: 1; height: 8px; background: #e9ecef; border-radius: 99px; overflow: hidden; }
+.checklistProgressFill { height: 100%; background: linear-gradient(90deg, #667eea, #51cf66); transition: width 0.2s ease; }
+.checklistProgressText { font-size: 0.75rem; font-weight: 700; color: #495057; white-space: nowrap; }
+.downloadBtn {
+  padding: 0.5rem 1rem; border-radius: 8px; border: none; background: #51cf66;
+  color: white; font-weight: 700; font-size: 0.78rem; cursor: pointer;
+  font-family: inherit; white-space: nowrap; transition: background 0.15s;
+}
+.downloadBtn:hover:not(:disabled) { background: #40b85c; }
+.downloadBtn:disabled { opacity: 0.6; cursor: default; }
+
+/* 시즌마다 카드 하나, 같은 줄이면 grid 기본 stretch로 높이가 자동으로 맞춰짐 */
+.checklistSheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+  background: white;
+  padding: 0.875rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 1px solid #e9ecef;
+}
+.checklistSeasonBlock {
+  display: flex; flex-direction: column; height: 100%;
+  border: 1px solid #e9ecef; border-radius: 9px; overflow: hidden; background: #fafafa;
+}
+.checklistSeasonHeader {
+  padding: 0.35rem 0.4rem; text-align: center; color: white;
+  font-size: 0.68rem; font-weight: 800; word-break: keep-all; line-height: 1.2;
+}
+.checklistBody { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0.35rem; }
+.checklistSoulsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.25rem; width: 100%; }
+.checklistSoul {
+  display: flex; flex-direction: column; align-items: stretch;
+  padding: 0; overflow: hidden; width: 100%;
+  border: 1.5px solid #dee2e6; border-radius: 5px; background: white; cursor: pointer;
+  filter: grayscale(100%); opacity: 0.5; transition: all 0.15s;
+}
+.checklistSoul:hover { opacity: 0.8; }
+.checklistSoulChecked { filter: none; opacity: 1; border-color: #51cf66; box-shadow: 0 0 0 2px rgba(81,207,102,0.35); }
+.checklistSoulImgWrap { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #fff; }
+.checklistSoulImg { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+.checklistSoulNoImg { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #ced4da; font-size: 0.65rem; }
+.checklistSoulName {
+  font-size: 0.5rem; line-height: 1.25; padding: 2px 2px 3px; color: #495057;
+  text-align: center; word-break: keep-all; overflow-wrap: break-word;
+  border-top: 1px solid #f1f3f5;
+}
+.checklistCheckMark {
+  position: absolute; top: 1px; right: 1px; width: 13px; height: 13px;
+  background: #51cf66; color: white; border-radius: 50%;
+  font-size: 0.55rem; font-weight: 900; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+
 /* ── 탭 ── */
 .tabRow {
   display: flex;
@@ -237,4 +307,15 @@
   .sinceTag { font-size: 0.9rem; padding: 0.2rem 0.6rem; }
   .soulsGrid { grid-template-columns: repeat(5, 1fr); gap: 0.6rem; padding: 0.75rem 1.25rem 1.25rem; }
   .soulName { font-size: 0.875rem; }
+
+  .modeToggleBtn { padding: 0.6rem 1.75rem; font-size: 0.9rem; }
+  .checklistWrap { padding: 0 2rem 3rem; }
+  .checklistProgressText { font-size: 0.85rem; }
+  .downloadBtn { padding: 0.6rem 1.4rem; font-size: 0.85rem; }
+  .checklistSheet { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.85rem; padding: 1.5rem; }
+  .checklistSeasonHeader { font-size: 0.8rem; padding: 0.5rem 0.5rem; }
+  .checklistBody { padding: 0.55rem; }
+  .checklistSoulsGrid { gap: 0.4rem; }
+  .checklistCheckMark { width: 16px; height: 16px; font-size: 0.65rem; }
+  .checklistSoulName { font-size: 0.62rem; padding: 2px 3px 3px; }
 }

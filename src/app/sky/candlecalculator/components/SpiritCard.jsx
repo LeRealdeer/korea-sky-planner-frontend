@@ -4,12 +4,6 @@ import { theme, translations } from '../styles/theme';
 import { LevelRow } from './LevelRow';
 import { AffinityBar } from './AffinityBar';
 
-const BRUSH_OPTIONS = [
-  { value: 'none',    label: { ko: '없음', en: 'None' },    color: '#9E9E9E' },
-  { value: 'planned', label: { ko: '예정', en: 'Planned' }, color: theme.colors.planned },
-  { value: 'owned',   label: { ko: '보유', en: 'Owned' },   color: theme.colors.affinity }
-];
-
 export function SpiritCard({
   spirit,
   spiritState = {},
@@ -26,6 +20,11 @@ export function SpiritCard({
   const isKo = language === 'ko';
   const [brushState, setBrushState] = useState('planned');
   const { pastCompanionDays = 0, futureCompanionDays = 0, nodeStates = {} } = spiritState;
+
+  const BRUSH_OPTIONS = [
+    { value: 'planned', label: { ko: '예정', en: 'Planned' }, color: theme.colors.planned },
+    { value: 'owned',   label: { ko: '보유', en: 'Owned' },   color: theme.colors.affinity }
+  ];
 
   const {
     currentAffinity = 0,
@@ -126,11 +125,12 @@ export function SpiritCard({
         </>
       )}
 
-      {/* 상태 버튼 — 여기서 고른 값이 아이템 클릭 시 적용됨 */}
+
+      {/* 클릭 시 적용 브러시 (예정/보유) */}
       {!simple && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap',
-          margin: '4px 0 8px', padding: '6px 8px',
+          display: 'flex', alignItems: 'center', gap: '6px',
+          margin: '8px 0 4px', padding: '6px 8px',
           background: '#F8FBFF', borderRadius: '8px', border: `1px solid ${theme.colors.border}`
         }}>
           <span style={{ fontSize: '11px', color: theme.colors.textLight, fontWeight: 'bold' }}>
@@ -144,7 +144,7 @@ export function SpiritCard({
                   key={opt.value}
                   onClick={() => setBrushState(opt.value)}
                   style={{
-                    padding: '4px 10px', fontSize: '11px', fontWeight: selected ? 'bold' : 'normal',
+                    padding: '4px 12px', fontSize: '11px', fontWeight: selected ? 'bold' : 'normal',
                     borderRadius: '6px', cursor: 'pointer',
                     border: `1.5px solid ${opt.color}`,
                     background: selected ? opt.color : '#fff',

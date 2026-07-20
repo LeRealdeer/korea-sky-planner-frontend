@@ -66,7 +66,7 @@ export function LevelRow({
               isLocked={lockedNodeIds.has(leftNodes[0].id)}
               canOwn={nowAccessible}
               brushState={brushState}
-              onSetState={() => onSetNodeState?.(leftNodes[0].id, brushState, nowAccessible)}
+              onSetState={(next) => onSetNodeState?.(leftNodes[0].id, next, nowAccessible)}
               size={NODE_SIZE}
               language={language}
             />
@@ -81,7 +81,7 @@ export function LevelRow({
               isLocked={lockedNodeIds.has(leftNodes[1].id)}
               canOwn={nowAccessible}
               brushState={brushState}
-              onSetState={() => onSetNodeState?.(leftNodes[1].id, brushState, nowAccessible)}
+              onSetState={(next) => onSetNodeState?.(leftNodes[1].id, next, nowAccessible)}
               size={NODE_SIZE}
               language={language}
             />
@@ -102,7 +102,7 @@ export function LevelRow({
               isLocked={lockedNodeIds.has(node.id)}
               canOwn={nowAccessible}
               brushState={brushState}
-              onSetState={() => onSetNodeState?.(node.id, brushState, nowAccessible)}
+              onSetState={(next) => onSetNodeState?.(node.id, next, nowAccessible)}
               size={NODE_SIZE}
               language={language}
             />

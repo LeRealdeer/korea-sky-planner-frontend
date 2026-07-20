@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill //PID 24632 //F //T)",
+      "Bash(taskkill //PID 17760 //F //T)",
+      "Bash(taskkill //PID 14640 //F //T)",
+      "Bash(taskkill //PID 15904 //F //T)",
+      "Bash(python3 -c \"print\\('py ok'\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s https://res.cloudinary.com/dbixeecd7/image/upload/v1767273073/sky-planner/m7roxwkpvugegxpk1bin.webp -o 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/big.webp')",
+      "Bash(curl -s https://res.cloudinary.com/dbixeecd7/image/upload/v1767275244/sky-planner/ugdl2fsnpfxnjhlbbdsj.webp -o 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/small.webp')",
+      "Bash(node -e *)",
+      "Bash(curl -sI \"https://res.cloudinary.com/dbixeecd7/image/upload/v1767273073/sky-planner/m7roxwkpvugegxpk1bin.webp\")",
+      "Bash(node 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/shot.js' 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/checklist.png')",
+      "Bash(node -e \"const p=require\\('puppeteer'\\); console.log\\(p.executablePath\\(\\)\\)\")",
+      "Bash(node 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/test-crop-math.js')",
+      "Bash(node -e \"console.log\\('hello', 1+1\\)\")",
+      "Bash(node --check 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/test-crop-math.js')",
+      "Bash(echo \"check-exit=$?\")",
+      "Bash(node 'C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\ed63004d-83dc-4a1c-9ba5-c491bbe8eb26\\\\scratchpad/mini.js')",
+      "Bash(echo \"exit=$?\")",
+      "Bash(node -e \"console.log\\('before'\\); const a = new Uint8ClampedArray\\(40000\\); console.log\\('after', a.length\\);\")",
+      "PowerShell(cd \"c:\\\\Projects\\\\korea-sky-planner\\\\ezen-mini-frontend\" && npx next dev --port 3001 2>&1 &)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 10)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 15)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 10)"
+    ]
+  }
+}

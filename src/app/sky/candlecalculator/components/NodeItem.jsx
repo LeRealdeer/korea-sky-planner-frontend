@@ -5,8 +5,16 @@ import { theme } from '../styles/theme';
 export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true, brushState = 'planned', onSetState, size = 66, language = 'ko' }) {
   const isSeason = node.type === 'season';
   const isKo = language === 'ko';
-  // 지금 선택된 상태 버튼 값이 "보유"인데 이 아이템은 아직 그 단계에 도달하지 못한 경우 — 클릭해도 적용되지 않음
+
+  // 보유 브러시인데 호감도 부족하면 클릭 막기
   const clickBlocked = brushState === 'owned' && !canOwn;
+
+  // 현재 상태가 브러시와 같으면 해제(none), 아니면 브러시 상태로 토글
+  const handleClick = () => {
+    if (clickBlocked) return;
+    const next = state === brushState ? 'none' : brushState;
+    onSetState?.(next);
+  };
 
   const getBorder = () => {
     if (isLocked)            return `2px dashed ${theme.colors.locked}`;
@@ -33,7 +41,7 @@ export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true
 
   return (
     <div
-      onClick={() => { if (!clickBlocked) onSetState?.(); }}
+      onClick={handleClick}
       title={tooltip}
       style={{
         position: 'relative',
@@ -83,7 +91,6 @@ export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true
           }}
         />
       )}
-      {/* season.webp 없을 때 fallback 텍스트 */}
       {isSeason && (
         <span style={{
           display: 'none',
@@ -92,7 +99,7 @@ export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true
         }}>⭐</span>
       )}
 
-      {/* 비용 — 우하단, 숫자만 */}
+      {/* 비용 — 우하단 */}
       {node.cost > 0 && (
         <div style={{
           position: 'absolute', bottom: '2px', right: '2px',
@@ -106,12 +113,12 @@ export function NodeItem({ node, state = 'none', isLocked = false, canOwn = true
       )}
 
       {/* 상태 배지 — 좌상단 */}
-      {state === 'owned'             && <Badge color={theme.colors.affinity} label="보유" />}
+      {state === 'owned'               && <Badge color={theme.colors.affinity} label="보유" />}
       {state === 'planned' && !isLocked && <Badge color={theme.colors.planned} label="예정" />}
-      {isLocked                      && <Badge color={theme.colors.locked} label="잠김" />}
+      {isLocked                         && <Badge color={theme.colors.locked}  label="잠김" />}
 
-      {/* 지금 상태 버튼이 "보유"인데 적용 불가한 경우 안내 */}
-      {clickBlocked && !isSeason && (
+      {/* 보유 적용 불가 안내 */}
+      {clickBlocked && (
         <div style={{
           position: 'absolute', top: '2px', right: '2px',
           fontSize: '10px', lineHeight: 1,

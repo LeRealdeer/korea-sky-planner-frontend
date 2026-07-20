@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useRef, Suspense } from "react";
+import React, { useEffect, useMemo, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import domtoimage from "dom-to-image-more";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { seasonColors, seasons as SEASON_ORDER } from "../../constants/seasonColors";
+import { useAutoCropStyle } from "../../hooks/useAutoCropStyle";
 import styles from "./page.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -14,6 +16,8 @@ const SK_QUERY    = "seasonDict_query";
 const SK_SEASON   = "seasonDict_season";
 const SK_SCROLL   = "seasonDict_scroll";
 const SK_OPEN     = "seasonDict_open";
+
+const LS_CHECKED_SOULS = "seasonDict_checkedSouls";
 
 function SeasonDictionaryContent() {
   const router = useRouter();
@@ -31,6 +35,13 @@ function SeasonDictionaryContent() {
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState(null);
+
+  // 보유 영혼 체크표
+  const [checklistMode, setChecklistMode] = useState(false);
+  const [checkedSoulIds, setCheckedSoulIds] = useState(() => new Set());
+  const [checklistLoaded, setChecklistLoaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const checklistSheetRef = useRef(null);
 
   const isRestoring = useRef(false);
 
@@ -105,6 +116,67 @@ function SeasonDictionaryContent() {
       buildGroupsSync(allSouls, submittedQuery, selectedSeason, null);
     }
   }, [submittedQuery, selectedSeason]);
+
+  // 체크표: 로컬스토리지에서 보유 체크 상태 복원 (최초 1회)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LS_CHECKED_SOULS);
+      if (saved) setCheckedSoulIds(new Set(JSON.parse(saved)));
+    } catch { /* 무시 */ }
+    setChecklistLoaded(true);
+  }, []);
+
+  // 체크표: 변경될 때마다 저장 (복원 완료 후에만 — 안 그러면 복원 전 빈 값으로 덮어씀)
+  useEffect(() => {
+    if (!checklistLoaded) return;
+    localStorage.setItem(LS_CHECKED_SOULS, JSON.stringify([...checkedSoulIds]));
+  }, [checkedSoulIds, checklistLoaded]);
+
+  // 체크표: 검색/필터와 무관하게 전체 영혼을 시즌 순서대로 그룹핑
+  const checklistGroups = useMemo(() => {
+    const map = new Map();
+    allSouls.forEach(soul => {
+      const sn = soul.seasonName || "기타";
+      if (!map.has(sn)) map.set(sn, []);
+      map.get(sn).push(soul);
+    });
+    map.forEach(list => list.sort((a, b) => (a.orderNum ?? 999) - (b.orderNum ?? 999)));
+
+    const result = [];
+    SEASON_ORDER.forEach(sn => { if (map.has(sn)) result.push({ seasonName: sn, souls: map.get(sn) }); });
+    map.forEach((souls, sn) => { if (!SEASON_ORDER.includes(sn)) result.push({ seasonName: sn, souls }); });
+    return result;
+  }, [allSouls]);
+
+  const toggleChecked = (soulId) => {
+    setCheckedSoulIds(prev => {
+      const next = new Set(prev);
+      if (next.has(soulId)) next.delete(soulId);
+      else next.add(soulId);
+      return next;
+    });
+  };
+
+  const handleDownloadChecklist = async () => {
+    if (!checklistSheetRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const dataUrl = await domtoimage.toPng(checklistSheetRef.current, {
+        quality: 1,
+        bgcolor: "#ffffff",
+        scale: 4,
+      });
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `sky-보유영혼체크표_${checkedSoulIds.size}-${allSouls.length}.png`;
+      link.click();
+    } catch (err) {
+      console.error("체크표 저장 중 오류:", err);
+      alert("이미지 저장 중 오류가 발생했습니다.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   // 카드 클릭 시 상태 저장
   const saveSession = () => {
@@ -331,54 +403,120 @@ function SeasonDictionaryContent() {
 
       {/* ── 컨트롤 카드 ── */}
       <div className={styles.controlCard}>
-        <p className={styles.chipGuide}>시즌 이름을 클릭하면 해당 시즌만 볼 수 있어요:</p>
-
-        <div className={styles.seasonChips}>
-          {SEASON_ORDER.map(season => (
-            <button
-              key={season}
-              onClick={() => handleSeasonClick(season)}
-              className={`${styles.seasonChip} ${selectedSeason === season ? styles.chipActive : ""}`}
-              style={{ backgroundColor: seasonColors[season] || "#888" }}
-            >
-              {season}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.allViewRow}>
+        <div className={styles.modeToggleRow}>
           <button
-            onClick={handleAllView}
-            className={`${styles.allViewBtn} ${!selectedSeason ? styles.allViewBtnActive : ""}`}
+            type="button"
+            onClick={() => setChecklistMode(v => !v)}
+            className={`${styles.modeToggleBtn} ${checklistMode ? styles.modeToggleBtnActive : ""}`}
           >
-            전체보기
+            {checklistMode ? "🔍 검색으로 돌아가기" : "🗂️ 보유 영혼 체크표"}
           </button>
         </div>
 
-        <div className={styles.searchWrapper}>
-          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="영혼 이름, 키워드 검색..."
-              className={styles.searchInput}
-            />
-            {searchQuery && (
-              <button type="button" className={styles.clearBtn} onClick={handleClearSearch}>✕</button>
-            )}
-            <button type="submit" className={styles.searchButton}>검색</button>
-          </form>
-          {submittedQuery && (
-            <p className={styles.searchResult}>
-              <strong>"{submittedQuery}"</strong> 검색 결과 — {totalCount}개 영혼
-            </p>
-          )}
-        </div>
+        {!checklistMode && (
+          <>
+            <p className={styles.chipGuide}>시즌 이름을 클릭하면 해당 시즌만 볼 수 있어요:</p>
+
+            <div className={styles.seasonChips}>
+              {SEASON_ORDER.map(season => (
+                <button
+                  key={season}
+                  onClick={() => handleSeasonClick(season)}
+                  className={`${styles.seasonChip} ${selectedSeason === season ? styles.chipActive : ""}`}
+                  style={{ backgroundColor: seasonColors[season] || "#888" }}
+                >
+                  {season}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.allViewRow}>
+              <button
+                onClick={handleAllView}
+                className={`${styles.allViewBtn} ${!selectedSeason ? styles.allViewBtnActive : ""}`}
+              >
+                전체보기
+              </button>
+            </div>
+
+            <div className={styles.searchWrapper}>
+              <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="영혼 이름, 키워드 검색..."
+                  className={styles.searchInput}
+                />
+                {searchQuery && (
+                  <button type="button" className={styles.clearBtn} onClick={handleClearSearch}>✕</button>
+                )}
+                <button type="submit" className={styles.searchButton}>검색</button>
+              </form>
+              {submittedQuery && (
+                <p className={styles.searchResult}>
+                  <strong>"{submittedQuery}"</strong> 검색 결과 — {totalCount}개 영혼
+                </p>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* ── 영혼 목록 ── */}
-      {loading ? (
+      {checklistMode ? (
+        loading ? (
+          <LoadingSpinner />
+        ) : (
+          <div className={styles.checklistWrap}>
+            <div className={styles.checklistProgressRow}>
+              <div className={styles.checklistProgress}>
+                <div className={styles.checklistProgressBar}>
+                  <div
+                    className={styles.checklistProgressFill}
+                    style={{ width: `${allSouls.length ? (checkedSoulIds.size / allSouls.length) * 100 : 0}%` }}
+                  />
+                </div>
+                <span className={styles.checklistProgressText}>
+                  보유 {checkedSoulIds.size} / {allSouls.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleDownloadChecklist}
+                disabled={downloading}
+                className={styles.downloadBtn}
+              >
+                {downloading ? "저장 중..." : "📥 이미지로 저장"}
+              </button>
+            </div>
+
+            <div className={styles.checklistSheet} ref={checklistSheetRef}>
+              {checklistGroups.map(({ seasonName, souls }) => (
+                <div key={seasonName} className={styles.checklistSeasonBlock}>
+                  <div
+                    className={styles.checklistSeasonHeader}
+                    style={{ background: seasonColors[seasonName] || "#888" }}
+                  >
+                    {seasonName}
+                  </div>
+                  <div className={styles.checklistBody}>
+                    <div className={styles.checklistSoulsGrid}>
+                      {souls.map(soul => (
+                        <ChecklistSoulThumb
+                          key={soul.id}
+                          soul={soul}
+                          checked={checkedSoulIds.has(soul.id)}
+                          onToggle={() => toggleChecked(soul.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      ) : loading ? (
         <LoadingSpinner />
       ) : error ? (
         <p className={styles.stateMsg}>오류: {error}</p>
@@ -437,6 +575,31 @@ function SeasonDictionaryContent() {
         </div>
       )}
     </div>
+  );
+}
+
+// 체크표 썸네일 — 이미지마다 캐릭터 바운딩 박스를 감지해 크기를 맞추기 위해
+// 캐릭터당 컴포넌트를 분리(훅은 .map() 콜백 안에서 직접 호출할 수 없음)
+function ChecklistSoulThumb({ soul, checked, onToggle }) {
+  const repImg = soul.images?.find(img => img.imageType === "REPRESENTATIVE");
+  const cropStyle = useAutoCropStyle(repImg?.url);
+
+  return (
+    <button
+      type="button"
+      title={soul.name}
+      onClick={onToggle}
+      className={`${styles.checklistSoul} ${checked ? styles.checklistSoulChecked : ""}`}
+    >
+      <span className={styles.checklistSoulImgWrap}>
+        {repImg?.url
+          ? <img src={repImg.url} alt={soul.name} className={styles.checklistSoulImg} style={cropStyle || undefined} />
+          : <span className={styles.checklistSoulNoImg}>—</span>
+        }
+        {checked && <span className={styles.checklistCheckMark}>✓</span>}
+      </span>
+      <span className={styles.checklistSoulName}>{soul.name}</span>
+    </button>
   );
 }
 

@@ -23,7 +23,19 @@
       "PowerShell(cd \"c:\\\\Projects\\\\korea-sky-planner\\\\ezen-mini-frontend\" && npx next dev --port 3001 2>&1 &)",
       "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 10)",
       "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 15)",
-      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 10)"
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/sky/candlecalculator\" -UseBasicParsing -TimeoutSec 10)",
+      "Bash(curl -sI \"https://res.cloudinary.com/dbixeecd7/image/upload/v1784038444/sky-planner/smzkzj8wsrnft0jlkeda.webp\" -H \"Origin: https://example.com\")",
+      "Bash(curl -s https://korea-sky-planner-backend-production.up.railway.app/api/v1/souls/all -o /c/Users/서인하/AppData/Local/Temp/claude/c--Projects-korea-sky-planner-ezen-mini-frontend/7b30b603-5668-4123-93b3-902ee211902e/scratchpad/souls.json)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000 --max-time 3)",
+      "Bash(chromium-cli --help)",
+      "Bash(node \"C:/Users/서인하/AppData/Local/Temp/claude/c--Projects-korea-sky-planner-ezen-mini-frontend/7b30b603-5668-4123-93b3-902ee211902e/scratchpad/shot.js\")",
+      "PowerShell(Set-Location \"c:\\\\Projects\\\\korea-sky-planner\\\\ezen-mini-frontend\"; node \"C:\\\\Users\\\\서인하\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Projects-korea-sky-planner-ezen-mini-frontend\\\\7b30b603-5668-4123-93b3-902ee211902e\\\\scratchpad\\\\shot2.js\"; Write-Output \"EXITCODE=$LASTEXITCODE\")",
+      "PowerShell($exe = \"C:\\\\Users\\\\서인하\\\\.cache\\\\puppeteer\\\\chrome\\\\win64-133.0.6943.53\\\\chrome-win64\\\\chrome.exe\"; Test-Path $exe; & $exe --version)",
+      "PowerShell($exe = \"C:\\\\Users\\\\서인하\\\\.cache\\\\puppeteer\\\\chrome\\\\win64-133.0.6943.53\\\\chrome-win64\\\\chrome.exe\"; & $exe --version; Write-Output \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(Get-Process chrome -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -Confirm:$false)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/sky/SeasonDictionary --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/sky/SeasonDictionary --max-time 8)"
     ]
   }
 }

@@ -160,8 +160,27 @@ function SeasonDictionaryContent() {
   const handleDownloadChecklist = async () => {
     if (!checklistSheetRef.current || downloading) return;
     setDownloading(true);
+
+    // 모바일에서 저장해도 항상 PC뷰로 캡처되도록, 화면엔 안 보이는 복제본을
+    // PC 너비로 띄워 놓고 그걸 캡처한다 (미디어쿼리는 실제 화면 너비 기준이라
+    // 원본 DOM에 스타일만 바꿔선 PC 레이아웃이 되지 않음).
+    let clone = null;
     try {
-      const dataUrl = await domtoimage.toPng(checklistSheetRef.current, {
+      clone = checklistSheetRef.current.cloneNode(true);
+      clone.classList.add(styles.forceDesktopSheet);
+      Object.assign(clone.style, {
+        position: "fixed",
+        top: "0",
+        left: "-99999px",
+        width: "1400px",
+        zIndex: "-1",
+      });
+      document.body.appendChild(clone);
+
+      // 강제 스타일이 반영된 레이아웃으로 다시 그려질 때까지 한 프레임 대기
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const dataUrl = await domtoimage.toPng(clone, {
         quality: 1,
         bgcolor: "#ffffff",
         scale: 4,
@@ -174,6 +193,7 @@ function SeasonDictionaryContent() {
       console.error("체크표 저장 중 오류:", err);
       alert("이미지 저장 중 오류가 발생했습니다.");
     } finally {
+      if (clone) document.body.removeChild(clone);
       setDownloading(false);
     }
   };

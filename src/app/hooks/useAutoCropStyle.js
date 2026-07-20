@@ -61,14 +61,16 @@ function detectBoundingBox(data, w, h) {
 }
 
 // box 한 변을 1로 두고, 캐릭터 바운딩 박스가 TARGET_FRAC을 채우도록
-// (그리고 최소한 box를 완전히 덮도록) 확대·이동한 절대좌표 스타일을 계산
+// 확대·이동한 절대좌표 스타일을 계산.
+// (예전엔 "box를 완전히 덮도록" 하는 coverScale 하한선이 있었지만, 원본 이미지의
+// 세로 비율이 영혼마다 제각각이라 그 하한선이 거의 항상 fitScale보다 커져서
+// 캐릭터가 목표 비율 이상으로 과확대되어 머리/발이 잘리는 문제가 있었음. 제거.)
 function computeCropStyle(bbox, w, h) {
   const cx = (bbox.minX + bbox.maxX + 1) / 2;
   const cy = (bbox.minY + bbox.maxY + 1) / 2;
 
   const fitScale = TARGET_FRAC / Math.max(bbox.bw, bbox.bh);
-  const coverScale = 1 / Math.min(w, h);
-  const scale = Math.min(MAX_SCALE, Math.max(fitScale, coverScale));
+  const scale = Math.min(MAX_SCALE, fitScale);
 
   const renderedW = scale * w;
   const renderedH = scale * h;

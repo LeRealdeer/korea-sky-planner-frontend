@@ -102,7 +102,7 @@ function Guide({ isKo }) {
 ].map(r => (
   <div key={r.lv} style={{ display: 'flex', gap: '6px', color: theme.colors.text, flexWrap: 'wrap', marginBottom: '4px' }}>
     <span style={{ color: theme.colors.affinity, fontWeight: 'bold', width: '115px', flexShrink: 0 }}>{r.lv}</span>
-    <span style={{ width: '45px', flexShrink: 0 }}>{r.pts}</span>
+    <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>{r.pts}</span>
     <span style={{ color: theme.colors.textLight, flex: 1, minWidth: '120px', wordBreak: 'keep-all' }}>{r.threshold}</span>
   </div>
 ))}
@@ -119,6 +119,15 @@ function Guide({ isKo }) {
           <div>• {isKo ? '시즌패스 보유 시 일일 6개, 미보유 시 5개 획득.' : 'Daily: 6 with season pass, 5 without.'}</div>
           <div>• {isKo ? '현재 보유 양초에 오늘치까지 포함하여 입력하세요 (오늘 이미 획득 가정).' : "Include today's candles in the current amount (assumed already collected)."}</div>
           <div>• {isKo ? `시패 구입 예정이라면 '아니오' 선택 후 구매예정 체크. (+${BONUS_CANDLES}개 보너스)` : `Plan to buy pass? Select 'No' then check 'Plan to Buy'. (+${BONUS_CANDLES} candles)`}</div>
+        </div>
+        <div style={{
+          marginTop: '8px', padding: '7px 10px', borderRadius: '6px',
+          background: '#FFF3E0', border: '1px solid #FFB74D',
+          fontSize: '11.5px', color: '#E65100', lineHeight: 1.6
+        }}>
+          {isKo
+            ? '⚠️ 2배 이벤트(양초 2배 획득 기간)는 계산에 포함되지 않습니다. 이벤트 기간이 있다면 여유 양초로 직접 가산해주세요.'
+            : '⚠️ Double-candle events are NOT included. If one is active, add the bonus manually to your current candle count.'}
         </div>
       </GuideSection>
 

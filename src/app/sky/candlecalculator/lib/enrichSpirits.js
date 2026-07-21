@@ -12,10 +12,7 @@ export function enrichSpiritsData(spiritsData) {
           ? (TRANSITION_POINTS[levelData.level] ?? 0) / nonSeasonLeftNodes.length
           : 0;
 
-      const unlockAffinity =
-        levelData.level === MAX_LEVEL
-          ? AFFINITY_THRESHOLDS[4]          // 18 — 5단계 노드는 28이 아니라 18 기준
-          : (AFFINITY_THRESHOLDS[levelData.level] ?? 0);
+      const unlockAffinity = AFFINITY_THRESHOLDS[levelData.level] ?? 0;
 
       return {
         ...levelData,

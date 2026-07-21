@@ -73,16 +73,16 @@ export function AffinityBar({ currentAffinity = 0, futureCompanionAffinity = 0, 
       {/* 레전드 */}
       <div style={{ display: 'flex', gap: '10px', marginTop: '4px', flexWrap: 'wrap' }}>
         {cur > 0 && (
-          <LegendDot color={theme.colors.affinity} label={`현재 ${cur}점`} />
+          <LegendDot color={theme.colors.affinity} label={`현재 ${+cur.toFixed(2)}점`} />
         )}
         {comp > 0 && (
-          <LegendDot color={theme.colors.companion} label={`동행 +${comp}점`} />
+          <LegendDot color={theme.colors.companion} label={`동행 +${+comp.toFixed(2)}점`} />
         )}
         {planned > 0 && (
-          <LegendDot color={theme.colors.planned} label={`구매 +${planned}점`} />
+          <LegendDot color={theme.colors.planned} label={`구매 +${+planned.toFixed(2)}점`} />
         )}
         <span style={{ fontSize: '10px', color: theme.colors.textLight, marginLeft: 'auto' }}>
-          → {projectedTotal}점
+          → {+projectedTotal.toFixed(2)}점
         </span>
       </div>
     </div>

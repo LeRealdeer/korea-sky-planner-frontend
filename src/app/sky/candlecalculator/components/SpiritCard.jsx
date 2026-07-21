@@ -105,13 +105,13 @@ export function SpiritCard({
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
             <AffinityChip
               label={t.currentAffinityLabel}
-              value={`${currentAffinity.toFixed(1)}${t.points}`}
+              value={`${+currentAffinity.toFixed(2)}${t.points}`}
               level={currentLevel}
               color={theme.colors.affinity}
             />
             <AffinityChip
               label={t.projectedAffinityLabel}
-              value={`${projectedAffinity.toFixed(1)}${t.points}`}
+              value={`${+projectedAffinity.toFixed(2)}${t.points}`}
               level={projectedLevel}
               color={theme.colors.companion}
               right

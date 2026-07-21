@@ -42,23 +42,36 @@ function Guide({ isKo }) {
   return (
     <div style={{ paddingTop: '14px', paddingBottom: '20px' }}>
 
-      <GuideSection title={isKo ? '🟦 아이템 상태 (영혼마다 있는 상태 버튼 사용)' : '🟦 Item States (use the per-spirit status button)'}>
+      <GuideSection title={isKo ? '🟦 아이템 상태 — 클릭으로 토글하기' : '🟦 Item States — Click to Toggle'}>
         <div style={{
           background: '#E3F2FD', borderRadius: '6px', padding: '8px 10px',
-          fontSize: '11.5px', color: '#0D47A1', marginBottom: '10px', lineHeight: 1.6
+          fontSize: '11.5px', color: '#0D47A1', marginBottom: '10px', lineHeight: 1.7
         }}>
-          {isKo
-            ? '각 영혼 카드 위쪽에 "클릭 시 적용: 없음 / 예정 / 보유" 버튼이 있어요. 먼저 원하는 상태를 고르고, 그 상태로 아이템들을 클릭해서 채워나가면 됩니다. (예: "보유"를 선택한 뒤 이미 가진 아이템들을 클릭)'
-            : 'Each spirit card has a "Click sets to: None / Planned / Owned" button at the top. Pick the state you want first, then click items to apply it. (e.g. select "Owned", then click the items you already have.)'}
+          {isKo ? (
+            <>
+              각 영혼 카드 위쪽에 <b>"클릭 시 적용: 예정 / 보유"</b> 버튼이 있어요.<br />
+              원하는 상태를 먼저 고른 뒤, 아이템을 클릭하면 됩니다.<br />
+              <b>같은 상태의 아이템을 다시 클릭하면 선택이 해제</b>됩니다.
+            </>
+          ) : (
+            <>
+              Each spirit card has a <b>"Click sets to: Planned / Owned"</b> button.<br />
+              Pick a state first, then click items to apply it.<br />
+              <b>Clicking an already-set item deselects it.</b>
+            </>
+          )}
         </div>
-        <StateChip bg={theme.colors.white}  border="#BDBDBD" label={isKo ? '없음' : 'None'}    desc={isKo ? '기본 상태. 아무것도 반영되지 않음.' : 'Default. Not counted toward cost or affinity.'} />
-        <StateChip bg="#E3F2FD" border={theme.colors.planned}  label={isKo ? '구매 예정 (파란색)' : 'Planned (blue)'}  desc={isKo ? '구매할 예정인 아이템. 양초 비용에 포함됩니다.' : 'Item you plan to buy. Included in candle cost.'} />
-        <StateChip bg="#E8F5E9" border={theme.colors.affinity} label={isKo ? '보유 (초록색)' : 'Owned (green)'}  desc={isKo ? '이미 보유한 아이템. 비용 제외, 호감도에 반영.' : 'Already owned. Excluded from cost, counted in affinity.'} />
-        <StateChip bg="#FFEBEE" border="#EF5350" dashed label={isKo ? '잠김 (빨간 점선)' : 'Locked (red dashed)'} desc={isKo ? '구매 예정이지만 호감도 부족 또는 시즌패스 미보유로 현재 구매 불가.' : 'Planned but currently unpurchasable: insufficient affinity or no season pass.'} />
-        <div style={{ fontSize: '11px', color: '#E65100', marginTop: '8px' }}>
+        <div style={{ marginBottom: '6px', fontSize: '11.5px', color: theme.colors.text }}>
+          {isKo ? '예시) "예정" 선택 → 구매할 아이템 클릭 → 다시 클릭하면 해제' : 'e.g. Select "Planned" → click items to buy → click again to deselect'}
+        </div>
+        <StateChip bg={theme.colors.white}  border="#BDBDBD" label={isKo ? '기본 (선택 안 됨)' : 'Default (none)'}  desc={isKo ? '아무것도 반영되지 않는 초기 상태.' : 'Not counted toward cost or affinity.'} />
+        <StateChip bg="#E3F2FD" border={theme.colors.planned}  label={isKo ? '예정 (파란색)' : 'Planned (blue)'}  desc={isKo ? '구매할 예정인 아이템. 양초 비용에 포함됩니다.' : 'Item you plan to buy. Included in candle cost.'} />
+        <StateChip bg="#E8F5E9" border={theme.colors.affinity} label={isKo ? '보유 (초록색)' : 'Owned (green)'}  desc={isKo ? '이미 가진 아이템. 비용 제외, 호감도에만 반영.' : 'Already owned. Excluded from cost, counted in affinity.'} />
+        <StateChip bg="#FFEBEE" border="#EF5350" dashed label={isKo ? '잠김 (빨간 점선)' : 'Locked (red dashed)'} desc={isKo ? '예정 상태지만 호감도 부족 또는 시즌패스 미보유로 현재 구매 불가. 양초 계산에서 제외됩니다.' : 'Planned but unpurchasable (low affinity or no pass). Excluded from candle cost.'} />
+        <div style={{ fontSize: '11px', color: '#E65100', marginTop: '8px', lineHeight: 1.6 }}>
           {isKo
-            ? '※ "보유" 상태를 선택했는데 아이템이 흐리고 🔒가 떠 있다면, 아직 그 단계에 도달하지 못한 거예요. 아랫단계 아이템부터 보유로 클릭해 호감도를 채워주세요.'
-            : '※ If an item looks dim with 🔒 while "Owned" is selected, that level hasn\'t been reached yet — click lower-level items as Owned first to build affinity.'}
+            ? '※ "보유" 선택 시 🔒 아이콘이 뜨는 아이템은 아직 호감도가 부족한 단계예요. 아랫단계 아이템부터 "보유"로 채워 호감도를 쌓아야 클릭할 수 있어요.'
+            : '※ Items showing 🔒 while "Owned" is selected have insufficient affinity. Fill lower-level items as Owned first to unlock them.'}
         </div>
       </GuideSection>
 

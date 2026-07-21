@@ -35,7 +35,8 @@
       "PowerShell(Get-Process chrome -ErrorAction SilentlyContinue)",
       "PowerShell(Stop-Process -Force -Confirm:$false)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/sky/SeasonDictionary --max-time 5)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/sky/SeasonDictionary --max-time 8)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/sky/SeasonDictionary --max-time 8)",
+      "Bash(npx eslint *)"
     ]
   }
 }

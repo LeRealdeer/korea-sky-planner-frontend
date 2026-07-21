@@ -12,7 +12,7 @@ import { simulateAll } from './lib/simulator';
 
 const spiritsData = enrichSpiritsData(rawSpiritsData);
 
-const SEASON_END = new Date("2026-08-03T16:00:00+09:00");
+const SEASON_END = new Date("2026-10-02T16:00:00+09:00");
 
 function getRemainingDays() {
   const diffMs = SEASON_END.getTime() - Date.now();

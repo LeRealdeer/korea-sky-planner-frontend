@@ -12,10 +12,16 @@ export function LevelRow({
   projectedAffinity = 0,
   brushState = 'planned',
   onSetNodeState,
-  language
+  language,
+  showDivider = false
 }) {
   const t = translations[language];
   const { level, leftNodes, rightNodes } = levelData;
+
+  // 일반노드가 3개(n3)인 단계는 시즌 노드 칸이 항상 비어있으므로, 그 자리에 n3을 표시
+  const rightDisplayNodes = rightNodes.length > 0
+    ? rightNodes
+    : (leftNodes[2] ? [leftNodes[2]] : []);
 
   const threshold = levelData.unlockAffinity ?? 0;
   const nowAccessible  = currentAffinity   >= threshold;
@@ -27,11 +33,12 @@ export function LevelRow({
     : '#BDBDBD';
 
   const labelText = t.levelLabel?.[level] ?? `${level}단계`;
-  const hasMultiRight = rightNodes.length > 1;
+  const hasMultiRight = rightDisplayNodes.length > 1;
 
   const getState = (nodeId) => spiritNodeStates[nodeId] ?? 'none';
 
   return (
+    <div style={{ width: 'fit-content' }}>
     <div style={{
       display: 'flex',
       alignItems: hasMultiRight ? 'center' : 'flex-start',
@@ -94,7 +101,7 @@ export function LevelRow({
           flexDirection: hasMultiRight ? 'column-reverse' : 'column',
           gap: '4px', alignItems: 'center'
         }}>
-          {rightNodes.map(node => (
+          {rightDisplayNodes.map(node => (
             <NodeItem
               key={node.id}
               node={node}
@@ -109,6 +116,10 @@ export function LevelRow({
           ))}
         </div>
       </div>
+    </div>
+    {showDivider && (
+      <div style={{ width: '100%', height: '1px', background: '#E8E8E8', margin: '2px 0 6px' }} />
+    )}
     </div>
   );
 }

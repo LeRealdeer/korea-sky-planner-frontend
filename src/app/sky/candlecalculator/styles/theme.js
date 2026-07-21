@@ -24,7 +24,7 @@ export const theme = {
 export const translations = {
   ko: {
     title: '스카이 양초 계산기',
-    subtitle: '구매 계획 시뮬레이터 · 카니발의 시즌',
+    subtitle: '구매 계획 시뮬레이터 · 반 고흐의 시즌',
 
     remainingDays: '남은 시즌 일수',
     days: '일',

@@ -187,7 +187,7 @@ export function SpiritCard({
 
       {/* 레벨 행: 5단계→1단계 순으로 렌더 (1단계가 맨 아래) */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {sortedLevels.map(levelData => (
+        {sortedLevels.map((levelData, idx) => (
           <LevelRow
             key={levelData.level}
             levelData={levelData}
@@ -198,6 +198,7 @@ export function SpiritCard({
             brushState={brushState}
             onSetNodeState={onSetNodeState}
             language={language}
+            showDivider={idx < sortedLevels.length - 1}
           />
         ))}
       </div>

@@ -9,6 +9,7 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { BudgetBar } from './components/BudgetBar';
 import { CalculationResult } from './components/CalculationResult';
 import { simulateAll } from './lib/simulator';
+import { LegacyCalculator } from './LegacyCalculator';
 
 const spiritsData = enrichSpiritsData(rawSpiritsData);
 
@@ -29,6 +30,7 @@ const initSpiritStates = () =>
 export default function CandleCalculator() {
   const router = useRouter();
   const [language, setLanguage] = useState('ko');
+  const [version, setVersion] = useState('new');
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.navigator) {
@@ -129,6 +131,37 @@ export default function CandleCalculator() {
         <p style={{ color: theme.colors.textLight, fontSize: '13px' }}>{t.subtitle}</p>
       </div>
 
+      {/* 버전 탭 */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0', marginBottom: '24px' }}>
+        {[
+          { key: 'new', label: '신버전 (호감도)' },
+          { key: 'legacy', label: '구버전' }
+        ].map(({ key, label }, i) => (
+          <button
+            key={key}
+            onClick={() => setVersion(key)}
+            style={{
+              padding: '8px 22px', fontSize: '13px', fontWeight: version === key ? 'bold' : 'normal',
+              cursor: 'pointer',
+              background: version === key ? theme.colors.primary : theme.colors.white,
+              color: version === key ? '#fff' : theme.colors.primary,
+              border: `2px solid ${theme.colors.primary}`,
+              borderRadius: i === 0 ? '8px 0 0 8px' : '0 8px 8px 0',
+              borderLeft: i === 1 ? 'none' : undefined,
+              transition: 'all 0.15s'
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* 구버전 */}
+      {version === 'legacy' && <LegacyCalculator language={language} />}
+
+      {/* 신버전 */}
+      {version === 'new' && <>
+
       {/* 설정 패널 */}
       <SettingsPanel
         currentCandles={currentCandles}
@@ -209,6 +242,8 @@ export default function CandleCalculator() {
           {t.backToMain}
         </button>
       </div>
+
+      </>}
     </div>
   );
 }

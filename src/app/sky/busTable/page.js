@@ -112,17 +112,19 @@ function hslToHex(h, s, l) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-// 테마 생성 함수 (원본 유지)
+// 테마 생성 함수 (밝기(l)에 따라 전체 테마가 비례해서 밝아지거나 어두워짐)
 function generateThemeFromColor(mainColor) {
   const [h, s, l] = hexToHSL(mainColor);
+  const offset = l - 48; // 프리셋 테마 기준 밝기(48) 대비 오프셋
+  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
   return {
-    background: `linear-gradient(180deg, ${hslToHex(h, s * 0.8, 92)} 0%, ${hslToHex(h, s * 0.9, 82)} 30%, ${hslToHex(h, s, 70)} 60%, ${hslToHex(h, s, 58)} 100%)`,
-    border: hslToHex(h, s, 50),
-    title: hslToHex(h, Math.min(s * 1.2, 100), 22),
-    mainBorder: hslToHex(h, s, 48),
-    selected: hslToHex(h, s, 48),
-    selectedText: hslToHex(h, Math.min(s * 1.2, 100), 22),
-    line: hslToHex(h, s, 62)
+    background: `linear-gradient(180deg, ${hslToHex(h, s * 0.8, clamp(92 + offset, 78, 97))} 0%, ${hslToHex(h, s * 0.9, clamp(82 + offset, 65, 92))} 30%, ${hslToHex(h, s, clamp(70 + offset, 50, 85))} 60%, ${hslToHex(h, s, clamp(58 + offset, 35, 75))} 100%)`,
+    border: hslToHex(h, s, clamp(50 + offset, 30, 65)),
+    title: hslToHex(h, Math.min(s * 1.2, 100), clamp(22 + offset * 0.5, 12, 35)),
+    mainBorder: hslToHex(h, s, clamp(48 + offset, 28, 65)),
+    selected: hslToHex(h, s, clamp(48 + offset, 28, 65)),
+    selectedText: hslToHex(h, Math.min(s * 1.2, 100), clamp(22 + offset * 0.5, 12, 35)),
+    line: hslToHex(h, s, clamp(62 + offset, 42, 80))
   };
 }
 
@@ -181,7 +183,24 @@ export default function BusTable() {
     }
   };
 
-  // 슬라이더 및 프리셋 핸들러 생략 (원본 그대로 사용)
+  const handleHueChange = (newHue) => {
+    setHue(newHue);
+    setCustomColor(hslToHex(newHue, saturation, lightness));
+    setUseCustomColor(true);
+  };
+
+  const handleSaturationChange = (newSat) => {
+    setSaturation(newSat);
+    setCustomColor(hslToHex(hue, newSat, lightness));
+    setUseCustomColor(true);
+  };
+
+  const handleLightnessChange = (newLight) => {
+    setLightness(newLight);
+    setCustomColor(hslToHex(hue, saturation, newLight));
+    setUseCustomColor(true);
+  };
+
   const handleCustomColorSelect = (color) => {
     const [h, s, l] = hexToHSL(color);
     setHue(h); setSaturation(s); setLightness(l);
@@ -231,15 +250,22 @@ export default function BusTable() {
 
         <div className={styles.colorSelector}>
           <span className={styles.colorLabel}>테마:</span>
+
+          <div className={styles.colorPickerWrapper}>
+            <button className={`${styles.colorButton} ${useCustomColor ? styles.activeColor : ''}`} onClick={() => setShowColorPicker(!showColorPicker)} style={{ background: useCustomColor ? customColor : 'linear-gradient(135deg, #ffffff, #e5e7eb)', position: 'relative' }}>
+              <span className={styles.colorPickerLabel}>🎨</span>
+            </button>
+          </div>
+
           {/* 기존 5개 프리셋 버튼 유지 */}
           <button className={`${styles.colorButton} ${!useCustomColor && theme === 'blue' ? styles.activeColor : ''}`} onClick={() => handlePresetTheme('blue')} style={{ background: 'linear-gradient(135deg, #bae6fd, #38bdf8)' }} />
           <button className={`${styles.colorButton} ${!useCustomColor && theme === 'red' ? styles.activeColor : ''}`} onClick={() => handlePresetTheme('red')} style={{ background: 'linear-gradient(135deg, #fecaca, #f87171)' }} />
           <button className={`${styles.colorButton} ${!useCustomColor && theme === 'yellow' ? styles.activeColor : ''}`} onClick={() => handlePresetTheme('yellow')} style={{ background: 'linear-gradient(135deg, #fef08a, #facc15)' }} />
           <button className={`${styles.colorButton} ${!useCustomColor && theme === 'green' ? styles.activeColor : ''}`} onClick={() => handlePresetTheme('green')} style={{ background: 'linear-gradient(135deg, #bef264, #84cc16)' }} />
           <button className={`${styles.colorButton} ${!useCustomColor && theme === 'purple' ? styles.activeColor : ''}`} onClick={() => handlePresetTheme('purple')} style={{ background: 'linear-gradient(135deg, #d8b4fe, #a855f7)' }} />
-          
+
           {/* ✨ NEW: 빈티지 테마 버튼 (책 아이콘 적용) */}
-          <button 
+          <button
             className={`${styles.colorButton} ${!useCustomColor && theme === 'vintage' ? styles.activeColor : ''}`}
             onClick={() => handlePresetTheme('vintage')}
             style={{ background: '#183e42', border: '2px solid #8c7355' }}
@@ -247,15 +273,104 @@ export default function BusTable() {
           >
             📜
           </button>
-
-          <div className={styles.colorPickerWrapper}>
-            <button className={`${styles.colorButton} ${useCustomColor ? styles.activeColor : ''}`} onClick={() => setShowColorPicker(!showColorPicker)} style={{ background: useCustomColor ? customColor : 'linear-gradient(135deg, #ffffff, #e5e7eb)', position: 'relative' }}>
-              <span className={styles.colorPickerLabel}>🎨</span>
-            </button>
-          </div>
         </div>
 
-        {/* 커스텀 컬러 피커 모달 (원본 유지) ... 생략 ... */}
+        {/* 커스텀 컬러 피커 모달 */}
+        {showColorPicker && (
+          <div className={styles.colorPickerModal} onClick={() => setShowColorPicker(false)}>
+            <div className={styles.colorPickerContent} onClick={(e) => e.stopPropagation()}>
+              <h4 className={styles.colorPickerTitle}>
+                {language === 'ko' ? '원하는 색상을 선택하세요' : 'Choose Your Color'}
+              </h4>
+
+              <div className={styles.colorPreview}>
+                <div className={styles.colorPreviewBox} style={{ background: customColor }} />
+                <span className={styles.colorPreviewText}>{customColor.toUpperCase()}</span>
+              </div>
+
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>{language === 'ko' ? '색상 (Hue)' : 'Hue'}</label>
+                <div className={styles.sliderWrapper}>
+                  <div
+                    className={styles.hueSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const percentage = (e.clientX - rect.left) / rect.width;
+                      handleHueChange(Math.round(percentage * 360));
+                    }}
+                  >
+                    <div className={styles.sliderThumb} style={{ left: `${(hue / 360) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>{language === 'ko' ? '채도 (Saturation)' : 'Saturation'}</label>
+                <div className={styles.sliderWrapper}>
+                  <div
+                    className={styles.saturationSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const percentage = (e.clientX - rect.left) / rect.width;
+                      handleSaturationChange(Math.round(percentage * 100));
+                    }}
+                    style={{
+                      background: `linear-gradient(to right, ${hslToHex(hue, 0, lightness)}, ${hslToHex(hue, 100, lightness)})`
+                    }}
+                  >
+                    <div className={styles.sliderThumb} style={{ left: `${saturation}%` }} />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.sliderGroup}>
+                <label className={styles.sliderLabel}>{language === 'ko' ? '밝기 (Lightness)' : 'Lightness'}</label>
+                <div className={styles.sliderWrapper}>
+                  <div
+                    className={styles.lightnessSlider}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const percentage = (e.clientX - rect.left) / rect.width;
+                      handleLightnessChange(Math.round(percentage * 100));
+                    }}
+                    style={{
+                      background: `linear-gradient(to right, ${hslToHex(hue, saturation, 0)}, ${hslToHex(hue, saturation, 50)}, ${hslToHex(hue, saturation, 100)})`
+                    }}
+                  >
+                    <div className={styles.sliderThumb} style={{ left: `${lightness}%` }} />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.presetColors}>
+                <label className={styles.sliderLabel}>{language === 'ko' ? '빠른 선택' : 'Quick Select'}</label>
+                <div className={styles.colorPalette}>
+                  <div className={styles.colorRow}>
+                    {['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6'].map(color => (
+                      <button key={color} className={styles.paletteColor} style={{ background: color }} onClick={() => handleCustomColorSelect(color)} />
+                    ))}
+                  </div>
+                  <div className={styles.colorRow}>
+                    {['#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899'].map(color => (
+                      <button key={color} className={styles.paletteColor} style={{ background: color }} onClick={() => handleCustomColorSelect(color)} />
+                    ))}
+                  </div>
+                  <div className={styles.colorRow}>
+                    {['#f43f5e', '#fb7185', '#fda4af', '#fbbf24', '#fde047', '#bef264', '#86efac', '#6ee7b7'].map(color => (
+                      <button key={color} className={styles.paletteColor} style={{ background: color }} onClick={() => handleCustomColorSelect(color)} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.colorPickerActions}>
+                <button className={styles.colorPickerCancel} onClick={() => setShowColorPicker(false)}>
+                  {language === 'ko' ? '완료' : 'Done'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ✨ 핵심: data-theme 속성을 추가하여 CSS가 빈티지 모드일 때만 스타일을 오버라이드 하도록 설정 */}

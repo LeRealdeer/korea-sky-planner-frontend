@@ -62,21 +62,21 @@ export default function MainPageClient() {
       {/* ── 공지 배너 ── */}
       <div className={styles.announcementBanner}>
         <div className={styles.announceItem}>
-          <span className={styles.announceIcon}>📖</span>
+          <span className={styles.announceIcon}>🕯️</span>
           <span className={styles.announceText}>
-            <strong>[NEW]</strong> 시즌 대백과 오픈 — 영혼을 키워드로 검색해보세요!
+            <strong>[NEW]</strong> 반고흐 시즌 양초 계산기 신버전 업데이트 — 지금 확인해보세요!
           </span>
-          <button className={styles.announceBtn} onClick={() => navigateTo('/sky/SeasonDictionary')}>
+          <button className={styles.announceBtn} onClick={() => navigateTo('/sky/candlecalculator')}>
             바로가기
           </button>
         </div>
         <div className={styles.announceDivider} />
         <div className={styles.announceItem}>
-          <span className={styles.announceIcon}>💤</span>
+          <span className={styles.announceIcon}>🎨</span>
           <span className={styles.announceText}>
-            <strong>[NEW]</strong> 미복각 영혼 — 한 번도 유랑을 오지 않은 영혼들을 확인해보세요!
+            <strong>[NEW]</strong> 버스 노선표 컬러 팔레트 복구 — 원하는 색상으로 나만의 노선표를 꾸며보세요!
           </span>
-          <button className={styles.announceBtn} onClick={() => navigateTo('/sky/travelingSprits/oldestSprits')}>
+          <button className={styles.announceBtn} onClick={() => navigateTo('/sky/busTable')}>
             바로가기
           </button>
         </div>

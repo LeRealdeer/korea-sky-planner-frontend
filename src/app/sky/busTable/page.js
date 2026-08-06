@@ -59,6 +59,16 @@ const presetThemes = {
     selected: '#183e42',
     selectedText: '#ffffff',
     line: '#8c7355'
+  },
+  // ✨ NEW: 어린 왕자 테마 (황혼의 소행성 B612 컨셉)
+  littlePrince: {
+    background: '#1e3a5f', // CSS에서 덮어쓰지만 Fallback용으로 추가
+    border: '#f4a261',
+    title: '#1e3a5f',
+    mainBorder: '#f4a261',
+    selected: '#d4a017',
+    selectedText: '#ffffff',
+    line: '#f4a261'
   }
 };
 
@@ -272,6 +282,16 @@ export default function BusTable() {
             title="마법서 테마"
           >
             📜
+          </button>
+
+          {/* ✨ NEW: 어린 왕자 테마 버튼 (장미 아이콘 적용) */}
+          <button
+            className={`${styles.colorButton} ${!useCustomColor && theme === 'littlePrince' ? styles.activeColor : ''}`}
+            onClick={() => handlePresetTheme('littlePrince')}
+            style={{ background: 'linear-gradient(135deg, #1e3a5f, #e76f51)', border: '2px solid #f4a261' }}
+            title="어린 왕자 테마"
+          >
+            🌹
           </button>
         </div>
 

@@ -217,7 +217,7 @@
 
 .title {
   color: #1e40af;
-  font-size: 3.5rem;
+  font-size: 2.4rem;
   font-weight: 800;
   margin: 0;
 }
@@ -776,5 +776,216 @@
 .captureArea[data-theme="vintage"] .optionButtonSelected {
   background: #183e42 !important;
   border-color: #183e42 !important;
+  color: white !important;
+}
+
+/* =======================================================
+   ✨ NEW: 어린 왕자 테마 오버라이드 (황혼의 소행성 B612 컨셉)
+   ======================================================= */
+
+.captureArea[data-theme="littlePrince"] {
+  background: linear-gradient(180deg, #0b1d3a 0%, #1e3a5f 45%, #4a6fa5 75%, #e8965a 100%) !important;
+  border: none !important;
+  box-shadow: inset 0 0 60px rgba(11, 29, 58, 0.4), 0 10px 40px rgba(0,0,0,0.15) !important;
+  padding: 2.5rem;
+  border-radius: 8px;
+}
+
+/* 헤더: 밤하늘 남색 바 + 노을 골드 테두리 */
+.captureArea[data-theme="littlePrince"] .header {
+  background: #1e3a5f;
+  background-image:
+    radial-gradient(circle at 15% 30%, rgba(255,255,255,0.5) 1px, transparent 1px),
+    radial-gradient(circle at 40% 70%, rgba(255,255,255,0.3) 1px, transparent 1px),
+    radial-gradient(circle at 80% 25%, rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size: 60px 60px, 90px 90px, 70px 70px;
+  border: 3px solid #f4a261;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+/* 헤더 구석의 장미 장식 */
+.captureArea[data-theme="littlePrince"] .header::before {
+  content: '🌹';
+  position: absolute;
+  top: -22px;
+  right: 10px;
+  font-size: 48px;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));
+  z-index: 5;
+}
+
+.captureArea[data-theme="littlePrince"] .title {
+  background: #faf3e8;
+  color: #1e3a5f !important;
+  padding: 0.5rem 2.5rem;
+  border-radius: 6px;
+  border: 2px solid #f4a261;
+  font-family: serif;
+  box-shadow: 3px 3px 0 rgba(244, 162, 97, 0.3);
+}
+
+/* 프로필: 작은 행성처럼 골드 링으로 감싼 프로필 */
+.captureArea[data-theme="littlePrince"] .profileLabel,
+.captureArea[data-theme="littlePrince"] .profileInput,
+.captureArea[data-theme="littlePrince"] .profileIntro {
+  color: #faf3e8 !important;
+  border-bottom-color: #f4a261;
+}
+
+.captureArea[data-theme="littlePrince"] .profileImageWrapper {
+  border: 4px solid #f4a261 !important;
+  box-shadow: 0 0 0 2px #1e3a5f, 0 0 0 4px #f4a261, 0 5px 15px rgba(0,0,0,0.4) !important;
+  border-radius: 50%;
+}
+
+/* 별이 흩뿌려진 밤하늘 노선 구역 */
+.captureArea[data-theme="littlePrince"] .routeSection {
+  background-color: #0b1d3a !important;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.25) 2px, transparent 2px),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.25) 2px, transparent 2px),
+    linear-gradient(to bottom, #0b1d3a, #1e3a5f) !important;
+  background-size: 100px 100px, 150px 150px, 80px 80px, 200px 200px, 100% 100%;
+  border: 4px solid #f4a261 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+/* 밤하늘 구석에서 지켜보는 여우 장식 */
+.captureArea[data-theme="littlePrince"] .routeSection::after {
+  content: '🦊';
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 46px;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+  z-index: 5;
+  pointer-events: none;
+}
+
+.captureArea[data-theme="littlePrince"] .routeMap::before {
+  background: #f4a261 !important; /* 연결선을 노을 골드로 */
+}
+
+.captureArea[data-theme="littlePrince"] .mainLocation {
+  background: #4a6fa5 !important;
+  border-color: #f4a261 !important;
+  color: white !important;
+  border-radius: 16px;
+}
+
+.captureArea[data-theme="littlePrince"] .mainLocationSelected {
+  background: #d4a017 !important; /* 노을 골드 포인트 컬러 */
+  color: white !important;
+  box-shadow: 0 0 15px rgba(212, 160, 23, 0.8) !important;
+}
+
+.captureArea[data-theme="littlePrince"] .subLocation {
+  background: #1e3a5f !important;
+  border-color: #4a6fa5 !important;
+  color: #faf3e8 !important;
+  border-radius: 16px;
+}
+
+.captureArea[data-theme="littlePrince"] .subLocationSelected {
+  background: #d4a017 !important;
+  border-color: #f4a261 !important;
+  color: white !important;
+}
+
+/* 사막의 모래빛 시즌맵 */
+.captureArea[data-theme="littlePrince"] .seasonMapSection {
+  background: #faf3e8 !important;
+  border: 2px solid #f4a261 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.35) !important;
+}
+
+.captureArea[data-theme="littlePrince"] .seasonMapTitle {
+  color: #1e3a5f !important;
+}
+
+.captureArea[data-theme="littlePrince"] .seasonMapItem {
+  background: #fff9f0 !important;
+  border-color: #f4a261 !important;
+  color: #1e3a5f !important;
+}
+
+.captureArea[data-theme="littlePrince"] .seasonMapItemSelected {
+  background: #d4a017 !important;
+  color: white !important;
+}
+
+/* 옵션 영역: 모래빛 카드 + 가운데 작은 행성(고리) 장식 */
+.captureArea[data-theme="littlePrince"] .optionsWrapper {
+  background: #faf3e8;
+  border: 3px solid #f4a261;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 40px rgba(244, 162, 97, 0.1);
+  padding: 1.5rem;
+  gap: 2.5rem; /* 가운데 행성 장식 여백 확보 */
+}
+
+/* 가운데 작은 행성(토성 고리 형태) 장식 */
+.captureArea[data-theme="littlePrince"] .optionsWrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 90px; height: 26px;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  border: 3px solid #f4a261;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.captureArea[data-theme="littlePrince"] .optionsWrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 50px; height: 50px;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  background: radial-gradient(circle at 35% 35%, #f4a261, #e76f51 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.25);
+  z-index: 11;
+}
+
+.captureArea[data-theme="littlePrince"] .categorySection {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.captureArea[data-theme="littlePrince"] .categoryTitle {
+  color: #1e3a5f !important;
+  border-bottom: 2px solid #f4a261 !important;
+}
+
+.captureArea[data-theme="littlePrince"] .optionGroup {
+  background: #fff9f0 !important;
+  border: 2px solid #e8c9a3 !important;
+}
+
+.captureArea[data-theme="littlePrince"] .optionHeader {
+  color: #1e3a5f !important;
+}
+
+.captureArea[data-theme="littlePrince"] .optionButton {
+  background: #faf3e8 !important;
+  border: 2px solid #f4a261 !important;
+  color: #1e3a5f !important;
+  border-radius: 20px !important;
+}
+
+.captureArea[data-theme="littlePrince"] .optionButtonSelected {
+  background: #d4a017 !important;
+  border-color: #d4a017 !important;
   color: white !important;
 }

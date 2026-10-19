@@ -4,7 +4,7 @@ import { spiritsData as rawSpiritsData } from './data/spiritsData';
 import { theme } from './styles/theme';
 
 const BONUS_CANDLES = 31;
-const SEASON_END = new Date("2026-10-02T16:00:00+09:00");
+const SEASON_END = new Date("2027-01-01T16:00:00+09:00");
 
 function getRemainingDays() {
   return Math.max(0, Math.floor((SEASON_END.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
@@ -38,7 +38,7 @@ const legacyT = {
     alreadyEnough: '이미 {amount}개 남습니다!',
     notices: [
       '• 아이콘은 Sky Wiki에서 참고하였으며, 양초와 하트 아이콘은 햇비님 제작 자료입니다.',
-      '• 오후 5시 리셋 이후 양초를 얻었다는 가정 하에 계산됩니다. 아직 리셋 전 오늘 일퀘를 안하셨다면 일퀘 양초를 포함해서 계산해주세요.',
+      '• 오후 4시 리셋 이후 양초를 얻었다는 가정 하에 계산됩니다. 아직 리셋 전 오늘 일퀘를 안하셨다면 일퀘 양초를 포함해서 계산해주세요.',
       '• 구매 예정이라면 시패 보유 여부 아니오 선택 후 구매예정 버튼을 눌러주세요.',
       '• (시즌초 2배 이벤트 미포함) 오른쪽 하단의 숫자는 재화 개수입니다.'
     ]

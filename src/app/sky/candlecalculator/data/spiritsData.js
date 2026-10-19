@@ -2,10 +2,10 @@ export const spiritsData = [
   {
     id: 1,
     name: {
-      ko: "예술적인 기억",
-      en: "Artistic Memory"
+      ko: "항해사",
+      en: "Wrestling Sailor"
     },
-    totalCandles: 103,
+    totalCandles: 75,
     levels: [
       {
         level: 5,
@@ -15,29 +15,29 @@ export const spiritsData = [
       {
         level: 4,
         leftNodes: [
-          { id: "s1_l4_n1", type: "normal", cost: 10 },
+          { id: "s1_l4_n1", type: "normal", cost: 32 },
           //{ id: "s1_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s1_l4_s1", type: "season", cost: 0 },
-          { id: "s1_l4_s2", type: "season", cost: 0 }
+          //{ id: "s1_l4_s2", type: "season", cost: 0 }
         ]
       },
       {
         level: 3,
         leftNodes: [
-          { id: "s1_l3_n1", type: "normal", cost: 22 },
-          { id: "s1_l3_n2", type: "normal", cost: 22 },
-          { id: "s1_l3_n3", type: "normal", cost: 10 },
+          { id: "s1_l3_n1", type: "normal", cost: 8 },
+          { id: "s1_l3_n2", type: "normal", cost: 10},
+          //{ id: "s1_l3_n3", type: "normal", cost: 10 },
 
         ],
-        rightNodes: []
+        rightNodes: [{ id: "s1_l3_s1", type: "season", cost: 0 }]
       },
       {
         level: 2,
         leftNodes: [
-          { id: "s1_l2_n1", type: "normal", cost: 15 },
-          { id: "s1_l2_n2", type: "normal", cost: 6 }
+          { id: "s1_l2_n1", type: "normal", cost: 18 },
+          //{ id: "s1_l2_n2", type: "normal", cost: 6 }
         ],
         rightNodes: [{ id: "s1_l2_s1", type: "season", cost: 0 }]
       },
@@ -45,7 +45,7 @@ export const spiritsData = [
         level: 1,
         leftNodes: [
           { id: "s1_l1_n1", type: "normal", cost: 0 },
-          { id: "s1_l1_n2", type: "normal", cost: 12 }
+          { id: "s1_l1_n2", type: "normal", cost: 4 }
         ],
         rightNodes: [{ id: "s1_l1_s1", type: "normal", cost: 0 }]
       }
@@ -54,10 +54,10 @@ export const spiritsData = [
   {
     id: 2,
     name: {
-      ko: "네덜란드의 기억",
-      en: "Dutch Memory"
+      ko: "상인",
+      en: "Showy Merchant"
     },
-    totalCandles: 89,
+    totalCandles: 100,
     levels: [
       {
         level: 5,
@@ -67,19 +67,19 @@ export const spiritsData = [
       {
         level: 4,
         leftNodes: [
-          { id: "s2_l4_n1", type: "normal", cost: 26 },
+          { id: "s2_l4_n1", type: "normal", cost: 32 },
           //{ id: "s2_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
           { id: "s2_l4_s1", type: "season", cost: 0 },
-          { id: "s2_l4_s2", type: "season", cost: 0 }
+          //{ id: "s2_l4_s2", type: "season", cost: 0 }
         ]
       },
       {
         level: 3,
         leftNodes: [
-          { id: "s2_l3_n1", type: "normal", cost: 22 },
-          { id: "s2_l3_n2", type: "normal", cost: 10 }
+          { id: "s2_l3_n1", type: "normal", cost: 28 },
+          { id: "s2_l3_n2", type: "normal", cost: 8 }
         ],
         rightNodes: [{ id: "s2_l3_s1", type: "season", cost: 0 }]
       },
@@ -87,7 +87,7 @@ export const spiritsData = [
         level: 2,
         leftNodes: [
           { id: "s2_l2_n1", type: "normal", cost: 18 },
-          { id: "s2_l2_n2", type: "normal", cost: 6 }
+          { id: "s2_l2_n2", type: "normal", cost: 7 }
         ],
         rightNodes: [{ id: "s2_l2_s1", type: "season", cost: 0 }]
       },
@@ -104,10 +104,10 @@ export const spiritsData = [
   {
     id: 3,
     name: {
-      ko: "소박한 기억",
-      en: "Rustic Memory"
+      ko: "낚시꾼",
+      en: "Old Angler"
     },
-    totalCandles: 89,
+    totalCandles: 100,
     levels: [
       {
         level: 5,
@@ -117,7 +117,7 @@ export const spiritsData = [
       {
         level: 4,
         leftNodes: [
-          { id: "s3_l4_n1", type: "normal", cost: 26 },
+          { id: "s3_l4_n1", type: "normal", cost: 32 },
           //{ id: "s3_l4_n2", type: "normal", cost: 0 }
         ],
         rightNodes: [
@@ -128,7 +128,7 @@ export const spiritsData = [
       {
         level: 3,
         leftNodes: [
-          { id: "s3_l3_n1", type: "normal", cost: 22 },
+          { id: "s3_l3_n1", type: "normal", cost: 28 },
           { id: "s3_l3_n2", type: "normal", cost: 8 }
         ],
         rightNodes: [{ id: "s3_l3_s1", type: "season", cost: 0 }]
@@ -137,7 +137,7 @@ export const spiritsData = [
         level: 2,
         leftNodes: [
           { id: "s3_l2_n1", type: "normal", cost: 18 },
-          { id: "s3_l2_n2", type: "normal", cost: 8 }
+          { id: "s3_l2_n2", type: "normal", cost: 7 }
         ],
         rightNodes: [{ id: "s3_l2_s1", type: "season", cost: 0 }]
       },
@@ -154,10 +154,10 @@ export const spiritsData = [
   {
     id: 4,
     name: {
-      ko: "즐거운 기억",
-      en: "jpyful Memory"
+      ko: "아이",
+      en: "Cuddly Rolling Child"
     },
-    totalCandles: 111,
+    totalCandles: 96,
     levels: [
       {
         level: 5,
@@ -167,38 +167,38 @@ export const spiritsData = [
       {
         level: 4,
         leftNodes: [
-          { id: "s4_l4_n1", type: "normal", cost: 26 },
-          { id: "s4_l4_n2", type: "normal", cost: 12 }
+          { id: "s4_l4_n1", type: "normal", cost: 12 },
+          //{ id: "s4_l4_n2", type: "normal", cost: 12 }
         ],
         rightNodes: [
           { id: "s4_l4_s1", type: "season", cost: 0 },
-          //{ id: "s4_l4_s2", type: "season", cost: 0 }
+          { id: "s4_l4_s2", type: "season", cost: 0 }
         ]
       },
       {
         level: 3,
         leftNodes: [
-          { id: "s4_l3_n1", type: "normal", cost: 22 },
-          { id: "s4_l3_n2", type: "normal", cost: 22 },
-          { id: "s4_l3_n3", type: "normal", cost: 8 }
+          { id: "s4_l3_n1", type: "normal", cost: 28 },
+          { id: "s4_l3_n2", type: "normal", cost: 24 },
+          //{ id: "s4_l3_n3", type: "normal", cost: 8 }
         ],
-        rightNodes: []
+        rightNodes: [{ id: "s4_l3_s1", type: "season", cost: 0 }]
       },
       {
         level: 2,
         leftNodes: [
-          { id: "s4_l2_n1", type: "normal", cost: 6 },
-          //{ id: "s4_l2_n2", type: "normal", cost: 7 }
+          { id: "s4_l2_n1", type: "normal", cost: 18 },
+          { id: "s4_l2_n2", type: "normal", cost: 7 }
         ],
         rightNodes: [{ id: "s4_l2_s1", type: "season", cost: 0 },
-          { id: "s4_l2_s2", type: "season", cost: 0 }
+          //{ id: "s4_l2_s2", type: "season", cost: 0 }
         ]
       },
       {
         level: 1,
         leftNodes: [
           { id: "s4_l1_n1", type: "normal", cost: 0 },
-          { id: "s4_l1_n2", type: "normal", cost: 12 }
+          { id: "s4_l1_n2", type: "normal", cost: 4 }
         ],
         rightNodes: [{ id: "s4_l1_s1", type: "normal", cost: 0 }]
       }

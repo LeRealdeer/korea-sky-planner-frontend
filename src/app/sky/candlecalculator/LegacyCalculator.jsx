@@ -4,7 +4,7 @@ import { spiritsData as rawSpiritsData } from './data/spiritsData';
 import { theme } from './styles/theme';
 
 const BONUS_CANDLES = 31;
-const SEASON_END = new Date("2027-01-01T16:00:00+09:00");
+const SEASON_END = new Date("2027-01-01T17:00:00+09:00");
 
 function getRemainingDays() {
   return Math.max(0, Math.floor((SEASON_END.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
